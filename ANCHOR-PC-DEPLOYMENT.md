@@ -24,6 +24,9 @@ Create a database named `evs_drills` in phpMyAdmin and import the point-system s
 C:\xampp\htdocs\Elite-Vision-Security-Hub\evs-drill-simulator.sql
 ```
 
+Then import `evs-client-directory-migration.sql` once to restore client addresses,
+equipment availability, police departments, and hotlines from the reference sheet.
+
 For a passworded MySQL account, define these Apache environment variables in
 the active Apache configuration before restarting Apache:
 
