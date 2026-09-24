@@ -1,0 +1,5127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EVS Command Center Hub</title>
+    <style>
+      :root {
+        --bg: #f3f5f3;
+        --bg-2: #ffffff;
+        --surface: #ffffff;
+        --surface-2: #f1f4f1;
+        --surface-3: #e7ebe7;
+        --border: #dde3de;
+        --cream: #172420;
+        --cream-dim: #3c4a44;
+        --cream-soft: #1c2b22;
+        --muted: #667b70;
+        --accent: #148a56;
+        --accent-dim: #0e6f44;
+        --gold: #a76f16;
+        --green: #16874f;
+        --orange: #b26a0c;
+        --red: #c53434;
+        --shadow: 0 4px 16px rgba(23, 40, 30, 0.06);
+        --radius: 13px;
+        --radius-sm: 10px;
+      }
+      body.dark-mode {
+        --bg: #101713;
+        --bg-2: #17221b;
+        --surface: #1b2820;
+        --surface-2: #223128;
+        --surface-3: #2c3c31;
+        --border: #3a4c3f;
+        --cream: #edf5ee;
+        --cream-dim: #c6d5c9;
+        --cream-soft: #d9e7dc;
+        --muted: #9db1a2;
+        --accent: #4fc483;
+        --accent-dim: #2c9d61;
+        --gold: #e0b168;
+        --green: #61d991;
+        --orange: #f0b35d;
+        --red: #f27a7a;
+        --shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, Arial, sans-serif;
+        background:
+          linear-gradient(rgba(20, 138, 86, 0.025) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(20, 138, 86, 0.025) 1px, transparent 1px),
+          radial-gradient(circle at 15% -10%, #e4f2e9 0%, transparent 45%),
+          radial-gradient(circle at 100% 0%, #eaf3ec 0%, transparent 40%),
+          var(--bg);
+        background-size:
+          44px 44px,
+          44px 44px,
+          auto,
+          auto,
+          auto;
+        color: var(--cream);
+        min-height: 100vh;
+      }
+      ::selection {
+        background: var(--accent);
+        color: #ffffff;
+      }
+      a {
+        color: var(--accent);
+      }
+      body {
+        scrollbar-color: var(--surface-3) var(--bg);
+      }
+      body.dark-mode {
+        background:
+          linear-gradient(rgba(104, 202, 143, 0.025) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(104, 202, 143, 0.025) 1px,
+            transparent 1px
+          ),
+          radial-gradient(circle at 15% -10%, #1d3a2a 0%, transparent 45%),
+          radial-gradient(circle at 100% 0%, #20352a 0%, transparent 40%),
+          var(--bg);
+        background-size:
+          44px 44px,
+          44px 44px,
+          auto,
+          auto,
+          auto;
+      }
+
+      /* ---------- header ---------- */
+      header {
+        padding: 14px 28px;
+        background: rgba(255, 255, 255, 0.92);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        backdrop-filter: blur(18px);
+        box-shadow: 0 8px 26px rgba(23, 40, 30, 0.05);
+      }
+      body.dark-mode header {
+        background: rgba(16, 23, 19, 0.9);
+        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.2);
+      }
+      .header-top {
+        display: grid;
+        grid-template-columns: minmax(230px, 1fr) auto minmax(390px, 1fr);
+        align-items: center;
+        gap: 22px;
+        max-width: 1440px;
+        margin: 0 auto;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+      .brand .logo {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        padding: 3px;
+        background: linear-gradient(145deg, #ffffff, #a7b5a9 44%, #526458 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+          0 6px 16px rgba(20, 138, 86, 0.2),
+          inset 0 1px 1px #ffffff;
+        flex: 0 0 auto;
+      }
+      .brand .logo img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .brand h1 {
+        font-size: 15px;
+        font-family:
+          "Avenir Next", "Century Gothic", "Trebuchet MS", sans-serif;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+      .brand .sub {
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 3px;
+        white-space: nowrap;
+      }
+      nav.tabs {
+        display: flex;
+        justify-self: center;
+        gap: 3px;
+        background: var(--surface-2);
+        padding: 4px;
+        border-radius: 12px;
+        border: 1px solid rgba(221, 227, 222, 0.9);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      }
+      nav.tabs button {
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        padding: 8px 13px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .nav-ic {
+        display: inline-flex;
+        width: 15px;
+        height: 15px;
+      }
+      .nav-ic svg {
+        width: 15px;
+        height: 15px;
+      }
+      .admin-toggle {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 11px;
+        border: 1px solid #cbd8cd;
+        border-radius: 999px;
+        background: #f7faf7;
+        color: var(--cream-dim);
+        box-shadow: 0 2px 7px rgba(23, 40, 30, 0.06);
+        font-weight: 700;
+        transition: all 0.2s ease;
+      }
+      .theme-toggle {
+        width: 38px;
+        height: 38px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 1px solid #cbd8cd;
+        border-radius: 50%;
+        background: #f7faf7;
+        color: var(--cream-dim);
+        box-shadow: 0 2px 7px rgba(23, 40, 30, 0.06);
+      }
+      .theme-toggle:hover {
+        border-color: var(--accent);
+        color: var(--accent-dim);
+        transform: translateY(-1px);
+      }
+      .theme-toggle svg {
+        width: 17px;
+        height: 17px;
+      }
+      .theme-toggle-label {
+        display: none;
+      }
+      body.dark-mode .theme-toggle {
+        border-color: #506456;
+        background: #26382c;
+        color: #f4cf7f;
+      }
+      .admin-toggle:hover {
+        border-color: var(--accent);
+        background: #ffffff;
+        color: var(--accent-dim);
+        box-shadow: 0 5px 14px rgba(20, 138, 86, 0.14);
+        transform: translateY(-1px);
+      }
+      #adminToggleIcon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #e7f1e9;
+        color: var(--accent-dim);
+      }
+      .admin-toggle svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+      }
+      body.is-admin .admin-toggle {
+        background: rgba(20, 138, 86, 0.1);
+        border-color: var(--accent-dim);
+        color: var(--accent-dim);
+      }
+      body.is-admin #adminToggleIcon {
+        background: var(--accent);
+        color: #ffffff;
+      }
+      .admin-only {
+        display: none !important;
+      }
+      body.is-admin .admin-only {
+        display: inline-flex !important;
+      }
+      body.is-admin .admin-only.block {
+        display: block !important;
+      }
+      .admin-pill {
+        font-size: 10.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(20, 138, 86, 0.12);
+        color: var(--accent-dim);
+        border: 1px solid rgba(20, 138, 86, 0.3);
+      }
+      nav.tabs button.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(20, 138, 86, 0.24);
+      }
+      nav.tabs button:not(.active):hover {
+        color: var(--cream);
+        background: var(--surface-2);
+      }
+      .header-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+        min-width: 0;
+      }
+      .header-controls select {
+        min-width: 145px;
+        max-width: 180px;
+        background: var(--surface-2);
+        border-radius: 8px;
+      }
+      .header-controls #newDrillBtn {
+        padding-left: 14px;
+        padding-right: 14px;
+        white-space: nowrap;
+      }
+      .header-controls .admin-toggle {
+        padding: 8px 10px;
+        white-space: nowrap;
+        background: #f7faf7;
+        color: var(--cream-dim);
+      }
+      body.dark-mode .header-controls .admin-toggle {
+        background: #26382c;
+        border-color: #506456;
+        color: var(--cream-dim);
+      }
+      .header-controls .theme-toggle {
+        background: #f7faf7;
+        color: var(--cream-dim);
+      }
+      body.dark-mode .header-controls .theme-toggle {
+        background: #26382c;
+        color: #f4cf7f;
+      }
+      body.dark-mode .panel,
+      body.dark-mode .detail-block {
+        background: var(--surface-2);
+      }
+      body.dark-mode .modal {
+        background: linear-gradient(180deg, #1f2d24, #19251e);
+      }
+      .drill-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .drill-toolbar .eyebrow {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .drill-toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .drill-toolbar-actions select {
+        min-width: 170px;
+      }
+      .monthly-quota {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      @media (max-width: 1080px) {
+        header {
+          padding: 12px 18px;
+        }
+        .header-top {
+          grid-template-columns: 1fr auto;
+          gap: 12px 18px;
+        }
+        nav.tabs {
+          grid-column: 1 / -1;
+          grid-row: 2;
+          justify-self: stretch;
+          justify-content: center;
+        }
+      }
+      @media (max-width: 620px) {
+        .header-top {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .brand,
+        .header-controls,
+        nav.tabs {
+          grid-column: 1;
+        }
+        .header-controls {
+          grid-row: 2;
+          justify-content: stretch;
+        }
+        nav.tabs {
+          grid-row: 3;
+        }
+        .brand .sub {
+          display: none;
+        }
+        .brand h1 {
+          font-size: 14px;
+        }
+        .header-controls {
+          gap: 6px;
+        }
+        .header-controls select {
+          min-width: 0;
+          max-width: none;
+          flex: 1;
+        }
+        .header-controls #newDrillBtn {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+        .header-controls .admin-toggle {
+          padding-left: 8px;
+          padding-right: 8px;
+        }
+        .drill-toolbar {
+          align-items: stretch;
+          flex-direction: column;
+        }
+        .drill-toolbar-actions {
+          width: 100%;
+        }
+        .drill-toolbar-actions select {
+          min-width: 0;
+          flex: 1;
+        }
+        .admin-toggle #adminToggleLabel {
+          display: none;
+        }
+        .admin-toggle {
+          width: 36px;
+          height: 36px;
+          justify-content: center;
+          padding: 0;
+        }
+        .theme-toggle {
+          width: 36px;
+          height: 36px;
+        }
+        nav.tabs {
+          justify-content: flex-start;
+          overflow-x: auto;
+          scrollbar-width: none;
+        }
+        nav.tabs::-webkit-scrollbar {
+          display: none;
+        }
+        nav.tabs button {
+          flex: 0 0 auto;
+          padding-left: 11px;
+          padding-right: 11px;
+        }
+      }
+      select,
+      button,
+      input[type="text"],
+      input[type="search"],
+      input[type="password"] {
+        padding: 9px 13px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--cream);
+        cursor: pointer;
+        font-size: 13.5px;
+        font-family: inherit;
+        transition: all 0.15s ease;
+      }
+      select:hover,
+      button:hover {
+        border-color: var(--accent-dim);
+      }
+      input[type="text"],
+      input[type="search"],
+      input[type="password"],
+      textarea {
+        cursor: text;
+      }
+      button.primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        border-color: var(--accent-dim);
+        color: #ffffff;
+        font-weight: 700;
+      }
+      button.primary:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+      }
+      button.ghost {
+        background: transparent;
+      }
+      button.gold {
+        background: linear-gradient(135deg, var(--gold), #c98f3f);
+        border-color: #c98f3f;
+        color: #ffffff;
+        font-weight: 700;
+      }
+      button:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      button.small-btn {
+        font-size: 11.5px;
+        padding: 6px 10px;
+      }
+      button.danger {
+        background: #fdeceb;
+        border-color: var(--red);
+        color: #b3261e;
+      }
+      button.icon-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        font-size: 14px;
+      }
+      .filter-chip {
+        display: flex;
+        gap: 6px;
+        background: var(--surface);
+        padding: 4px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        width: fit-content;
+      }
+      .filter-chip button {
+        border: none;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 12.5px;
+        font-weight: 600;
+      }
+      .filter-chip button.active {
+        background: var(--surface-3);
+        color: var(--cream);
+      }
+      .filter-chip button.active.green {
+        background: rgba(74, 222, 128, 0.18);
+        color: var(--green);
+      }
+      .filter-chip button.active.orange {
+        background: rgba(242, 169, 60, 0.18);
+        color: var(--orange);
+      }
+      .filter-chip button.active.red {
+        background: rgba(239, 91, 91, 0.18);
+        color: var(--red);
+      }
+
+      /* ---------- layout ---------- */
+      main {
+        max-width: 1160px;
+        margin: 34px auto 90px;
+        padding: 0 22px;
+      }
+      section.view {
+        display: none;
+      }
+      section.view.active {
+        display: block;
+        animation: fadeUp 0.35s ease;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .card {
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 22px;
+        border: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+        box-shadow: 0 14px 34px rgba(23, 40, 30, 0.055);
+      }
+      body.dark-mode .card {
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.2);
+      }
+      .card.cream {
+        background: linear-gradient(180deg, #fbf6ea, #f6efd9);
+        color: #17241c;
+        border-color: #e3d8b8;
+      }
+      .card.cream .muted-c {
+        color: #6b6250;
+      }
+      .card-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .card h2 {
+        margin: 0;
+        font-size: 15.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      #noOperatorNotice {
+        position: relative;
+        overflow: hidden;
+        min-height: 210px;
+        display: grid;
+        align-content: center;
+        padding: 34px 38px;
+        background:
+          radial-gradient(
+            circle at 88% 18%,
+            rgba(20, 138, 86, 0.14),
+            transparent 30%
+          ),
+          linear-gradient(135deg, var(--surface), var(--surface-2));
+      }
+      #noOperatorNotice[hidden] {
+        display: none !important;
+      }
+      #noOperatorNotice::before {
+        content: "DRILL / 01";
+        position: absolute;
+        top: 24px;
+        right: 28px;
+        color: var(--accent);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+      }
+      #noOperatorNotice::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 28px;
+        bottom: 28px;
+        width: 3px;
+        border-radius: 0 3px 3px 0;
+        background: var(--accent);
+      }
+      #noOperatorNotice h2 {
+        font-family:
+          "Avenir Next", "Century Gothic", "Trebuchet MS", sans-serif;
+        font-size: clamp(24px, 3vw, 36px);
+        font-weight: 600;
+        letter-spacing: 0.01em;
+      }
+      #noOperatorNotice .hint {
+        max-width: 580px;
+        font-size: 13px;
+        line-height: 1.7;
+      }
+      .leaderboard-tools {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .leaderboard-tools input[type="month"] {
+        width: 155px;
+        padding: 7px 9px;
+        font-size: 12px;
+      }
+      @media (max-width: 620px) {
+        #noOperatorNotice {
+          min-height: 240px;
+          padding: 32px 26px;
+        }
+        #noOperatorNotice::before {
+          top: 20px;
+          right: 22px;
+        }
+      }
+      .section-heading {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin: 26px 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .section-heading:first-child {
+        margin-top: 0;
+      }
+
+      /* ---------- directory / operations console ---------- */
+      #view-directory,
+      #view-operations {
+        --console-radius: 5px;
+      }
+      #view-directory .search-row,
+      #view-operations .search-row {
+        padding: 8px;
+        margin-bottom: 24px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+      #view-directory .search-row input,
+      #view-operations .search-row input {
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+      #view-directory .search-row select,
+      #view-operations .search-row select {
+        min-width: 150px;
+        border-radius: 4px;
+      }
+      #view-directory .section-heading,
+      #view-operations .section-heading {
+        margin-top: 28px;
+        margin-bottom: 12px;
+        padding-bottom: 9px;
+        border-bottom: 1px solid var(--border);
+        color: var(--cream-dim);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+      }
+      #view-directory .section-heading:first-child,
+      #view-operations .section-heading:first-child {
+        margin-top: 0;
+      }
+      #view-directory .section-heading .step-line,
+      #view-operations .section-heading .step-line {
+        background: var(--border);
+      }
+      #view-directory .grid-cards {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 0;
+      }
+      #view-directory .entity-card {
+        min-height: 76px;
+        padding: 12px 4px;
+        border-width: 0 0 1px;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+      }
+      #view-directory .entity-card:hover {
+        background: var(--surface-2);
+        border-color: var(--border);
+        transform: none;
+      }
+      #view-directory .avatar {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        border-radius: 5px;
+        background: var(--surface-3) !important;
+        color: var(--accent) !important;
+        border: 1px solid var(--border);
+        font-size: 12px;
+      }
+      #view-directory .directory-marker {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--surface-3);
+        color: var(--accent);
+        border: 1px solid var(--border);
+      }
+      #view-directory .directory-marker svg {
+        width: 16px;
+        height: 16px;
+      }
+      #view-directory .entity-body .name {
+        font-size: 13px;
+        letter-spacing: 0.01em;
+      }
+      #view-directory .entity-body .desc {
+        font-size: 11.5px;
+        line-height: 1.5;
+      }
+      #view-directory .badge {
+        padding: 2px 7px;
+        border-radius: 3px;
+        font-size: 9px;
+        letter-spacing: 0.08em;
+      }
+      #view-directory .entity-actions,
+      #view-operations .doc-actions {
+        opacity: 0.6;
+        transition: opacity 0.15s ease;
+      }
+      #view-directory .entity-card:hover .entity-actions,
+      #view-operations .doc-card:hover .doc-actions {
+        opacity: 1;
+      }
+      #view-operations .client-docs-section {
+        padding: 0;
+        margin-bottom: 18px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        overflow: hidden;
+      }
+      #view-operations .client-header {
+        margin: 0;
+        padding: 10px 4px;
+        background: transparent;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+      }
+      #view-operations .client-header:hover {
+        background: var(--surface-2);
+      }
+      .client-toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        text-align: left;
+      }
+      .client-toggle .client-info {
+        flex: 1;
+      }
+      .client-toggle .client-chevron {
+        width: 16px;
+        height: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-size: 20px;
+        line-height: 1;
+        transform: rotate(90deg);
+        transition:
+          transform 0.18s ease,
+          color 0.18s ease;
+      }
+      .client-toggle:hover .client-chevron {
+        color: var(--accent);
+      }
+      .client-docs-section.is-collapsed .client-chevron {
+        transform: rotate(0deg);
+      }
+      .client-doc-count {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .client-docs-section.is-collapsed .docs-list {
+        display: none;
+      }
+      #view-operations .client-header .avatar {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        border-radius: 5px;
+        background: var(--surface-3) !important;
+        color: var(--accent) !important;
+        border: 1px solid var(--border);
+        font-size: 11px;
+      }
+      #view-operations .client-marker {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        background: linear-gradient(145deg, #e4f2e8, #cfe6d6);
+        color: var(--accent-dim);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      }
+      #view-operations .client-marker svg {
+        width: 16px;
+        height: 16px;
+      }
+      #view-operations .client-name {
+        font-size: 13px;
+      }
+      #view-operations .client-location {
+        font-size: 11px;
+      }
+      #view-operations .docs-list {
+        gap: 0;
+      }
+      #view-operations .doc-card {
+        padding: 12px 4px;
+        border: 0;
+        border-bottom: 1px solid var(--border);
+        border-radius: 0;
+        background: transparent;
+      }
+      #view-operations .doc-card:last-child {
+        border-bottom: 0;
+      }
+      #view-operations .doc-card:hover {
+        background: var(--surface-2);
+        box-shadow: none;
+      }
+      #view-operations .doc-icon {
+        width: 30px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--accent);
+        background: rgba(20, 138, 86, 0.05);
+      }
+      #view-operations .doc-icon svg {
+        width: 16px;
+        height: 16px;
+      }
+      #view-operations .doc-icon img {
+        width: 18px;
+        height: 18px;
+        display: block;
+      }
+      #view-operations .doc-title {
+        font-size: 13px;
+      }
+      #view-operations .doc-category {
+        font-size: 10px;
+        letter-spacing: 0.08em;
+      }
+      #view-operations .doc-description {
+        margin: 8px 0;
+        font-size: 11.5px;
+        line-height: 1.5;
+      }
+      #view-operations .doc-link {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .view-mode-toggle {
+        display: inline-flex;
+        gap: 2px;
+        padding: 3px;
+        margin-left: auto;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+      }
+      .view-mode-toggle button {
+        padding: 5px 9px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .view-mode-toggle button.active {
+        background: var(--surface);
+        color: var(--accent);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      }
+      #view-directory.list-mode .grid-cards,
+      #view-operations.list-mode .grid-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      #view-directory:not(.list-mode) .grid-cards,
+      #view-operations:not(.list-mode) .grid-cards {
+        gap: 10px;
+      }
+      #view-directory:not(.list-mode) .entity-card {
+        min-height: 82px;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface-2);
+      }
+      #view-directory:not(.list-mode) .entity-card:hover {
+        background: var(--surface);
+        border-color: var(--accent);
+      }
+      #view-operations:not(.list-mode) .client-docs-section {
+        padding: 0;
+        margin-bottom: 0;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--surface-2);
+      }
+      #view-operations:not(.list-mode) .client-header {
+        padding: 12px 14px;
+        border-bottom-width: 1px;
+      }
+      #view-operations:not(.list-mode) .doc-card {
+        padding: 13px 14px;
+        background: var(--surface);
+      }
+      #view-directory.list-mode .entity-card {
+        min-height: 0;
+        align-items: center;
+        padding: 8px 8px 8px 12px;
+        background: var(--surface-2);
+        box-shadow: inset 3px 0 0 var(--accent);
+      }
+      #view-directory.list-mode .entity-body .desc {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #view-operations.list-mode .client-docs-section {
+        margin-bottom: 10px;
+        border-left: 0;
+        background: var(--surface-2);
+      }
+      #view-operations.list-mode .client-header {
+        padding: 8px 12px 8px 14px;
+        border-bottom-width: 1px;
+      }
+      #view-operations.list-mode .doc-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 12px 9px 14px;
+        background: var(--surface);
+        margin-left: 18px;
+        border-left: 1px solid var(--border);
+        position: relative;
+      }
+      #view-operations.list-mode .doc-header {
+        flex: 1;
+        min-width: 240px;
+        margin: 0;
+        align-items: center;
+      }
+      #view-operations.list-mode .doc-description {
+        flex: 1;
+        margin: 0;
+        max-width: 34%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #view-operations.list-mode .doc-link {
+        flex: 0 0 auto;
+      }
+      @media (max-width: 620px) {
+        .view-mode-toggle button {
+          padding-left: 7px;
+          padding-right: 7px;
+        }
+        #view-operations.list-mode .doc-card {
+          display: block;
+          margin-left: 12px;
+        }
+        #view-operations.list-mode .doc-header {
+          min-width: 0;
+        }
+        #view-operations.list-mode .doc-description {
+          max-width: none;
+          margin: 7px 0;
+        }
+      }
+
+      /* ---------- badges ---------- */
+      .badge {
+        display: inline-block;
+        padding: 3px 11px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .badge.green {
+        background: rgba(74, 222, 128, 0.15);
+        color: var(--green);
+        border: 1px solid rgba(74, 222, 128, 0.4);
+      }
+      .badge.orange {
+        background: rgba(242, 169, 60, 0.15);
+        color: var(--orange);
+        border: 1px solid rgba(242, 169, 60, 0.4);
+      }
+      .badge.red {
+        background: rgba(239, 91, 91, 0.15);
+        color: var(--red);
+        border: 1px solid rgba(239, 91, 91, 0.4);
+      }
+      .badge.role {
+        background: rgba(20, 138, 86, 0.15);
+        color: var(--accent);
+        border: 1px solid rgba(20, 138, 86, 0.4);
+        text-transform: none;
+      }
+      .badge.role.ceo {
+        background: rgba(224, 177, 104, 0.18);
+        color: var(--gold);
+        border: 1px solid rgba(224, 177, 104, 0.4);
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--surface-3);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11.5px;
+        color: var(--cream-dim);
+      }
+
+      /* ---------- drill ---------- */
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 6px 0 0;
+      }
+      .narrative {
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 16px 0;
+        padding: 16px;
+        background: var(--surface-2);
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+      }
+      .stepper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 4px 0 18px;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .step .dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--surface-3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        border: 1px solid var(--border);
+      }
+      .step.done .dot {
+        background: var(--accent);
+        color: #ffffff;
+        border-color: var(--accent);
+      }
+      .step.now .dot {
+        background: transparent;
+        border-color: var(--accent);
+        color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(20, 138, 86, 0.15);
+      }
+      .step.now {
+        color: var(--cream);
+      }
+      .step-line {
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .timer-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface-3);
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 12.5px;
+        font-variant-numeric: tabular-nums;
+        color: var(--gold);
+        border: 1px solid var(--border);
+      }
+      .cat-buttons {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+        flex-wrap: wrap;
+      }
+      .cat-buttons button {
+        flex: 1;
+        min-width: 140px;
+        padding: 14px;
+        font-weight: 700;
+        font-size: 13.5px;
+        border-radius: var(--radius-sm);
+      }
+      .cat-buttons button.green {
+        background: rgba(74, 222, 128, 0.08);
+        border-color: rgba(74, 222, 128, 0.4);
+        color: var(--green);
+      }
+      .cat-buttons button.orange {
+        background: rgba(242, 169, 60, 0.08);
+        border-color: rgba(242, 169, 60, 0.4);
+        color: var(--orange);
+      }
+      .cat-buttons button.red {
+        background: rgba(239, 91, 91, 0.08);
+        border-color: rgba(239, 91, 91, 0.4);
+        color: var(--red);
+      }
+      .cat-buttons button.selected {
+        outline: 2px solid var(--cream);
+        transform: translateY(-2px);
+      }
+      .feedback {
+        margin-top: 8px;
+        font-size: 13px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: var(--surface-3);
+        color: var(--cream-dim);
+      }
+      .intel-panel {
+        margin: 16px 0 20px;
+        padding: 12px 0 14px;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        background: transparent;
+      }
+      .intel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .intel-head strong {
+        padding-left: 10px;
+        border-left: 3px solid var(--accent);
+        color: var(--cream);
+        font-size: 13px;
+        letter-spacing: 0.01em;
+      }
+      .intel-cost {
+        color: var(--cream-dim);
+        padding: 4px 8px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface-3);
+        font-size: 10px;
+        font-weight: 800;
+      }
+      .intel-actions {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .intel-actions button {
+        padding: 7px 11px;
+        font-size: 11px;
+        border-radius: 999px;
+        background: var(--surface);
+        border-color: var(--border);
+      }
+      .intel-actions button:disabled {
+        color: var(--muted);
+        background: var(--surface-3);
+        border-color: var(--border);
+      }
+      .intel-results {
+        display: grid;
+        gap: 4px;
+        margin-top: 9px;
+        padding: 8px 10px;
+        border-left: 2px solid var(--accent);
+        background: var(--surface-2);
+        color: var(--cream-dim);
+        font-size: 12px;
+      }
+      .tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+      }
+      .tool-btn {
+        padding: 9px 13px;
+        font-size: 13px;
+        border-radius: 999px;
+      }
+      .tool-btn.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        border-color: var(--accent-dim);
+        color: #ffffff;
+        font-weight: 700;
+      }
+      .panel {
+        background: var(--surface-2);
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        margin-top: 10px;
+        border: 1px solid var(--border);
+      }
+      textarea {
+        width: 100%;
+        min-height: 70px;
+        background: var(--surface-2);
+        color: var(--text);
+        color: var(--cream);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        font-family: inherit;
+        font-size: 13px;
+        resize: vertical;
+      }
+      textarea:focus,
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(20, 138, 86, 0.15);
+      }
+      .rec-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+      .rec-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--red);
+        display: none;
+      }
+      .rec-dot.on {
+        display: inline-block;
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.2;
+        }
+      }
+      audio {
+        height: 32px;
+      }
+      .checklist {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+      }
+      .checklist .hit {
+        color: var(--green);
+      }
+      .checklist .miss {
+        color: var(--red);
+      }
+      .score-box {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .score-item {
+        background: var(--surface-3);
+        border-radius: 10px;
+        padding: 12px 8px;
+        text-align: center;
+        border: 1px solid var(--border);
+      }
+      .score-item .num {
+        font-size: 24px;
+        font-weight: 800;
+      }
+      .score-item .lbl {
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .score-item.points-earned {
+        background: rgba(224, 177, 104, 0.12);
+        border-color: rgba(224, 177, 104, 0.48);
+      }
+      .assessment-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 12px;
+      }
+      .assessment-chip {
+        padding: 6px 9px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--surface-2);
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .assessment-chip.good {
+        border-color: rgba(22, 135, 79, 0.4);
+        background: rgba(22, 135, 79, 0.1);
+        color: var(--green);
+      }
+      .assessment-chip.partial {
+        border-color: rgba(178, 106, 12, 0.4);
+        background: rgba(178, 106, 12, 0.1);
+        color: var(--orange);
+      }
+      .assessment-chip.needs-work {
+        border-color: rgba(197, 52, 52, 0.35);
+        background: rgba(197, 52, 52, 0.08);
+        color: var(--red);
+      }
+      .points-explanation {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border: 1px solid rgba(224, 177, 104, 0.35);
+        border-radius: 10px;
+        background: rgba(224, 177, 104, 0.08);
+        color: var(--cream-dim);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .points-explanation strong {
+        color: var(--gold);
+      }
+      .script-feedback {
+        margin-top: 12px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface-2);
+      }
+      .script-feedback-title {
+        margin-bottom: 8px;
+        color: var(--cream);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .script-feedback-row {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        padding: 7px 0;
+        border-top: 1px solid var(--border);
+        font-size: 12px;
+      }
+      .script-feedback-row strong {
+        min-width: 105px;
+        color: var(--cream-dim);
+      }
+      .admin-grade-box {
+        margin-top: 12px;
+        padding: 12px;
+        border: 1px solid rgba(20, 138, 86, 0.35);
+        border-radius: 10px;
+        background: rgba(20, 138, 86, 0.06);
+      }
+      .admin-grade-box .grid2 {
+        gap: 8px;
+      }
+      .script-keyword {
+        display: inline-block;
+        margin: 0 4px 4px 0;
+        padding: 3px 6px;
+        border-radius: 5px;
+        font-size: 11px;
+      }
+      .script-keyword.hit {
+        background: rgba(22, 135, 79, 0.12);
+        color: var(--green);
+      }
+      .script-keyword.miss {
+        background: rgba(197, 52, 52, 0.1);
+        color: var(--red);
+      }
+      @media (max-width: 760px) {
+        .score-box {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 420px) {
+        .score-box {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      th,
+      td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+      }
+      th {
+        color: var(--muted);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: 700;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .hint {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      footer.actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 560px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .field {
+        margin-bottom: 12px;
+      }
+      .field label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+      .field input[type="text"],
+      .field select,
+      .field textarea {
+        width: 100%;
+      }
+      .checkrow {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin: 8px 0;
+        font-size: 13px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .chip {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .chip.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        border-color: var(--accent-dim);
+        color: #ffffff;
+        font-weight: 700;
+      }
+      .small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .error-banner {
+        background: #fdeceb;
+        border: 1px solid var(--red);
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        margin-bottom: 16px;
+        font-size: 13px;
+      }
+      .rowbtns {
+        display: flex;
+        gap: 6px;
+      }
+
+      /* ---------- dashboard / stats ---------- */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      @media (max-width: 720px) {
+        .stat-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-top: 3px solid var(--accent);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        color: var(--cream);
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card .stat-icon {
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .stat-card .stat-icon svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+      }
+      .stat-card .stat-num {
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+      .stat-card .stat-lbl {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 3px;
+        font-weight: 600;
+      }
+      .badges-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .achievement {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--surface-3);
+        border: 1px solid var(--border);
+        padding: 7px 13px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .achievement .ic {
+        font-size: 14px;
+        color: var(--accent);
+        display: inline-flex;
+      }
+      .achievement .ic svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      /* ---------- directory ---------- */
+      .search-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        align-items: center;
+      }
+      .search-row input {
+        flex: 1;
+      }
+      .grid-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+      }
+      .entity-card {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        transition: border-color 0.15s ease;
+      }
+      .entity-card:hover {
+        border-color: var(--accent-dim);
+      }
+      .avatar {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 14px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        color: #ffffff;
+      }
+      .avatar.gold {
+        background: linear-gradient(135deg, var(--gold), #c98f3f);
+        color: #ffffff;
+      }
+      .entity-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .entity-body .name {
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .entity-body .desc {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+      .entity-actions {
+        display: flex;
+        gap: 4px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 30px 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .empty-state .big {
+        font-size: 30px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: center;
+        color: var(--muted);
+      }
+      .empty-state .big svg {
+        width: 32px;
+        height: 32px;
+      }
+
+      /* ---------- operations ---------- */
+      .client-docs-section {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        margin-bottom: 16px;
+      }
+      .client-header {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .client-info {
+        flex: 1;
+      }
+      .client-name {
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .client-location {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .docs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .doc-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px;
+        transition: all 0.15s ease;
+      }
+      .doc-card:hover {
+        border-color: var(--accent-dim);
+        box-shadow: 0 2px 8px rgba(20, 138, 86, 0.1);
+      }
+      .doc-header {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .doc-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .doc-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .doc-title {
+        font-weight: 700;
+        font-size: 13.5px;
+        word-break: break-word;
+      }
+      .doc-category {
+        font-size: 11px;
+        color: var(--accent);
+        font-weight: 600;
+        margin-top: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .doc-actions {
+        display: flex;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+      .doc-description {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 8px;
+        line-height: 1.4;
+      }
+      .doc-empty {
+        text-align: center;
+        padding: 12px;
+        color: var(--muted);
+        font-size: 12px;
+        font-style: italic;
+      }
+      .doc-link {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent);
+        text-decoration: none;
+        padding: 4px 0;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.15s ease;
+      }
+      .doc-link:hover {
+        border-bottom-color: var(--accent);
+      }
+
+      /* ---------- modal ---------- */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 12, 8, 0.72);
+        backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 20px;
+        animation: fadeIn 0.18s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .modal-overlay.hidden {
+        display: none;
+      }
+      .modal {
+        background: linear-gradient(180deg, #ffffff, #fbfcfa);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        max-width: 560px;
+        width: 100%;
+        max-height: 88vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: popIn 0.2s ease;
+      }
+      @keyframes popIn {
+        from {
+          opacity: 0;
+          transform: scale(0.96) translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: #ffffff;
+        z-index: 2;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+      body.dark-mode .modal-head {
+        background: var(--surface);
+      }
+      .modal-head h3 {
+        margin: 0;
+        font-size: 15.5px;
+      }
+      .modal-body {
+        padding: 20px 22px;
+      }
+      .modal-foot {
+        padding: 16px 22px 20px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        border-top: 1px solid var(--border);
+      }
+      .modal-close {
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px 8px;
+      }
+      .modal-close:hover {
+        color: var(--cream);
+      }
+      .warn {
+        background: rgba(242, 169, 60, 0.1);
+        border: 1px solid rgba(242, 169, 60, 0.4);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 12px;
+        margin-bottom: 12px;
+        color: var(--cream-dim);
+      }
+
+      /* ---------- toasts ---------- */
+      #toastHost {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 200;
+      }
+      .toast {
+        background: var(--surface-3);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--accent);
+        color: var(--cream);
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        box-shadow: var(--shadow);
+        animation: slideIn 0.25s ease;
+        max-width: 320px;
+      }
+      .toast.error {
+        border-left-color: var(--red);
+      }
+      .toast.warn {
+        border-left-color: var(--orange);
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .toast.fade {
+        animation: fadeOutRight 0.3s ease forwards;
+      }
+      @keyframes fadeOutRight {
+        to {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+      }
+
+      /* ---------- confetti ---------- */
+      #confettiHost {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 250;
+        overflow: hidden;
+      }
+      .confetti-piece {
+        position: absolute;
+        top: -10px;
+        width: 8px;
+        height: 14px;
+        opacity: 0.9;
+        animation: confFall linear forwards;
+      }
+      @keyframes confFall {
+        to {
+          transform: translateY(105vh) rotate(600deg);
+          opacity: 0.3;
+        }
+      }
+
+      /* ---------- review / submissions ---------- */
+      .leaderboard {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .lb-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: var(--radius-sm);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+      }
+      .lb-row.top {
+        background: linear-gradient(
+          90deg,
+          rgba(224, 177, 104, 0.16),
+          var(--surface-2)
+        );
+        border-color: rgba(224, 177, 104, 0.4);
+      }
+      .lb-rank {
+        width: 22px;
+        text-align: center;
+        font-weight: 800;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .lb-row.top .lb-rank {
+        color: var(--gold);
+      }
+      .lb-name {
+        flex: 1;
+        font-weight: 700;
+        font-size: 13.5px;
+      }
+      .lb-meta {
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .lb-score {
+        font-weight: 800;
+        font-size: 15px;
+        color: var(--accent);
+      }
+      .lb-points {
+        min-width: 78px;
+        color: var(--gold);
+        font-size: 12px;
+        font-weight: 800;
+        text-align: right;
+      }
+      .operator-summary {
+        display: grid;
+        gap: 6px;
+      }
+      .operator-summary-row {
+        display: grid;
+        grid-template-columns: minmax(150px, 1fr) repeat(4, minmax(70px, auto));
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface-2);
+      }
+      .operator-summary-row:last-child {
+        border-bottom: 0;
+      }
+      .operator-summary-name {
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .operator-summary-metric {
+        color: var(--muted);
+        font-size: 11px;
+        text-align: right;
+      }
+      .operator-summary-metric strong {
+        display: block;
+        color: var(--cream);
+        font-size: 13px;
+      }
+      @media (max-width: 620px) {
+        .operator-summary-row {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .operator-summary-name {
+          grid-column: 1 / -1;
+        }
+        .operator-summary-metric {
+          text-align: left;
+        }
+      }
+      .submission {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        margin-bottom: 10px;
+        overflow: hidden;
+        background: var(--surface-2);
+      }
+      .submission-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        cursor: pointer;
+        flex-wrap: wrap;
+      }
+      .submission-head:hover {
+        background: var(--surface-3);
+      }
+      .submission-head .who {
+        font-weight: 700;
+        font-size: 13.5px;
+        min-width: 110px;
+      }
+      .submission-head .when {
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .ring {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11.5px;
+        font-weight: 800;
+        margin-left: auto;
+      }
+      .submission-detail {
+        display: none;
+        padding: 4px 16px 16px;
+        border-top: 1px dashed var(--border);
+      }
+      .submission.open .submission-detail {
+        display: block;
+      }
+      .submission.open .chevron {
+        transform: rotate(90deg);
+      }
+      .chevron {
+        transition: transform 0.15s ease;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 12px;
+      }
+      @media (max-width: 620px) {
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .detail-block {
+        background: #eef1ee;
+        border-radius: 10px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+      }
+      .detail-block h4 {
+        margin: 0 0 8px;
+        font-size: 11.5px;
+        text-transform: uppercase;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+      }
+      .compare-line {
+        font-size: 12.5px;
+        margin: 4px 0;
+        display: flex;
+        gap: 6px;
+      }
+      .no-detail-note {
+        font-size: 12px;
+        color: var(--muted);
+        font-style: italic;
+        padding: 8px 0 0;
+      }
+      .script-block {
+        margin-top: 8px;
+        font-size: 12.5px;
+        line-height: 1.5;
+      }
+      .script-block .label {
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        margin-bottom: 3px;
+      }
+      .script-block .body-text {
+        background: var(--surface-2);
+        border-radius: 6px;
+        padding: 8px 10px;
+        white-space: pre-wrap;
+      }
+
+      /* ---------- welcome reveal ---------- */
+      .welcome-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background-color: #111915;
+        background-image:
+          linear-gradient(rgba(175, 215, 187, 0.035) 1px, transparent 1px),
+          linear-gradient(
+            90deg,
+            rgba(175, 215, 187, 0.035) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 68% 42%,
+            rgba(38, 121, 79, 0.2),
+            transparent 34%
+          ),
+          linear-gradient(135deg, #101a15 0%, #18251e 52%, #0d1411 100%);
+        background-size:
+          44px 44px,
+          44px 44px,
+          auto,
+          auto;
+        color: #f5f8f5;
+        transition:
+          opacity 0.7s ease,
+          visibility 0.7s ease;
+      }
+      .welcome-screen.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .welcome-screen::before {
+        content: "";
+        position: absolute;
+        width: min(62vw, 760px);
+        aspect-ratio: 1;
+        right: -12vw;
+        top: 12%;
+        border: 1px solid rgba(184, 219, 195, 0.12);
+        border-radius: 50%;
+        transform: rotate(-18deg) scaleY(0.42);
+      }
+      .welcome-content {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(230px, 1fr) minmax(150px, 0.72fr);
+        align-items: center;
+        gap: clamp(28px, 6vw, 86px);
+        width: min(900px, calc(100% - 40px));
+        padding: clamp(28px, 5vw, 58px);
+        border: 1px solid rgba(184, 219, 195, 0.18);
+        border-radius: 18px;
+        background: rgba(16, 27, 21, 0.38);
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.28);
+        animation: welcome-rise 1s ease both;
+      }
+      .welcome-content::before {
+        content: "";
+        position: absolute;
+        left: -1px;
+        top: 28px;
+        width: 3px;
+        height: 72px;
+        border-radius: 0 3px 3px 0;
+        background: #63c98d;
+      }
+      .welcome-copy-block {
+        display: grid;
+        justify-items: start;
+        gap: 16px;
+      }
+      .welcome-index {
+        margin: 0;
+        color: rgba(193, 225, 201, 0.58);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+      }
+      .welcome-mark-wrap {
+        width: clamp(128px, 17vw, 178px);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        perspective: 900px;
+        justify-self: center;
+      }
+      .welcome-mark {
+        position: relative;
+        width: 78%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        padding: 8px;
+        background: conic-gradient(
+          from 210deg,
+          #53665a,
+          #f3f8f3 20%,
+          #879c8c 42%,
+          #26392e 64%,
+          #dce8de 82%,
+          #53665a
+        );
+        transform-style: preserve-3d;
+        animation: logo-orbit 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+        box-shadow:
+          0 0 0 1px rgba(215, 239, 220, 0.36),
+          0 16px 40px rgba(0, 0, 0, 0.4),
+          0 0 30px rgba(87, 192, 128, 0.16);
+      }
+      .welcome-mark::before {
+        content: "";
+        position: absolute;
+        inset: -9px;
+        z-index: -1;
+        border: 1px solid rgba(187, 223, 195, 0.26);
+        border-radius: 50%;
+        box-shadow:
+          0 0 0 7px rgba(12, 27, 18, 0.24),
+          0 0 28px rgba(94, 203, 135, 0.2);
+        transform: translateZ(-10px);
+      }
+      .welcome-mark::after {
+        content: "";
+        position: absolute;
+        inset: 8px;
+        border-radius: inherit;
+        background: linear-gradient(
+          115deg,
+          rgba(255, 255, 255, 0.58),
+          transparent 24%,
+          transparent 65%,
+          rgba(9, 45, 26, 0.26)
+        );
+        mix-blend-mode: screen;
+        pointer-events: none;
+      }
+      .welcome-mark img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        object-fit: cover;
+        border: 1px solid rgba(32, 54, 39, 0.46);
+        backface-visibility: hidden;
+      }
+      .welcome-kicker {
+        margin: 0;
+        color: #98c9a8;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .welcome-content h2 {
+        margin: 0;
+        font-family:
+          "Avenir Next", "Century Gothic", "Trebuchet MS", sans-serif;
+        font-size: clamp(25px, 4vw, 40px);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      .welcome-copy {
+        max-width: 350px;
+        margin: 0;
+        color: #b4c6ba;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .welcome-enter {
+        border: 1px solid rgba(170, 220, 184, 0.42);
+        border-radius: 999px;
+        padding: 11px 20px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease,
+          transform 0.2s ease;
+      }
+      .welcome-enter:hover {
+        border-color: #8cd4a3;
+        background: rgba(91, 216, 151, 0.18);
+        transform: translateY(-2px);
+      }
+      .welcome-enter:focus-visible {
+        outline: 2px solid #a8e5bb;
+        outline-offset: 4px;
+      }
+      @keyframes logo-orbit {
+        0%,
+        100% {
+          transform: rotateY(-22deg) rotateZ(-2deg);
+        }
+        50% {
+          transform: rotateY(382deg) rotateZ(2deg);
+        }
+      }
+      @keyframes welcome-rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .welcome-mark,
+        .welcome-content {
+          animation: none;
+        }
+      }
+      @media (max-width: 620px) {
+        .welcome-content {
+          grid-template-columns: 1fr;
+          gap: 26px;
+          width: min(100% - 28px, 480px);
+          padding: 32px 24px;
+        }
+        .welcome-copy-block {
+          justify-items: center;
+          text-align: center;
+          order: 2;
+        }
+        .welcome-mark-wrap {
+          order: 1;
+          width: 142px;
+        }
+        .welcome-content::before {
+          top: 0;
+          left: 28px;
+          width: 64px;
+          height: 3px;
+          border-radius: 0 0 3px 3px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section
+      class="welcome-screen"
+      id="welcomeScreen"
+      aria-label="EVS welcome screen"
+    >
+      <div class="welcome-content">
+        <div class="welcome-copy-block">
+          <p class="welcome-index" aria-hidden="true">EVS / 01</p>
+          <p class="welcome-kicker">Elite Vision Security</p>
+          <h2>Command Center</h2>
+          <p class="welcome-copy">
+            A calm, focused workspace for every drill, response, and operational
+            decision.
+          </p>
+          <button class="welcome-enter" id="enterCommandCenter">
+            Enter Command Center
+          </button>
+        </div>
+        <div class="welcome-mark-wrap" aria-hidden="true">
+          <div class="welcome-mark">
+            <img src="assets/logo.jpeg" alt="" />
+          </div>
+        </div>
+      </div>
+    </section>
+    <header>
+      <div class="header-top">
+        <div class="brand">
+          <div class="logo">
+            <img src="assets/logo.jpeg" alt="Elite Vision Security logo" />
+          </div>
+          <div>
+            <h1>EVS Command Center Hub</h1>
+            <div class="sub">
+              Elite Vision Security · Central Operations Management
+            </div>
+          </div>
+        </div>
+        <nav class="tabs">
+          <button class="nav active" data-view="drill">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <circle cx="12" cy="12" r="8.5" />
+                <circle cx="12" cy="12" r="4.5" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="0.9"
+                  fill="currentColor"
+                /></svg></span
+            >Drill
+          </button>
+          <button class="nav" data-view="stats">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M4 20V10M12 20V4M20 20v-7"
+                  stroke-linecap="round"
+                /></svg></span
+            >Statistics
+          </button>
+          <button class="nav" data-view="review">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M3 12a9 9 0 1 0 3-6.7" stroke-linecap="round" />
+                <path
+                  d="M3 4v5h5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path d="M12 8v4l3 2" stroke-linecap="round" /></svg></span
+            ><span id="historyTabLabel">History</span>
+          </button>
+          <button class="nav" data-view="directory">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"
+                /></svg></span
+            >Directory
+          </button>
+          <button class="nav" data-view="operations">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m0-18h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9m0-18v18m-4-4h12M5 12h12"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg></span
+            >Operations
+          </button>
+        </nav>
+        <div class="header-controls">
+          <button
+            class="ghost theme-toggle"
+            id="themeToggleBtn"
+            type="button"
+            aria-label="Switch to dark mode"
+            title="Switch to dark mode"
+          >
+            <span id="themeToggleIcon"></span>
+            <span class="theme-toggle-label" id="themeToggleLabel"
+              >Dark mode</span
+            >
+          </button>
+          <button class="ghost admin-toggle" id="adminToggleBtn">
+            <span id="adminToggleIcon"></span
+            ><span id="adminToggleLabel">Admin Login</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div id="dbBanner" class="error-banner" hidden>
+        Can't reach the database API. Make sure this page was opened through
+        XAMPP (e.g. <code>http://localhost/evs-drill-simulator/</code>) with
+        Apache and MySQL running, and that
+        <code>evs-drill-simulator.sql</code> has been imported in phpMyAdmin.
+      </div>
+
+      <!-- ============ DRILL VIEW ============ -->
+      <section class="view active" id="view-drill">
+        <div class="drill-toolbar">
+          <p class="eyebrow">Live response training</p>
+          <div class="drill-toolbar-actions">
+            <select id="operatorSelect"></select>
+            <span class="monthly-quota" id="monthlyQuota"
+              >20 tries this month</span
+            >
+            <button class="primary" id="newDrillBtn">New Scenario</button>
+            <button
+              class="small-btn danger admin-only"
+              id="resetOperatorAttempts"
+            >
+              Reset attempts
+            </button>
+          </div>
+        </div>
+        <div id="drillCard" class="card" hidden></div>
+        <div class="card" id="noOperatorNotice">
+          <h2>Ready when you are</h2>
+          <p class="hint" style="margin-top: 6px">
+            Select your operator name above, then click
+            <strong>New Scenario</strong> to get a randomized live scenario.
+            Your classification and responses are graded — no answers are shown
+            until you finish, so this is a real read on where you stand.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ STATISTICS VIEW ============ -->
+      <section class="view" id="view-stats">
+        <div class="card">
+          <div class="card-title-row">
+            <div>
+              <h2>Employee of the Month</h2>
+              <span class="small">Points reward score and consistency</span>
+            </div>
+            <div class="leaderboard-tools">
+              <label class="sr-only" for="leaderboardMonth"
+                >Leaderboard month</label
+              >
+              <input type="month" id="leaderboardMonth" />
+              <button class="small-btn danger admin-only" id="resetLeaderboard">
+                Reset month
+              </button>
+            </div>
+          </div>
+          <div class="leaderboard" id="leaderboard"></div>
+        </div>
+        <div class="card operator-summary-card">
+          <div class="card-title-row">
+            <h2>Operator Performance</h2>
+            <span class="small" id="operatorStatsPeriod">Selected month</span>
+          </div>
+          <div class="operator-summary" id="operatorStats"></div>
+        </div>
+      </section>
+
+      <!-- ============ REVIEW / HISTORY VIEW ============ -->
+      <section class="view" id="view-review">
+        <div class="card">
+          <div class="card-title-row">
+            <h2 id="submissionsTitle">Scenario History</h2>
+            <span class="small" id="submissionCount"></span>
+          </div>
+          <div class="search-row">
+            <input
+              type="search"
+              id="reviewSearch"
+              placeholder="Search by operator or client..."
+            />
+            <select id="reviewOperatorFilter">
+              <option value="all">All operators</option>
+            </select>
+            <button class="ghost small-btn admin-only" id="clearHistory">
+              Clear all
+            </button>
+          </div>
+          <div
+            class="filter-chip"
+            id="categoryFilterChips"
+            style="margin-bottom: 14px"
+          >
+            <button data-cat="all" class="active">All</button>
+            <button data-cat="green" class="green">Green</button>
+            <button data-cat="orange" class="orange">Orange</button>
+            <button data-cat="red" class="red">Red</button>
+          </div>
+          <div id="submissionsList"></div>
+        </div>
+        <div class="card operator-summary-card">
+          <div class="card-title-row">
+            <h2>Overall Operator Statistics</h2>
+            <span class="small">All-time performance</span>
+          </div>
+          <div class="operator-summary" id="historyOperatorStats"></div>
+        </div>
+      </section>
+
+      <!-- ============ DIRECTORY VIEW ============ -->
+      <section class="view" id="view-directory">
+        <div class="search-row">
+          <input
+            type="search"
+            id="directorySearch"
+            placeholder="Search clients, scenarios, or team members..."
+          />
+          <select id="directoryFilter" aria-label="Directory filter">
+            <option value="all">All records</option>
+            <option value="team">Team only</option>
+            <option value="clients">Clients only</option>
+            <option value="scenarios">Scenarios only</option>
+          </select>
+        </div>
+
+        <div class="section-heading" id="directoryTeamHeading">
+          <span>Team</span>
+          <span class="step-line"></span>
+          <div class="view-mode-toggle" data-mode-target="directory">
+            <button type="button" data-mode="grid" class="active">Grid</button>
+            <button type="button" data-mode="list">List</button>
+          </div>
+          <button class="small-btn primary admin-only" id="openAddPerson">
+            + Add Person
+          </button>
+        </div>
+        <div class="grid-cards" id="teamCards"></div>
+
+        <div class="section-heading" id="directoryClientsHeading">
+          <span>Clients</span>
+          <span class="step-line"></span>
+          <button class="small-btn primary admin-only" id="openAddClient">
+            + Add Client
+          </button>
+        </div>
+        <div class="grid-cards" id="clientCards"></div>
+
+        <div
+          class="section-heading admin-only block"
+          id="directoryScenariosHeading"
+        >
+          <span>Scenarios</span>
+          <span class="step-line"></span>
+          <button class="small-btn primary admin-only" id="openAddIncident">
+            + Add Scenario
+          </button>
+        </div>
+        <div class="grid-cards admin-only block" id="incidentCards"></div>
+      </section>
+
+      <!-- ============ OPERATIONS VIEW ============ -->
+      <section class="view" id="view-operations">
+        <div class="search-row">
+          <input
+            type="search"
+            id="operationsSearch"
+            placeholder="Search clients or documents..."
+          />
+          <select id="operationsFilter" aria-label="Operations filter">
+            <option value="all" selected>All resources</option>
+            <option value="documents">With documents</option>
+            <option value="empty">Needs documents</option>
+          </select>
+        </div>
+
+        <div class="section-heading">
+          <span>Operational Resources</span>
+          <span class="step-line"></span>
+          <div class="view-mode-toggle" data-mode-target="operations">
+            <button type="button" data-mode="grid" class="active">Grid</button>
+            <button type="button" data-mode="list">List</button>
+          </div>
+          <button class="small-btn primary admin-only" id="openAddDocument">
+            + Add Document
+          </button>
+        </div>
+        <div class="grid-cards" id="documentsGrid"></div>
+      </section>
+    </main>
+
+    <div class="modal-overlay hidden" id="modalOverlay">
+      <div class="modal" id="modalBox"></div>
+    </div>
+    <div id="toastHost"></div>
+    <div id="confettiHost"></div>
+
+    <script>
+      const API = {
+        clients: "api/clients.php",
+        incidents: "api/incidents.php",
+        operators: "api/operators.php",
+        executives: "api/executives.php",
+        history: "api/history.php",
+        documents: "api/documents.php",
+      };
+
+      async function apiGet(url) {
+        const res = await fetch(url);
+        return res.json();
+      }
+      async function apiSend(url, method, body) {
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: body !== undefined ? JSON.stringify(body) : undefined,
+        });
+        const data = await res.json();
+        if (!res.ok)
+          throw new Error(data.error || `Request failed (${res.status})`);
+        return data;
+      }
+
+      const TOOL_LABELS = {
+        speaker: "Speaker",
+        siren: "Siren / Alarm",
+        police: "Call Police",
+        ambulance: "Call Ambulance (911)",
+        supervisor: "Call Supervisor",
+        ceo: "Call CEO",
+        chat: "Report to Client Chat",
+      };
+      const ALL_TOOL_KEYS = Object.keys(TOOL_LABELS);
+
+      /* ==================== ICONS ==================== */
+      const ICON = {
+        drill:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.9" fill="currentColor"/></svg>',
+        stats:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7" stroke-linecap="round"/></svg>',
+        history:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 3-6.7" stroke-linecap="round"/><path d="M3 4v5h5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8v4l3 2" stroke-linecap="round"/></svg>',
+        directory:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>',
+        team: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" stroke-linecap="round"/></svg>',
+        client:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V6a1 1 0 0 1 1-1h6v15M11 20h9M14 9h2M14 13h2M7 9h1M7 13h1" stroke-linecap="round"/></svg>',
+        scenario:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h13l3 3v13H4Z"/><path d="M17 4v3h3" stroke-linejoin="round"/></svg>',
+        logged:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 2v4M16 2v4M4 10h16" stroke-linecap="round"/></svg>',
+        target:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/></svg>',
+        streak:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 3s4 4 4 8a5 5 0 0 1-10 0c0-1.5.7-2.4 1.3-3.2.3.9 1 1.2 1.4.6C10.2 6.7 10 5 13 3Z"/></svg>',
+        today:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.2 12h-2M21.8 12h-2M6 6l-1.4-1.4M19.4 19.4 18 18M18 6l1.4-1.4M4.6 19.4 6 18" stroke-linecap="round"/></svg>',
+        first:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7Z"/><path d="m9 12 2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        perfect:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.3 2.3L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        veteran:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 6v5c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6Z"/></svg>',
+        trophy:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4h10v5a5 5 0 0 1-10 0Zm0 0H4v1a4 4 0 0 0 4 4M17 4h3v1a4 4 0 0 1-4 4M12 14v3M9 21h6M9.5 21v-.5A2.5 2.5 0 0 1 12 18h0a2.5 2.5 0 0 1 2.5 2.5v.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6h11M9 12h11M9 18h11" stroke-linecap="round"/><circle cx="4.5" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>',
+        empty:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 10 12 4l8 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="M9 20v-6h6v6"/></svg>',
+        lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>',
+        unlock:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.4-2.1" stroke-linecap="round"/></svg>',
+        clock:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2" stroke-linecap="round"/></svg>',
+        edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg>',
+        trash:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      };
+
+      /* ==================== STATE ==================== */
+      let CLIENTS = [],
+        INCIDENTS = [],
+        OPERATORS = [],
+        EXECUTIVES = [],
+        HISTORY = [],
+        DOCUMENTS = [];
+      let SUPERVISOR_NAMES = [],
+        CEO_NAMES = [],
+        POLICE_DEPARTMENTS = [];
+      let editingClientId = null,
+        editingIncidentId = null,
+        editingPersonId = null,
+        editingPersonType = null;
+      let current = null;
+      let mediaRecorder,
+        chunks = [],
+        activeRecordTarget = null;
+      let catFilter = "all";
+      let openSubmissionId = null;
+      const collapsedClientIds = new Set();
+      let operationsInitialized = false;
+      const ADMIN_CODE = "evsadmin";
+      let isAdmin = sessionStorage.getItem("evs_admin") === "1";
+      let isDarkMode = localStorage.getItem("evs_theme") === "dark";
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      let leaderboardMonth =
+        localStorage.getItem("evs_leaderboard_month") || currentMonth;
+
+      // Rich per-submission detail (classification/tool/script breakdown) is
+      // stored server-side in drill_history.detail_json and comes back as
+      // h.detail on every GET, so the Review tab shows a full assessment on
+      // any device. Voice recordings themselves are session-only (blob URLs
+      // can't survive a reload), tracked here purely for in-session playback.
+      function getDetail(h) {
+        return h.detail || null;
+      }
+      const SESSION_AUDIO = {}; // historyId -> { tool: blobUrl }
+
+      function client(id) {
+        return CLIENTS.find((c) => c.id === id);
+      }
+
+      /* ==================== TOAST ==================== */
+      function toast(msg, type = "ok") {
+        const host = document.getElementById("toastHost");
+        const el = document.createElement("div");
+        el.className = "toast" + (type === "ok" ? "" : " " + type);
+        el.textContent = msg;
+        host.appendChild(el);
+        setTimeout(() => {
+          el.classList.add("fade");
+          setTimeout(() => el.remove(), 300);
+        }, 3200);
+      }
+
+      /* ==================== CONFETTI ==================== */
+      function confetti() {
+        const host = document.getElementById("confettiHost");
+        const colors = ["#5bd897", "#e0b168", "#f3ede0", "#4ade80"];
+        for (let i = 0; i < 60; i++) {
+          const p = document.createElement("div");
+          p.className = "confetti-piece";
+          p.style.left = Math.random() * 100 + "vw";
+          p.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
+          p.style.animationDuration = 1.6 + Math.random() * 1.4 + "s";
+          p.style.animationDelay = Math.random() * 0.3 + "s";
+          host.appendChild(p);
+          setTimeout(() => p.remove(), 3200);
+        }
+      }
+
+      /* ==================== MODAL ==================== */
+      function openModal(title, bodyHTML, footHTML) {
+        document.getElementById("modalBox").innerHTML = `
+    <div class="modal-head">
+      <h3>${title}</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">${bodyHTML}</div>
+    ${footHTML ? `<div class="modal-foot">${footHTML}</div>` : ""}
+  `;
+        document.getElementById("modalOverlay").classList.remove("hidden");
+      }
+      function closeModal() {
+        document.getElementById("modalOverlay").classList.add("hidden");
+        document.getElementById("modalBox").innerHTML = "";
+      }
+      document.getElementById("modalOverlay").addEventListener("click", (e) => {
+        if (e.target.id === "modalOverlay") closeModal();
+      });
+      function confirmModal(title, message, confirmLabel = "Delete") {
+        return new Promise((resolve) => {
+          openModal(
+            title,
+            `<p style="font-size:13.5px;line-height:1.5;">${message}</p>`,
+            `<button class="ghost" id="cmCancel">Cancel</button>
+       <button class="danger" id="cmOk">${confirmLabel}</button>`,
+          );
+          document.getElementById("cmCancel").onclick = () => {
+            closeModal();
+            resolve(false);
+          };
+          document.getElementById("cmOk").onclick = () => {
+            closeModal();
+            resolve(true);
+          };
+        });
+      }
+
+      /* ==================== LOAD ==================== */
+      function dismissWelcome() {
+        document.getElementById("welcomeScreen")?.classList.add("is-hidden");
+      }
+
+      document.getElementById("enterCommandCenter").onclick = dismissWelcome;
+
+      async function loadAll() {
+        try {
+          const [
+            clients,
+            incidents,
+            operators,
+            executives,
+            history,
+            documents,
+          ] = await Promise.all([
+            apiGet(API.clients),
+            apiGet(API.incidents),
+            apiGet(API.operators),
+            apiGet(API.executives),
+            apiGet(API.history),
+            apiGet(API.documents),
+          ]);
+          if (!Array.isArray(clients) || !Array.isArray(incidents))
+            throw new Error("bad payload");
+          CLIENTS = clients;
+          INCIDENTS = incidents;
+          OPERATORS = operators;
+          EXECUTIVES = executives;
+          HISTORY = history;
+          DOCUMENTS = documents || [];
+          SUPERVISOR_NAMES = OPERATORS.filter(
+            (o) => o.role === "Supervisor",
+          ).map((o) => o.name);
+          CEO_NAMES = EXECUTIVES.map((e) => e.name);
+          POLICE_DEPARTMENTS = [
+            ...new Set([
+              "911",
+              ...CLIENTS.map((c) => c.police_department).filter(Boolean),
+            ]),
+          ];
+          document.getElementById("dbBanner").hidden = true;
+          initOperatorSelect();
+          renderDashboard();
+        } catch (err) {
+          document.getElementById("dbBanner").hidden = false;
+        }
+      }
+
+      function initOperatorSelect() {
+        const sel = document.getElementById("operatorSelect");
+        const prev = sel.value;
+        sel.innerHTML =
+          '<option value="">Select operator...</option>' +
+          OPERATORS.map(
+            (o) =>
+              `<option value="${o.name}">${o.name}${o.role === "Supervisor" ? " (Supervisor)" : ""}</option>`,
+          ).join("");
+        if (prev) sel.value = prev;
+        updateMonthlyQuota();
+      }
+
+      function updateMonthlyQuota() {
+        const operator = document.getElementById("operatorSelect")?.value;
+        const quota = document.getElementById("monthlyQuota");
+        if (!quota) return;
+        if (!operator) {
+          quota.textContent = "20 tries this month";
+          return;
+        }
+        const monthKey = new Date().toISOString().slice(0, 7);
+        const used = HISTORY.filter(
+          (h) =>
+            h.operator_name === operator &&
+            (h.created_at || "").slice(0, 7) === monthKey,
+        ).length;
+        quota.textContent = `${Math.max(0, 20 - used)} tries remaining`;
+        quota.style.color = used >= 20 ? "var(--red)" : "";
+      }
+
+      document
+        .getElementById("operatorSelect")
+        .addEventListener("change", updateMonthlyQuota);
+
+      /* ==================== VIEW NAV ==================== */
+      document.querySelectorAll("nav.tabs button.nav").forEach((btn) => {
+        btn.onclick = () => switchView(btn.dataset.view);
+      });
+      function switchView(view) {
+        document
+          .querySelectorAll("section.view")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById("view-" + view).classList.add("active");
+        document
+          .querySelectorAll("nav.tabs button.nav")
+          .forEach((b) =>
+            b.classList.toggle("active", b.dataset.view === view),
+          );
+        if (view === "directory") renderDirectory();
+        if (view === "operations") renderOperations();
+        if (view === "review") renderReview();
+        if (view === "stats") {
+          renderDashboard();
+          renderLeaderboard();
+        }
+      }
+
+      function applyViewMode(view, mode) {
+        const section = document.getElementById("view-" + view);
+        if (!section) return;
+        section.classList.toggle("list-mode", mode === "list");
+        document
+          .querySelectorAll(
+            `.view-mode-toggle[data-mode-target="${view}"] button`,
+          )
+          .forEach((button) =>
+            button.classList.toggle("active", button.dataset.mode === mode),
+          );
+        localStorage.setItem("evs_view_mode_" + view, mode);
+      }
+
+      document.querySelectorAll(".view-mode-toggle").forEach((toggle) => {
+        const view = toggle.dataset.modeTarget;
+        const savedMode =
+          localStorage.getItem("evs_view_mode_" + view) || "grid";
+        applyViewMode(view, savedMode);
+        toggle.querySelectorAll("button").forEach((button) => {
+          button.onclick = () => applyViewMode(view, button.dataset.mode);
+        });
+      });
+
+      /* ==================== ADMIN MODE ==================== */
+      const LOCK_ICON =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>';
+      const UNLOCK_ICON =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.4-2.1" stroke-linecap="round"/></svg>';
+      const MOON_ICON =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 15.4A8.5 8.5 0 0 1 8.6 4 8.5 8.5 0 1 0 20 15.4Z" stroke-linejoin="round"/></svg>';
+      const SUN_ICON =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.5 12h-2M21.5 12h-2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4" stroke-linecap="round"/></svg>';
+      function applyTheme() {
+        document.body.classList.toggle("dark-mode", isDarkMode);
+        document.getElementById("themeToggleIcon").innerHTML = isDarkMode
+          ? SUN_ICON
+          : MOON_ICON;
+        const label = isDarkMode ? "Light mode" : "Dark mode";
+        document.getElementById("themeToggleLabel").textContent = label;
+        document
+          .getElementById("themeToggleBtn")
+          .setAttribute(
+            "aria-label",
+            `Switch to ${isDarkMode ? "light" : "dark"} mode`,
+          );
+        document
+          .getElementById("themeToggleBtn")
+          .setAttribute(
+            "title",
+            `Switch to ${isDarkMode ? "light" : "dark"} mode`,
+          );
+      }
+      document.getElementById("themeToggleBtn").onclick = () => {
+        isDarkMode = !isDarkMode;
+        localStorage.setItem("evs_theme", isDarkMode ? "dark" : "light");
+        applyTheme();
+      };
+      applyTheme();
+
+      function applyAdminUI() {
+        document.body.classList.toggle("is-admin", isAdmin);
+        document.getElementById("adminToggleIcon").innerHTML = isAdmin
+          ? UNLOCK_ICON
+          : LOCK_ICON;
+        document.getElementById("adminToggleLabel").textContent = isAdmin
+          ? "Admin Mode"
+          : "Admin Login";
+        document.getElementById("historyTabLabel").textContent = isAdmin
+          ? "Review"
+          : "History";
+        document.getElementById("submissionsTitle").textContent = isAdmin
+          ? "Submitted Drills — Review"
+          : "Your Scenario History";
+      }
+
+      function refreshAdminViews() {
+        if (
+          document.getElementById("view-directory").classList.contains("active")
+        )
+          renderDirectory();
+        if (document.getElementById("view-review").classList.contains("active"))
+          renderSubmissionsList();
+      }
+
+      function enableAdminMode() {
+        isAdmin = true;
+        sessionStorage.setItem("evs_admin", "1");
+        applyAdminUI();
+        refreshAdminViews();
+        toast("Admin mode enabled.");
+      }
+
+      function openAdminLogin() {
+        openModal(
+          "Admin access",
+          `<form id="adminLoginForm">
+      <p class="hint" style="margin:0 0 16px;">Enter the administrator access code to manage scenarios, people, clients, documents, and history.</p>
+      <div class="field" style="margin-bottom:8px;">
+        <label for="adminCodeInput">Access code</label>
+        <input id="adminCodeInput" type="password" autocomplete="current-password" placeholder="Enter access code" style="width:100%;" />
+      </div>
+      <p id="adminLoginError" class="small" style="color:var(--red);min-height:18px;margin:0;"></p>
+      <p class="small" style="margin:6px 0 0;">This is a local app gate, not server-side authentication.</p>
+    </form>`,
+          `<button class="ghost" id="adminCancel">Cancel</button>
+     <button class="primary" id="adminSubmit" type="submit" form="adminLoginForm">Unlock admin mode</button>`,
+        );
+        const input = document.getElementById("adminCodeInput");
+        const form = document.getElementById("adminLoginForm");
+        const error = document.getElementById("adminLoginError");
+        input.focus();
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          if (input.value === ADMIN_CODE) {
+            closeModal();
+            enableAdminMode();
+          } else {
+            error.textContent = "Incorrect access code.";
+            input.value = "";
+            input.focus();
+          }
+        });
+        document.getElementById("adminCancel").onclick = closeModal;
+      }
+
+      document.getElementById("adminToggleBtn").onclick = () => {
+        if (isAdmin) {
+          isAdmin = false;
+          sessionStorage.removeItem("evs_admin");
+          applyAdminUI();
+          toast("Signed out of admin mode.");
+          refreshAdminViews();
+          return;
+        }
+        openAdminLogin();
+      };
+      applyAdminUI();
+
+      document.getElementById("resetOperatorAttempts").onclick = async () => {
+        if (!isAdmin) return;
+        const operator = document.getElementById("operatorSelect").value;
+        if (!operator) {
+          toast("Select an operator first.", "warn");
+          return;
+        }
+        const monthLabel = new Date().toLocaleDateString(undefined, {
+          month: "long",
+          year: "numeric",
+        });
+        const ok = await confirmModal(
+          `Reset ${operator}'s attempts?`,
+          `This permanently deletes ${operator}'s completed drills from ${monthLabel} and restores their 20-attempt allowance.`,
+          "Reset attempts",
+        );
+        if (!ok) return;
+        const monthKey = new Date().toISOString().slice(0, 7);
+        await apiSend(
+          API.history +
+            "?month=" +
+            encodeURIComponent(monthKey) +
+            "&operator=" +
+            encodeURIComponent(operator),
+          "DELETE",
+        );
+        HISTORY = await apiGet(API.history);
+        updateMonthlyQuota();
+        renderDashboard();
+        toast(`${operator}'s monthly attempts were reset.`);
+      };
+
+      /* ==================== CATEGORY FILTER (History tab) ==================== */
+      document
+        .querySelectorAll("#categoryFilterChips button")
+        .forEach((btn) => {
+          btn.onclick = () => {
+            catFilter = btn.dataset.cat;
+            document
+              .querySelectorAll("#categoryFilterChips button")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderSubmissionsList();
+          };
+        });
+
+      /* ==================== DASHBOARD ==================== */
+      function renderDashboard() {
+        const total = HISTORY.length;
+        const today = new Date().toDateString();
+        const todayCount = HISTORY.filter(
+          (h) => new Date(h.created_at).toDateString() === today,
+        ).length;
+        const avg = total
+          ? Math.round(
+              HISTORY.reduce((s, h) => s + Number(h.overall_pct || 0), 0) /
+                total,
+            )
+          : 0;
+        // streak: consecutive most-recent scenarios (any operator) scoring >= 80
+        let streak = 0;
+        const sorted = [...HISTORY].sort((a, b) => b.id - a.id);
+        for (const h of sorted) {
+          if (Number(h.overall_pct) >= 80) streak++;
+          else break;
+        }
+
+        const dashboardStats = document.getElementById("dashboardStats");
+        if (dashboardStats)
+          dashboardStats.innerHTML = `
+    <div class="stat-card"><div class="stat-icon">${ICON.logged}</div><div class="stat-num">${total}</div><div class="stat-lbl">Scenarios logged</div></div>
+    <div class="stat-card"><div class="stat-icon">${ICON.target}</div><div class="stat-num">${avg}%</div><div class="stat-lbl">Average score</div></div>
+    <div class="stat-card"><div class="stat-icon">${ICON.streak}</div><div class="stat-num">${streak}</div><div class="stat-lbl">Current streak (80%+)</div></div>
+    <div class="stat-card"><div class="stat-icon">${ICON.today}</div><div class="stat-num">${todayCount}</div><div class="stat-lbl">Run today</div></div>
+  `;
+
+        const badges = [];
+        if (total >= 1)
+          badges.push({ ic: ICON.first, label: "First scenario logged" });
+        if (streak >= 3)
+          badges.push({
+            ic: ICON.streak,
+            label: `${streak}-scenario hot streak`,
+          });
+        if (HISTORY.some((h) => Number(h.overall_pct) === 100))
+          badges.push({ ic: ICON.perfect, label: "Perfect score on record" });
+        if (total >= 10)
+          badges.push({ ic: ICON.veteran, label: "10+ scenarios completed" });
+        const achievementsRow = document.getElementById("achievementsRow");
+        if (achievementsRow)
+          achievementsRow.innerHTML = badges
+            .map(
+              (b) =>
+                `<span class="achievement"><span class="ic">${b.ic}</span> ${b.label}</span>`,
+            )
+            .join("");
+        renderLeaderboard();
+        renderOperatorStats(
+          "operatorStats",
+          HISTORY.filter(
+            (h) => (h.created_at || "").slice(0, 7) === leaderboardMonth,
+          ),
+          `Month of ${new Date(`${leaderboardMonth}-01T00:00:00`).toLocaleDateString(undefined, { month: "long", year: "numeric" })}`,
+        );
+      }
+
+      /* ==================== DRILL PICKING & RUNNING ==================== */
+      // Spaced repetition: incident categories where this operator has
+      // historically scored lower are weighted to appear more often, so
+      // practice time concentrates on the operator's actual weak spots.
+      function pickIncident(operator) {
+        const pool = INCIDENTS.slice();
+        if (pool.length === 0) return null;
+        if (!operator) return pool[Math.floor(Math.random() * pool.length)];
+
+        const catStats = {};
+        HISTORY.filter((h) => h.operator_name === operator).forEach((h) => {
+          const c = h.category;
+          catStats[c] = catStats[c] || { sum: 0, count: 0 };
+          catStats[c].sum += Number(h.overall_pct || 0);
+          catStats[c].count++;
+        });
+        const weights = pool.map((inc) => {
+          const s = catStats[inc.category];
+          if (!s || s.count === 0) return 3; // never-seen categories get priority
+          const avg = s.sum / s.count;
+          return Math.max(1, Math.round((100 - avg) / 25) + 1);
+        });
+        const total = weights.reduce((a, b) => a + b, 0);
+        let r = Math.random() * total;
+        for (let i = 0; i < pool.length; i++) {
+          r -= weights[i];
+          if (r <= 0) return pool[i];
+        }
+        return pool[pool.length - 1];
+      }
+
+      function startScenario() {
+        const operator = document.getElementById("operatorSelect").value;
+        if (!operator) {
+          toast("Select your operator name first.", "warn");
+          return;
+        }
+        const monthKey = new Date().toISOString().slice(0, 7);
+        const monthlyAttempts = HISTORY.filter(
+          (h) =>
+            h.operator_name === operator &&
+            (h.created_at || "").slice(0, 7) === monthKey,
+        ).length;
+        if (monthlyAttempts >= 20) {
+          toast(
+            "This operator has used all 20 drill attempts for the month.",
+            "warn",
+          );
+          return;
+        }
+        if (INCIDENTS.length === 0) {
+          toast(
+            "No scenarios available yet — add one in the Directory tab.",
+            "warn",
+          );
+          return;
+        }
+        const inc = pickIncident(operator);
+        current = {
+          operator,
+          inc,
+          chosenCat: null,
+          toolsUsed: new Set(),
+          scripts: {},
+          audio: {},
+          revealedInfo: new Set(),
+          infoPenalty: 0,
+          policeDepartmentChoice: "",
+          startedAt: Date.now(),
+          finished: false,
+          timerHandle: null,
+        };
+        document.getElementById("noOperatorNotice").hidden = true;
+        renderScenario();
+        startTimer();
+      }
+
+      function startTimer() {
+        clearInterval(current.timerHandle);
+        current.timerHandle = setInterval(() => {
+          const el = document.getElementById("timerChip");
+          if (!el || !current || current.finished) return;
+          const secs = Math.floor((Date.now() - current.startedAt) / 1000);
+          const m = String(Math.floor(secs / 60)).padStart(2, "0");
+          const s = String(secs % 60).padStart(2, "0");
+          el.textContent = `${m}:${s}`;
+        }, 1000);
+      }
+
+      function toolsForClient(inc) {
+        return [
+          "speaker",
+          "siren",
+          "police",
+          "ambulance",
+          "supervisor",
+          "ceo",
+          "chat",
+        ];
+      }
+
+      function stepper(activeIdx) {
+        const labels = ["Classify", "Respond", "Score"];
+        return `<div class="stepper">${labels
+          .map((l, i) => {
+            const cls = i < activeIdx ? "done" : i === activeIdx ? "now" : "";
+            const icon = i < activeIdx ? "✓" : i + 1;
+            return `<div class="step ${cls}"><span class="dot">${icon}</span><span>${l}</span></div>${i < labels.length - 1 ? '<span class="step-line"></span>' : ""}`;
+          })
+          .join("")}</div>`;
+      }
+
+      function renderScenario() {
+        const { inc } = current;
+        const card = document.getElementById("drillCard");
+        card.hidden = false;
+
+        const toolBtns = toolsForClient(inc)
+          .map(
+            (t) =>
+              `<button class="tool-btn ${current.toolsUsed.has(t) ? "active" : ""}" data-tool="${t}" onclick="toggleTool('${t}')">${TOOL_LABELS[t]}</button>`,
+          )
+          .join("");
+
+        const activeStep =
+          current.toolsUsed.size > 0 || current.chosenCat ? 1 : 0;
+
+        card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+      <div>
+        <span class="pill">${inc.category ? "Live scenario" : ""}</span>
+        <h2 style="margin:10px 0 0;">${inc.client_name}</h2>
+        <div class="meta">Incident time: ${inc.time_label || "Not listed"} &nbsp;•&nbsp; Operator: ${current.operator}</div>
+      </div>
+      <span class="timer-chip" id="timerChip">00:00</span>
+    </div>
+
+    <div id="scenarioStepper">${stepper(activeStep)}</div>
+
+    <p class="narrative">${inc.narrative}</p>
+
+    <div class="intel-panel">
+      <div class="intel-head">
+        <strong>Information desk</strong>
+        <span class="intel-cost" id="intelCost">3 pts per reveal</span>
+      </div>
+      <div class="small" style="margin-top:5px;">Request only the operational detail you truly need.</div>
+      <div class="intel-actions">
+        <button type="button" data-intel="address" onclick="revealInfo('address')">Reveal address · 3 pts</button>
+        <button type="button" data-intel="equipment" onclick="revealInfo('equipment')">Reveal equipment · 3 pts</button>
+        <button type="button" data-intel="police" onclick="revealInfo('police')">Reveal police contact · 3 pts</button>
+      </div>
+      <div class="intel-results" id="intelResults"></div>
+    </div>
+
+    <div class="section-heading" style="margin-top:6px;">Step 1 · Classify this situation</div>
+    <div class="cat-buttons">
+      <button class="green" onclick="pickCategory('green')">GREEN — Safe</button>
+      <button class="orange" onclick="pickCategory('orange')">ORANGE — Unusual</button>
+      <button class="red" onclick="pickCategory('red')">RED — Emergency</button>
+    </div>
+    <div id="catFeedback"></div>
+
+    <div class="section-heading">Step 2 · Choose your response actions</div>
+    <div class="tools">${toolBtns}</div>
+    <div id="toolPanels"></div>
+
+    <footer class="actions">
+      <button class="primary" onclick="finishScenario()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14" style="vertical-align:-2px;margin-right:4px;"><path d="m5 12 4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Finish Scenario &amp; Score</button>
+    </footer>
+    <div id="results"></div>
+  `;
+      }
+
+      function updateStepper() {
+        const stepperHost = document.getElementById("scenarioStepper");
+        if (!stepperHost || !current) return;
+        const activeStep = current.finished
+          ? 2
+          : current.toolsUsed.size > 0 || current.chosenCat
+            ? 1
+            : 0;
+        stepperHost.innerHTML = stepper(activeStep);
+      }
+
+      function revealInfo(type) {
+        if (!current || current.finished || current.revealedInfo.has(type))
+          return;
+        const inc = current.inc;
+        const info = {
+          address: `Address: ${inc.client_address}`,
+          equipment: `Site equipment: Speaker ${inc.client_has_speaker ? "available" : "not listed"}; Siren ${inc.client_has_siren ? "available" : "not listed"}`,
+          police: `Police contact: ${inc.police_department || "not listed"}${inc.police_hotline ? ` · Hotline: ${inc.police_hotline}` : ""}`,
+        };
+        current.revealedInfo.add(type);
+        current.infoPenalty += 3;
+        const result = document.createElement("div");
+        result.textContent = info[type];
+        document.getElementById("intelResults")?.appendChild(result);
+        const button = document.querySelector(`[data-intel="${type}"]`);
+        if (button) {
+          button.disabled = true;
+          button.textContent = "Revealed";
+        }
+        const cost = document.getElementById("intelCost");
+        if (cost) cost.textContent = `${current.infoPenalty} points used`;
+      }
+
+      function pickCategory(cat) {
+        current.chosenCat = cat;
+        document
+          .querySelectorAll(".cat-buttons button")
+          .forEach((b) => b.classList.remove("selected"));
+        document
+          .querySelector(`.cat-buttons button.${cat}`)
+          .classList.add("selected");
+        // No correctness hint here on purpose — this is an assessment.
+        const fb = document.getElementById("catFeedback");
+        fb.className = "feedback";
+        fb.textContent = "Classification locked in. Keep going.";
+        updateStepper();
+      }
+
+      function toggleTool(tool) {
+        const btn = document.querySelector(`.tool-btn[data-tool="${tool}"]`);
+        const panels = document.getElementById("toolPanels");
+
+        if (current.toolsUsed.has(tool)) {
+          current.toolsUsed.delete(tool);
+          btn.classList.remove("active");
+          document.getElementById("panel-" + tool)?.remove();
+          updateStepper();
+          return;
+        }
+        current.toolsUsed.add(tool);
+        btn.classList.add("active");
+        updateStepper();
+
+        if (tool === "speaker") {
+          panels.insertAdjacentHTML(
+            "beforeend",
+            `
+      <div class="panel" id="panel-${tool}">
+        <strong>Speaker announcement</strong>
+        <textarea placeholder="Type what you would say over the speaker..." oninput="setScript('${tool}', this.value)"></textarea>
+        <div class="rec-row">
+          <button onclick="toggleRecord('${tool}')">Record voicemail</button>
+          <span class="rec-dot" id="dot-${tool}"></span>
+          <span id="audioSlot-${tool}"></span>
+        </div>
+      </div>`,
+          );
+        } else if (tool === "supervisor" || tool === "ceo") {
+          const options = (tool === "supervisor" ? SUPERVISOR_NAMES : CEO_NAMES)
+            .map((n) => `<option>${n}</option>`)
+            .join("");
+          panels.insertAdjacentHTML(
+            "beforeend",
+            `
+      <div class="panel" id="panel-${tool}">
+        <strong>${tool === "supervisor" ? "Call Supervisor" : "Call CEO"}</strong>
+        <select onchange="setScript('${tool}_contact', this.value)" style="margin:8px 0;">${options}</select>
+        <textarea placeholder="Type exactly what you would say, including the client, address, and what happened..." oninput="setScript('${tool}', this.value)"></textarea>
+        <div class="rec-row">
+          <button onclick="toggleRecord('${tool}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13" style="vertical-align:-2px;margin-right:4px;"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke-linecap="round"/></svg>Record voicemail</button>
+          <span class="rec-dot" id="dot-${tool}"></span>
+          <span id="audioSlot-${tool}"></span>
+        </div>
+      </div>`,
+          );
+        } else if (["police", "ambulance"].includes(tool)) {
+          const target = tool === "police" ? "the police" : "911/EMS";
+          const policeOptions = POLICE_DEPARTMENTS.map(
+            (department) =>
+              `<option value="${department}">${department}</option>`,
+          ).join("");
+          panels.insertAdjacentHTML(
+            "beforeend",
+            `
+      <div class="panel" id="panel-${tool}">
+        <strong>Call script — ${target}</strong>
+        ${tool === "police" ? `<label class="small" style="display:block;margin-top:8px;">Police department to call</label><select onchange="setPoliceDepartment(this.value)" style="margin:4px 0 8px;width:100%;"><option value="">Choose a department...</option>${policeOptions}</select>` : ""}
+        <textarea placeholder="Type exactly what you would say, including your name, Elite Vision Security, the address, and what you need them to do..." oninput="setScript('${tool}', this.value)"></textarea>
+        <div class="rec-row">
+          <button onclick="toggleRecord('${tool}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13" style="vertical-align:-2px;margin-right:4px;"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke-linecap="round"/></svg>Record voicemail</button>
+          <span class="rec-dot" id="dot-${tool}"></span>
+          <span id="audioSlot-${tool}"></span>
+        </div>
+      </div>`,
+          );
+        } else if (tool === "chat") {
+          panels.insertAdjacentHTML(
+            "beforeend",
+            `
+      <div class="panel" id="panel-chat">
+        <strong>Client group chat message</strong>
+        <textarea placeholder="Type the update you would post in the client's group chat..." oninput="setScript('chat', this.value)"></textarea>
+      </div>`,
+          );
+        }
+      }
+
+      function setScript(key, value) {
+        current.scripts[key] = value;
+      }
+
+      function setPoliceDepartment(value) {
+        if (current) current.policeDepartmentChoice = value;
+      }
+
+      /* ==================== VOICE RECORDING ==================== */
+      async function toggleRecord(tool) {
+        const dot = document.getElementById("dot-" + tool);
+        if (
+          activeRecordTarget === tool &&
+          mediaRecorder &&
+          mediaRecorder.state === "recording"
+        ) {
+          mediaRecorder.stop();
+          return;
+        }
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          chunks = [];
+          mediaRecorder = new MediaRecorder(stream);
+          activeRecordTarget = tool;
+          mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(chunks, { type: "audio/webm" });
+            const url = URL.createObjectURL(blob);
+            current.audio[tool] = url;
+            document.getElementById("audioSlot-" + tool).innerHTML =
+              `<audio controls src="${url}"></audio>`;
+            dot.classList.remove("on");
+            stream.getTracks().forEach((t) => t.stop());
+          };
+          mediaRecorder.start();
+          dot.classList.add("on");
+        } catch (err) {
+          toast(
+            "Microphone access is needed to record a voicemail. You can still grade the typed script.",
+            "warn",
+          );
+        }
+      }
+
+      /* ==================== SCORING ==================== */
+      function unavailableEquipmentUsed() {
+        const unavailable = [];
+        if (!current.inc.client_has_speaker && current.toolsUsed.has("speaker"))
+          unavailable.push("Speaker");
+        if (!current.inc.client_has_siren && current.toolsUsed.has("siren"))
+          unavailable.push("Siren / Alarm");
+        return unavailable;
+      }
+
+      function equipmentKnowledgeCorrect() {
+        const speakerCorrect =
+          current.toolsUsed.has("speaker") === !!current.inc.client_has_speaker;
+        const sirenCorrect =
+          current.toolsUsed.has("siren") === !!current.inc.client_has_siren;
+        return speakerCorrect && sirenCorrect;
+      }
+
+      function addressIncludedInScripts(perTool, addressPart) {
+        const addressRequirements = perTool.filter((tool) =>
+          tool.required.includes(addressPart),
+        );
+        return (
+          addressRequirements.length > 0 &&
+          addressRequirements.every((tool) => tool.hits.includes(addressPart))
+        );
+      }
+
+      function scoreTools() {
+        const idealSet = new Set(current.inc.ideal_tools);
+        const used = current.toolsUsed;
+        const correct = [...idealSet].filter((t) => used.has(t)).length;
+        const extra =
+          [...used].filter((t) => !idealSet.has(t)).length +
+          unavailableEquipmentUsed().length;
+        const denom = Math.max(idealSet.size, 1);
+        return Math.max(0, Math.round(((correct - extra * 0.5) / denom) * 100));
+      }
+
+      // Time-boxed scoring: faster, appropriately-paced responses score
+      // higher. Targets scale with incident severity — red (critical) calls
+      // for the quickest response, green allows more time to think it through.
+      const TIME_TARGET_SEC = { red: 90, orange: 150, green: 240 };
+      function scoreTime(category, elapsedSec) {
+        const target = TIME_TARGET_SEC[category] || 180;
+        if (elapsedSec <= target) return 100;
+        const over = elapsedSec - target;
+        return Math.max(0, 100 - Math.round((over / target) * 100));
+      }
+
+      function scorePoints(overall, infoPenalty, revealFreeEligible = false) {
+        const performanceBonus = overall >= 90 ? 10 : overall >= 80 ? 5 : 0;
+        const revealFreeBonus =
+          infoPenalty === 0 && revealFreeEligible ? 10 : 0;
+        return overall + performanceBonus + revealFreeBonus;
+      }
+
+      function normalizeDepartment(value) {
+        return (value || "").trim().toLowerCase().replace(/\s+/g, " ");
+      }
+
+      function scoreScripts(addressPart) {
+        const externalTools = ["police", "ambulance"].filter((t) =>
+          current.toolsUsed.has(t),
+        );
+        const internalTools = ["supervisor", "ceo"].filter((t) =>
+          current.toolsUsed.has(t),
+        );
+        const speakerTools = ["speaker"].filter((t) =>
+          current.toolsUsed.has(t),
+        );
+        let totalHits = 0,
+          totalPossible = 0;
+        const perTool = [];
+
+        // A recorded voicemail stands in for the typed script — if audio was
+        // captured for a tool, that call is graded as fully delivered even
+        // if the text box was left blank.
+        const hasAudio = (t) => !!(current.audio && current.audio[t]);
+
+        externalTools.forEach((t) => {
+          const text = (current.scripts[t] || "").toLowerCase();
+          const required = ["elite vision", addressPart].concat(
+            current.inc.extra_keywords.map((x) => x.toLowerCase()),
+          );
+          const hits =
+            !text.trim() && hasAudio(t)
+              ? required.slice()
+              : required.filter((term) => text.includes(term));
+          totalHits += hits.length;
+          totalPossible += required.length;
+          perTool.push({
+            tool: t,
+            required,
+            hits,
+            text: current.scripts[t] || "",
+          });
+        });
+
+        internalTools.forEach((t) => {
+          const text = (current.scripts[t] || "").toLowerCase();
+          const required = [addressPart].concat(
+            current.inc.extra_keywords.map((x) => x.toLowerCase()),
+          );
+          const hits =
+            !text.trim() && hasAudio(t)
+              ? required.slice()
+              : required.filter((term) => text.includes(term));
+          totalHits += hits.length;
+          totalPossible += required.length;
+          perTool.push({
+            tool: t,
+            required,
+            hits,
+            text: current.scripts[t] || "",
+            contact: current.scripts[t + "_contact"],
+          });
+        });
+
+        speakerTools.forEach((t) => {
+          const text = (current.scripts[t] || "").trim();
+          const hit = text.length > 15 || hasAudio(t);
+          totalHits += hit ? 1 : 0;
+          totalPossible += 1;
+          perTool.push({
+            tool: t,
+            required: ["announcement of reasonable length"],
+            hits: hit ? ["announcement of reasonable length"] : [],
+            text,
+          });
+        });
+
+        const pct =
+          totalPossible === 0
+            ? 0
+            : Math.round((totalHits / totalPossible) * 100);
+        return { pct, perTool };
+      }
+
+      async function finishScenario() {
+        if (!current.chosenCat) {
+          toast("Classify the situation before finishing.", "warn");
+          return;
+        }
+        current.finished = true;
+        clearInterval(current.timerHandle);
+        updateStepper();
+        const elapsedSec = Math.floor((Date.now() - current.startedAt) / 1000);
+
+        const addressPart = current.inc.client_address
+          .split(",")[0]
+          .toLowerCase();
+
+        const catCorrect = current.chosenCat === current.inc.category;
+        const catPct = catCorrect ? 100 : 0;
+        const toolPct = scoreTools();
+        const scriptResult = scoreScripts(addressPart);
+        const timePct = scoreTime(current.inc.category, elapsedSec);
+        const overall = Math.round(
+          (catPct + toolPct + scriptResult.pct + timePct) / 4,
+        );
+        const usedPolice = current.toolsUsed.has("police");
+        const expectedPolice = current.inc.police_department || "911";
+        const policeDepartmentCorrect =
+          usedPolice &&
+          normalizeDepartment(current.policeDepartmentChoice) ===
+            normalizeDepartment(expectedPolice);
+        const noKnowledgeReveals =
+          !current.revealedInfo.has("equipment") &&
+          !current.revealedInfo.has("police");
+        const knowledgeChoiceCorrect =
+          equipmentKnowledgeCorrect() &&
+          !current.revealedInfo.has("address") &&
+          addressIncludedInScripts(scriptResult.perTool, addressPart) &&
+          (!usedPolice || policeDepartmentCorrect);
+        const addressRequired = scriptResult.perTool.some((tool) =>
+          tool.required.includes(addressPart),
+        );
+        const addressPenalty =
+          addressRequired &&
+          !addressIncludedInScripts(scriptResult.perTool, addressPart)
+            ? 3
+            : 0;
+        const policeDepartmentPenalty =
+          usedPolice && !policeDepartmentCorrect ? 3 : 0;
+        const revealFreeBonus =
+          noKnowledgeReveals && knowledgeChoiceCorrect ? 10 : 0;
+        const performanceBonus = overall >= 90 ? 10 : overall >= 80 ? 5 : 0;
+        const timeAdjustment =
+          timePct >= 100 ? 5 : timePct >= 80 ? 2 : timePct < 50 ? -5 : 0;
+        const grossPoints =
+          scorePoints(overall, current.infoPenalty, policeDepartmentCorrect) +
+          timeAdjustment;
+        const unavailableEquipment = unavailableEquipmentUsed();
+        const equipmentPenalty = unavailableEquipment.length * 3;
+        const points = Math.max(
+          0,
+          grossPoints -
+            current.infoPenalty -
+            equipmentPenalty -
+            addressPenalty -
+            policeDepartmentPenalty,
+        );
+        const policeDepartmentStatus = !usedPolice
+          ? null
+          : policeDepartmentCorrect
+            ? "good"
+            : current.policeDepartmentChoice
+              ? "needs-work"
+              : "partial";
+
+        const ringColor =
+          overall >= 85
+            ? "var(--green)"
+            : overall >= 60
+              ? "var(--orange)"
+              : "var(--red)";
+        const timeTarget = TIME_TARGET_SEC[current.inc.category] || 180;
+        const statusChip = (label, status, detail) =>
+          `<span class="assessment-chip ${status}">${status === "good" ? "✓" : status === "partial" ? "~" : "!"} ${label}: ${detail}</span>`;
+        const classificationStatus = catCorrect ? "good" : "needs-work";
+        const toolStatus =
+          toolPct === 100 ? "good" : toolPct > 0 ? "partial" : "needs-work";
+        const scriptStatus =
+          scriptResult.pct === 100
+            ? "good"
+            : scriptResult.pct > 0
+              ? "partial"
+              : "needs-work";
+        const timeStatus =
+          timePct >= 80 ? "good" : timePct >= 50 ? "partial" : "needs-work";
+
+        document.getElementById("results").innerHTML = `
+    <div class="score-box">
+      <div class="score-item"><div class="num" style="color:${catCorrect ? "var(--green)" : "var(--red)"}">${catPct}%</div><div class="lbl">Classification</div></div>
+      <div class="score-item"><div class="num">${toolPct}%</div><div class="lbl">Tool Selection</div></div>
+      <div class="score-item"><div class="num">${scriptResult.pct}%</div><div class="lbl">Script Completeness</div></div>
+      <div class="score-item"><div class="num" style="color:${timePct >= 80 ? "var(--green)" : timePct >= 50 ? "var(--orange)" : "var(--red)"}">${timePct}%</div><div class="lbl">Response Time</div></div>
+      <div class="score-item"><div class="num" style="color:${ringColor}">${overall}%</div><div class="lbl">Overall</div></div>
+      <div class="score-item points-earned"><div class="num" style="color:var(--gold)">${points}</div><div class="lbl">Points Earned</div></div>
+    </div>
+    <div class="assessment-summary">
+      ${statusChip("Classification", classificationStatus, catCorrect ? "Correct" : "Needs correction")}
+      ${statusChip("Actions", toolStatus, toolPct === 100 ? "All ideal actions" : `${toolPct}% complete`)}
+      ${statusChip("Scripts", scriptStatus, scriptResult.pct === 100 ? "Complete" : `${scriptResult.pct}% complete`)}
+      ${statusChip("Timing", timeStatus, timePct >= 80 ? "On target" : `${timePct}% on target`)}
+      ${usedPolice ? statusChip("Police", policeDepartmentStatus, policeDepartmentCorrect ? "Correct department" : current.policeDepartmentChoice ? "Wrong department" : "No department selected") : ""}
+      ${unavailableEquipment.length ? statusChip("Equipment", "needs-work", `${unavailableEquipment.join(", ")} unavailable`) : ""}
+      ${scriptResult.perTool.some((tool) => tool.required.includes(addressPart)) ? statusChip("Address", addressIncludedInScripts(scriptResult.perTool, addressPart) ? "good" : "needs-work", addressIncludedInScripts(scriptResult.perTool, addressPart) ? "Included in scripts" : "Missing from scripts") : ""}
+    </div>
+    <div class="points-explanation">
+      Points: <strong>${overall}</strong> base score
+      ${performanceBonus ? ` + <strong>${performanceBonus}</strong> performance bonus` : ""}
+      ${timeAdjustment > 0 ? ` + <strong>${timeAdjustment}</strong> speed bonus` : timeAdjustment < 0 ? ` − <strong>${Math.abs(timeAdjustment)}</strong> slow response adjustment` : ""}
+      ${revealFreeBonus ? ` + <strong>${revealFreeBonus}</strong> correct no-reveal knowledge bonus` : ""}
+      ${current.infoPenalty ? ` − <strong>${current.infoPenalty}</strong> information cost` : ""}
+      ${equipmentPenalty ? ` − <strong>${equipmentPenalty}</strong> unavailable equipment cost` : ""}
+      ${addressPenalty ? ` − <strong>${addressPenalty}</strong> address accuracy cost` : ""}
+      ${policeDepartmentPenalty ? ` − <strong>${policeDepartmentPenalty}</strong> police department cost` : ""}
+      = <strong>${points} points earned</strong>.
+    </div>
+    <div class="script-feedback">
+      <div class="script-feedback-title">Script requirements</div>
+      ${
+        scriptResult.perTool.length
+          ? scriptResult.perTool
+              .map(
+                (tool) => `
+        <div class="script-feedback-row">
+          <strong>${TOOL_LABELS[tool.tool]}</strong>
+          <div>${tool.required
+            .map(
+              (keyword) =>
+                `<span class="script-keyword ${tool.hits.includes(keyword) ? "hit" : "miss"}">${tool.hits.includes(keyword) ? "✓" : "✕"} ${keyword}</span>`,
+            )
+            .join("")}</div>
+        </div>`,
+              )
+              .join("")
+          : '<div class="small">No script-based actions were selected.</div>'
+      }
+    </div>
+    <div class="warn" style="margin-top:14px;">
+      Correct classification was <strong>${current.inc.category.toUpperCase()}</strong>${catCorrect ? " — nice read." : ` — you chose ${current.chosenCat.toUpperCase()}.`}
+      Ideal actions: ${current.inc.ideal_tools.map((t) => TOOL_LABELS[t]).join(", ") || "—"}.
+      Time to complete: ${Math.floor(elapsedSec / 60)}m ${elapsedSec % 60}s (target for this severity: under ${Math.floor(timeTarget / 60)}m ${timeTarget % 60}s).
+      ${current.infoPenalty ? `<br>Information reveals: -${current.infoPenalty} points.` : ""}
+      ${equipmentPenalty ? `<br>Unavailable equipment: ${unavailableEquipment.join(", ")} (-${equipmentPenalty} points).` : ""}
+      ${addressPenalty ? `<br>Address was missing or incorrect in a required script (-${addressPenalty} points).` : ""}
+      ${policeDepartmentPenalty ? `<br>Police department selection was incorrect (-${policeDepartmentPenalty} points).` : ""}
+      ${revealFreeBonus ? `<br>Equipment and police knowledge were correct without revealing information: +${revealFreeBonus} points.` : ""}
+    </div>
+  `;
+
+        if (overall >= 90) confetti();
+
+        const detail = {
+          incidentTitle: current.inc.title,
+          narrative: current.inc.narrative,
+          correctCat: current.inc.category,
+          chosenCat: current.chosenCat,
+          idealTools: current.inc.ideal_tools,
+          usedTools: [...current.toolsUsed],
+          scripts: current.scripts,
+          perTool: scriptResult.perTool,
+          elapsedSec,
+          catPct,
+          toolPct,
+          timePct,
+          scriptPct: scriptResult.pct,
+          overall,
+          grossPoints,
+          points,
+          infoPenalty: current.infoPenalty,
+          equipmentPenalty,
+          addressPenalty,
+          policeDepartmentPenalty,
+          revealFreeBonus,
+          timeAdjustment,
+          revealedInfo: [...current.revealedInfo],
+          policeDepartmentChoice: current.policeDepartmentChoice,
+          expectedPoliceDepartment: expectedPolice,
+          policeDepartmentCorrect,
+          unavailableEquipment,
+          equipmentKnowledgeCorrect: equipmentKnowledgeCorrect(),
+          knowledgeChoiceCorrect,
+          noKnowledgeReveals,
+          addressIncludedInScripts: addressIncludedInScripts(
+            scriptResult.perTool,
+            addressPart,
+          ),
+        };
+
+        try {
+          const posted = await apiSend(API.history, "POST", {
+            operator_name: current.operator,
+            client_name: current.inc.client_name,
+            category: current.inc.category,
+            tool_pct: toolPct,
+            script_pct: scriptResult.pct,
+            overall_pct: overall,
+            detail,
+          });
+          if (posted && posted.id && Object.keys(current.audio).length) {
+            SESSION_AUDIO[posted.id] = current.audio;
+          }
+          HISTORY = await apiGet(API.history);
+          updateMonthlyQuota();
+          renderDashboard();
+          toast("Scenario submitted for review.");
+        } catch (err) {
+          toast(
+            err.message.includes("Monthly drill limit")
+              ? "This operator has used all 20 drill attempts for the month."
+              : `Could not save scenario: ${err.message}`,
+            "warn",
+          );
+        }
+      }
+
+      /* ==================== REVIEW ==================== */
+      function ringStyle(pct) {
+        const color = pct >= 85 ? "#4ade80" : pct >= 60 ? "#f2a93c" : "#ef5b5b";
+        return `background:conic-gradient(${color} ${pct * 3.6}deg, var(--surface-3) 0deg); color:var(--cream);`;
+      }
+
+      function renderLeaderboard() {
+        const monthInput = document.getElementById("leaderboardMonth");
+        if (monthInput) monthInput.value = leaderboardMonth;
+        const monthHistory = HISTORY.filter(
+          (h) => (h.created_at || "").slice(0, 7) === leaderboardMonth,
+        );
+        const byOp = {};
+        monthHistory.forEach((h) => {
+          const name = h.operator_name || "Unknown";
+          byOp[name] = byOp[name] || { count: 0, sum: 0, points: 0 };
+          const score = Number(h.overall_pct || 0);
+          const earnedPoints =
+            h.detail && h.detail.points !== undefined
+              ? Number(h.detail.adminReview?.pointsAwarded ?? h.detail.points)
+              : scorePoints(score);
+          byOp[name].count++;
+          byOp[name].sum += score;
+          byOp[name].points += earnedPoints;
+        });
+        const rows = Object.entries(byOp)
+          .map(([name, d]) => ({
+            name,
+            count: d.count,
+            avg: Math.round(d.sum / d.count),
+            points: d.points,
+          }))
+          .sort((a, b) => b.points - a.points || b.avg - a.avg);
+
+        if (rows.length === 0) {
+          document.getElementById("leaderboard").innerHTML =
+            '<div class="empty-state"><div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 4h10v5a5 5 0 0 1-10 0Zm0 0H4v1a4 4 0 0 0 4 4M17 4h3v1a4 4 0 0 1-4 4M12 14v3M9 21h6M9.5 21v-.5A2.5 2.5 0 0 1 12 18h0a2.5 2.5 0 0 1 2.5 2.5v.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>No scenarios logged for this month yet.</div>';
+          return;
+        }
+        document.getElementById("leaderboard").innerHTML = rows
+          .map(
+            (r, i) => `
+    <div class="lb-row ${i === 0 ? "top" : ""}">
+      <span class="lb-rank">${i + 1}</span>
+      <span class="lb-name">${r.name}</span>
+      <span class="lb-meta">${r.count} scenario${r.count === 1 ? "" : "s"}</span>
+      <span class="lb-points">${r.points} pts</span>
+      <span class="lb-score">${r.avg}%</span>
+    </div>`,
+          )
+          .join("");
+      }
+      function renderOperatorStats(targetId, records, periodLabel) {
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        const byOp = {};
+        records.forEach((h) => {
+          const name = h.operator_name || "Unknown";
+          const score = Number(h.overall_pct || 0);
+          byOp[name] = byOp[name] || {
+            count: 0,
+            sum: 0,
+            points: 0,
+            best: 0,
+          };
+          const earnedPoints =
+            h.detail && h.detail.points !== undefined
+              ? Number(h.detail.adminReview?.pointsAwarded ?? h.detail.points)
+              : scorePoints(score);
+          byOp[name].count++;
+          byOp[name].sum += score;
+          byOp[name].points += earnedPoints;
+          byOp[name].best = Math.max(byOp[name].best, score);
+        });
+        const rows = Object.entries(byOp)
+          .map(([name, stats]) => ({
+            name,
+            count: stats.count,
+            avg: Math.round(stats.sum / stats.count),
+            points: stats.points,
+            best: stats.best,
+          }))
+          .sort((a, b) => b.points - a.points || b.avg - a.avg);
+        const period = document.getElementById("operatorStatsPeriod");
+        if (period && targetId === "operatorStats")
+          period.textContent = periodLabel;
+        if (!rows.length) {
+          target.innerHTML =
+            '<div class="empty-state">No operator results for this period yet.</div>';
+          return;
+        }
+        target.innerHTML = rows
+          .map(
+            (row) => `
+      <div class="operator-summary-row">
+        <div class="operator-summary-name">${row.name}</div>
+        <div class="operator-summary-metric"><strong>${row.count}</strong> scenarios</div>
+        <div class="operator-summary-metric"><strong>${row.avg}%</strong> average</div>
+        <div class="operator-summary-metric"><strong>${row.points}</strong> points</div>
+        <div class="operator-summary-metric"><strong>${row.best}%</strong> best</div>
+      </div>`,
+          )
+          .join("");
+      }
+
+      const leaderboardMonthInput = document.getElementById("leaderboardMonth");
+      leaderboardMonthInput.value = leaderboardMonth;
+      leaderboardMonthInput.addEventListener("change", () => {
+        leaderboardMonth = leaderboardMonthInput.value || currentMonth;
+        localStorage.setItem("evs_leaderboard_month", leaderboardMonth);
+        renderLeaderboard();
+        renderOperatorStats(
+          "operatorStats",
+          HISTORY.filter(
+            (h) => (h.created_at || "").slice(0, 7) === leaderboardMonth,
+          ),
+          `Month of ${new Date(`${leaderboardMonth}-01T00:00:00`).toLocaleDateString(undefined, { month: "long", year: "numeric" })}`,
+        );
+      });
+
+      document.getElementById("resetLeaderboard").onclick = async () => {
+        if (!isAdmin) return;
+        const monthLabel = new Date(
+          `${leaderboardMonth}-01T00:00:00`,
+        ).toLocaleDateString(undefined, {
+          month: "long",
+          year: "numeric",
+        });
+        const ok = await confirmModal(
+          `Reset ${monthLabel}?`,
+          `This permanently deletes all leaderboard scores recorded during ${monthLabel}. Other months are not affected.`,
+          "Reset month",
+        );
+        if (!ok) return;
+        await apiSend(
+          API.history + "?month=" + encodeURIComponent(leaderboardMonth),
+          "DELETE",
+        );
+        HISTORY = await apiGet(API.history);
+        renderDashboard();
+        renderLeaderboard();
+        if (document.getElementById("view-review").classList.contains("active"))
+          renderReview();
+        toast(`${monthLabel} leaderboard reset.`);
+      };
+
+      function renderReview() {
+        renderLeaderboard();
+        renderOperatorStats(
+          "historyOperatorStats",
+          HISTORY,
+          "All-time performance",
+        );
+        const opSel = document.getElementById("reviewOperatorFilter");
+        const ops = [
+          ...new Set(HISTORY.map((h) => h.operator_name).filter(Boolean)),
+        ];
+        const prevOp = opSel.value || "all";
+        opSel.innerHTML =
+          '<option value="all">All operators</option>' +
+          ops.map((o) => `<option value="${o}">${o}</option>`).join("");
+        opSel.value = ops.includes(prevOp) ? prevOp : "all";
+        renderSubmissionsList();
+      }
+
+      function renderSubmissionsList() {
+        const q = (
+          document.getElementById("reviewSearch").value || ""
+        ).toLowerCase();
+        const opFilter = document.getElementById("reviewOperatorFilter").value;
+        let rows = [...HISTORY].sort((a, b) => b.id - a.id);
+        if (opFilter !== "all")
+          rows = rows.filter((h) => h.operator_name === opFilter);
+        if (catFilter !== "all")
+          rows = rows.filter((h) => h.category === catFilter);
+        if (q)
+          rows = rows.filter(
+            (h) =>
+              (h.operator_name || "").toLowerCase().includes(q) ||
+              (h.client_name || "").toLowerCase().includes(q),
+          );
+        document.getElementById("submissionCount").textContent =
+          `${rows.length} submission${rows.length === 1 ? "" : "s"}`;
+
+        if (rows.length === 0) {
+          document.getElementById("submissionsList").innerHTML =
+            '<div class="empty-state"><div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></div>Nothing matches yet.</div>';
+          return;
+        }
+
+        document.getElementById("submissionsList").innerHTML = rows
+          .map((h) => {
+            const detail = getDetail(h);
+            const open = openSubmissionId === h.id;
+            return `
+      <div class="submission ${open ? "open" : ""}" id="sub-${h.id}">
+        <div class="submission-head" onclick="toggleSubmission(${h.id})">
+          <span class="chevron">▶</span>
+          <span class="who">${h.operator_name || "—"}</span>
+          <span class="badge ${h.category}">${h.category}</span>
+          <span class="when">${h.client_name} · ${h.created_at}</span>
+          <span class="ring" style="${ringStyle(Number(h.overall_pct))}"><span style="background:var(--surface-2);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;">${h.overall_pct}%</span></span>
+        </div>
+        <div class="submission-detail">${renderSubmissionDetail(h, detail)}</div>
+        <div style="padding:0 14px 14px;text-align:right;">
+          <button class="small-btn danger" onclick="deleteHistoryRow(${h.id})">Delete drill</button>
+        </div>
+      </div>`;
+          })
+          .join("");
+      }
+
+      function renderSubmissionDetail(h, detail) {
+        if (!detail) {
+          return `<p class="no-detail-note">Full breakdown isn't available for this submission (it may have been logged in a different browser/session). Scores: Tools ${h.tool_pct}% · Script ${h.script_pct}% · Overall ${h.overall_pct}%.</p>`;
+        }
+        const catOk = detail.chosenCat === detail.correctCat;
+        const usedSet = new Set(detail.usedTools);
+        const idealSet = new Set(detail.idealTools);
+        const missed = detail.idealTools.filter((t) => !usedSet.has(t));
+        const extra = detail.usedTools.filter((t) => !idealSet.has(t));
+        const audio = SESSION_AUDIO[h.id] || {};
+        const adminReview = detail.adminReview || null;
+
+        return `
+    <p class="narrative" style="margin-top:12px;">${detail.narrative}</p>
+    <div class="detail-grid">
+      <div class="detail-block">
+        <h4>Classification</h4>
+        <div class="compare-line">Correct: <strong style="color:var(--green)">${detail.correctCat.toUpperCase()}</strong></div>
+        <div class="compare-line">Chosen: <strong style="color:${catOk ? "var(--green)" : "var(--red)"}">${detail.chosenCat.toUpperCase()}</strong> ${catOk ? "✓" : "✕"}</div>
+        <div class="compare-line">Time to complete: ${Math.floor(detail.elapsedSec / 60)}m ${detail.elapsedSec % 60}s${detail.timePct !== undefined ? ` (response-time score: ${detail.timePct}%)` : ""}</div>
+      </div>
+      <div class="detail-block">
+        <h4>Tool Selection — ${detail.toolPct}%</h4>
+        <div class="compare-line">Used: ${detail.usedTools.map((t) => TOOL_LABELS[t]).join(", ") || "—"}</div>
+        <div class="compare-line" style="color:${missed.length ? "var(--red)" : "var(--muted)"}">Missed ideal: ${missed.map((t) => TOOL_LABELS[t]).join(", ") || "none"}</div>
+        <div class="compare-line" style="color:${extra.length ? "var(--orange)" : "var(--muted)"}">Unnecessary: ${extra.map((t) => TOOL_LABELS[t]).join(", ") || "none"}</div>
+      </div>
+    </div>
+    <div class="detail-block" style="margin-top:12px;">
+      <h4>Scripts &amp; Call Content — ${detail.scriptPct}%</h4>
+      ${
+        detail.perTool.length === 0
+          ? '<div class="small">No scripts were entered.</div>'
+          : detail.perTool
+              .map(
+                (pt) => `
+        <div class="script-block">
+          <div class="label">${TOOL_LABELS[pt.tool]}${pt.contact ? " → " + pt.contact : ""} · ${pt.hits.length}/${pt.required.length} key elements</div>
+          <div class="body-text">${pt.text ? pt.text.replace(/</g, "&lt;") : "(nothing entered)"}</div>
+          <div class="checklist">${pt.required
+            .map(
+              (r) =>
+                `<span class="${pt.hits.includes(r) ? "hit" : "miss"}">${pt.hits.includes(r) ? "✓" : "✕"} ${r}</span>`,
+            )
+            .join("")}</div>
+          ${audio[pt.tool] ? `<audio controls src="${audio[pt.tool]}" style="margin-top:6px;"></audio>` : ""}
+        </div>`,
+              )
+              .join("")
+      }
+    </div>
+    ${
+      isAdmin
+        ? `
+    <div class="admin-grade-box">
+      <div class="script-feedback-title">Admin voicemail grading</div>
+      <div class="grid2">
+        <div class="field"><label for="vmPoints-${h.id}">Voicemail points (0-100)</label><input type="number" id="vmPoints-${h.id}" min="0" max="100" value="${adminReview?.voicemailPoints ?? detail.scriptPct ?? 0}"></div>
+        <div class="field"><label for="finalPoints-${h.id}">Final points awarded</label><input type="number" id="finalPoints-${h.id}" min="0" value="${adminReview?.pointsAwarded ?? detail.points ?? 0}"></div>
+      </div>
+      <div class="field"><label for="gradeNotes-${h.id}">Admin notes</label><textarea id="gradeNotes-${h.id}" rows="2" placeholder="What was done well or needs coaching?">${adminReview?.notes || ""}</textarea></div>
+      <button class="small-btn primary" onclick="saveAdminGrade(${h.id})">Save admin grade</button>
+      ${adminReview ? `<span class="small" style="margin-left:8px;">Reviewed ${adminReview.reviewedAt || ""}</span>` : ""}
+    </div>`
+        : ""
+    }
+  `;
+      }
+
+      async function saveAdminGrade(id) {
+        if (!isAdmin) return;
+        const voicemailPoints = Number(
+          document.getElementById(`vmPoints-${id}`).value || 0,
+        );
+        const pointsAwarded = Number(
+          document.getElementById(`finalPoints-${id}`).value || 0,
+        );
+        const notes = document.getElementById(`gradeNotes-${id}`).value.trim();
+        const result = await apiSend(API.history + "?id=" + id, "PUT", {
+          voicemail_points: voicemailPoints,
+          points_awarded: pointsAwarded,
+          notes,
+        });
+        const row = HISTORY.find((item) => item.id === id);
+        if (row) row.detail = result.detail;
+        renderSubmissionsList();
+        renderLeaderboard();
+        renderOperatorStats(
+          "historyOperatorStats",
+          HISTORY,
+          "All-time performance",
+        );
+        toast("Admin grade saved.");
+      }
+
+      function toggleSubmission(id) {
+        openSubmissionId = openSubmissionId === id ? null : id;
+        renderSubmissionsList();
+      }
+      document
+        .getElementById("reviewSearch")
+        ?.addEventListener("input", renderSubmissionsList);
+      document
+        .getElementById("reviewOperatorFilter")
+        ?.addEventListener("change", renderSubmissionsList);
+
+      async function deleteHistoryRow(id) {
+        const ok = await confirmModal(
+          "Delete drill?",
+          "This removes this drill from history and permanently deletes its score.",
+        );
+        if (!ok) return;
+        await apiSend(API.history + "?id=" + id, "DELETE");
+        delete SESSION_AUDIO[id];
+        if (openSubmissionId === id) openSubmissionId = null;
+        HISTORY = await apiGet(API.history);
+        renderReview();
+        renderDashboard();
+        toast("Drill deleted.");
+      }
+      document.getElementById("clearHistory").onclick = async () => {
+        const ok = await confirmModal(
+          "Clear all history?",
+          "This deletes every submitted scenario for every operator. This can't be undone.",
+        );
+        if (!ok) return;
+        await apiSend(API.history, "DELETE");
+        HISTORY = await apiGet(API.history);
+        renderReview();
+        renderDashboard();
+        toast("History cleared.");
+      };
+
+      /* ==================== DIRECTORY ==================== */
+      function renderDirectory() {
+        const q = (
+          document.getElementById("directorySearch").value || ""
+        ).toLowerCase();
+        const filter = document.getElementById("directoryFilter").value;
+        const directorySections = {
+          team: ["directoryTeamHeading", "teamCards"],
+          clients: ["directoryClientsHeading", "clientCards"],
+          scenarios: ["directoryScenariosHeading", "incidentCards"],
+        };
+        Object.entries(directorySections).forEach(([key, ids]) => {
+          const visible = filter === "all" || filter === key;
+          ids.forEach((id) => (document.getElementById(id).hidden = !visible));
+        });
+
+        const team = [
+          ...EXECUTIVES.map((e) => ({ ...e, kind: "executive" })),
+          ...OPERATORS.map((o) => ({ ...o, kind: "operator" })),
+        ].filter((p) => p.name.toLowerCase().includes(q));
+
+        document.getElementById("teamCards").innerHTML =
+          team.length === 0
+            ? emptyState(
+                `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" stroke-linecap="round"/></svg>`,
+                "No team members yet.",
+              )
+            : team
+                .map(
+                  (p) => `
+      <div class="entity-card">
+        <span class="directory-marker" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" stroke-linecap="round"/></svg></span>
+        <div class="entity-body">
+          <div class="name">${p.name}</div>
+          <div class="desc"><span class="badge role ${p.kind === "executive" ? "ceo" : ""}">${p.role}</span></div>
+        </div>
+        <div class="entity-actions">
+          <button class="icon-btn ghost admin-only" title="Edit" onclick="editPerson('${p.kind}',${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg></button>
+          <button class="icon-btn danger admin-only" title="Delete" onclick="deletePerson('${p.kind}',${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>`,
+                )
+                .join("");
+
+        const clients = CLIENTS.filter(
+          (c) =>
+            c.name.toLowerCase().includes(q) ||
+            c.address.toLowerCase().includes(q),
+        );
+        document.getElementById("clientCards").innerHTML =
+          clients.length === 0
+            ? emptyState(
+                `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><path d="M4 20V6a1 1 0 0 1 1-1h6v15M11 20h9M14 9h2M14 13h2M7 9h1M7 13h1" stroke-linecap="round"/></svg>`,
+                "No clients yet.",
+              )
+            : clients
+                .map(
+                  (c) => `
+      <div class="entity-card">
+        <span class="directory-marker" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V6a1 1 0 0 1 1-1h6v15M11 20h9M14 9h2M14 13h2M7 9h1M7 13h1" stroke-linecap="round"/></svg></span>
+        <div class="entity-body">
+          <div class="name">${c.name}</div>
+          <div class="desc">${c.address}${c.state ? ", " + c.state : ""}<br>${c.has_speaker ? "Speaker  " : ""}${c.has_siren ? "Siren" : ""}${!c.has_speaker && !c.has_siren ? "No speaker/siren on site" : ""}${c.police_department ? "<br>Police Dept: " + c.police_department : ""}</div>
+        </div>
+        <div class="entity-actions">
+          <button class="icon-btn ghost admin-only" title="Edit" onclick="editClient(${c.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg></button>
+          <button class="icon-btn danger admin-only" title="Delete" onclick="deleteClientRow(${c.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>`,
+                )
+                .join("");
+
+        const incidents = INCIDENTS.filter(
+          (i) =>
+            i.title.toLowerCase().includes(q) ||
+            i.client_name.toLowerCase().includes(q),
+        );
+        document.getElementById("incidentCards").innerHTML =
+          incidents.length === 0
+            ? emptyState(
+                `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><path d="M4 4h13l3 3v13H4Z"/><path d="M17 4v3h3" stroke-linejoin="round"/></svg>`,
+                "No scenarios yet — add one to start running operations.",
+              )
+            : incidents
+                .map(
+                  (i) => `
+      <div class="entity-card">
+        <span class="directory-marker" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h13l3 3v13H4Z"/><path d="M17 4v3h3M8 12h8M8 16h5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="entity-body">
+          <div class="name">${i.title}</div>
+          <div class="desc">${i.client_name} <span class="badge ${i.category}">${i.category}</span></div>
+        </div>
+        <div class="entity-actions">
+          <button class="icon-btn ghost admin-only" title="Edit" onclick="editIncident(${i.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg></button>
+          <button class="icon-btn danger admin-only" title="Delete" onclick="deleteIncidentRow(${i.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>`,
+                )
+                .join("");
+      }
+
+      /* ==================== OPERATIONS VIEW ==================== */
+      function toggleClientDocs(clientId) {
+        if (collapsedClientIds.has(clientId))
+          collapsedClientIds.delete(clientId);
+        else collapsedClientIds.add(clientId);
+        renderOperations();
+      }
+
+      function renderOperations() {
+        const q = (
+          document.getElementById("operationsSearch").value || ""
+        ).toLowerCase();
+        const filter = document.getElementById("operationsFilter").value;
+
+        // Group documents by client
+        const docsByClient = {};
+        DOCUMENTS.forEach((doc) => {
+          if (!docsByClient[doc.client_id]) {
+            docsByClient[doc.client_id] = [];
+          }
+          docsByClient[doc.client_id].push(doc);
+        });
+
+        if (!operationsInitialized) {
+          CLIENTS.forEach((client) => collapsedClientIds.add(client.id));
+          operationsInitialized = true;
+        }
+
+        // Filter clients that have documents or match search
+        const relevantClients = CLIENTS.filter((c) => {
+          const hasDocuments =
+            docsByClient[c.id] && docsByClient[c.id].length > 0;
+          const matchesSearch = c.name.toLowerCase().includes(q);
+          const matchesFilter =
+            filter === "all" ||
+            (filter === "documents" && hasDocuments) ||
+            (filter === "empty" && !hasDocuments);
+          return matchesFilter && (hasDocuments || matchesSearch);
+        });
+
+        // If no matches, show empty state
+        if (
+          relevantClients.length === 0 &&
+          Object.keys(docsByClient).length === 0
+        ) {
+          document.getElementById("documentsGrid").innerHTML = emptyState(
+            `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><path d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m0-18h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9m0-18v18m-4-4h12M5 12h12" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            "No operational documents yet. Add documents to help operators prepare for drills.",
+          );
+          return;
+        }
+
+        const html = CLIENTS.map((client) => {
+          const docs = docsByClient[client.id] || [];
+          const matchesSearch =
+            client.name.toLowerCase().includes(q) ||
+            docs.some(
+              (d) =>
+                d.title.toLowerCase().includes(q) ||
+                (d.description && d.description.toLowerCase().includes(q)),
+            );
+
+          const matchesFilter =
+            filter === "all" ||
+            (filter === "documents" && docs.length > 0) ||
+            (filter === "empty" && docs.length === 0);
+          if (!matchesFilter || (!matchesSearch && docs.length === 0))
+            return "";
+
+          const docsHtml =
+            docs.length === 0
+              ? '<div class="doc-empty">No documents for this client</div>'
+              : docs
+                  .map((doc) => {
+                    const docIcon =
+                      doc.doc_type === "google_drive"
+                        ? '<img src="https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png" alt="Google Drive" />'
+                        : doc.doc_type === "uploaded"
+                          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h8l4 4v14H6Z" stroke-linejoin="round"/><path d="M14 3v5h4" stroke-linejoin="round"/></svg>'
+                          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 13.5a4 4 0 0 0 5.7.2l2-2a4 4 0 0 0-5.7-5.7l-1.1 1.1M14 10.5a4 4 0 0 0-5.7-.2l-2 2A4 4 0 0 0 8 18l1.1-1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                    const docLink =
+                      doc.url ||
+                      (doc.file_path ? `downloads/${doc.file_path}` : "#");
+                    return `
+                  <div class="doc-card">
+                    <div class="doc-header">
+                      <span class="doc-icon">${docIcon}</span>
+                      <div class="doc-info">
+                        <div class="doc-title">${doc.title}</div>
+                        ${doc.category ? `<div class="doc-category">${doc.category}</div>` : ""}
+                      </div>
+                      <div class="doc-actions admin-only">
+                        <button class="icon-btn ghost" title="Edit" onclick="editDocument(${doc.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg></button>
+                        <button class="icon-btn danger" title="Delete" onclick="deleteDocument(${doc.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                      </div>
+                    </div>
+                    ${doc.description ? `<div class="doc-description">${doc.description}</div>` : ""}
+                    <a href="${docLink}" target="_blank" class="doc-link">Open Document →</a>
+                  </div>
+                `;
+                  })
+                  .join("");
+
+          const isCollapsed = collapsedClientIds.has(client.id);
+          return `
+            <div class="client-docs-section ${isCollapsed ? "is-collapsed" : ""}" data-client-id="${client.id}">
+              <div class="client-header">
+                <button class="client-toggle" type="button" aria-expanded="${!isCollapsed}" onclick="toggleClientDocs(${client.id})">
+                  <span class="client-marker" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V6a1 1 0 0 1 1-1h6v15M11 20h9M14 9h2M14 13h2M7 9h1M7 13h1" stroke-linecap="round"/></svg></span>
+                  <div class="client-info">
+                    <div class="client-name">${client.name}</div>
+                    <div class="client-location">${client.address}${client.state ? ", " + client.state : ""}</div>
+                  </div>
+                  <span class="client-doc-count">${docs.length} ${docs.length === 1 ? "resource" : "resources"}</span>
+                  <span class="client-chevron" aria-hidden="true">›</span>
+                </button>
+              </div>
+              <div class="docs-list">
+                ${docsHtml}
+              </div>
+            </div>
+          `;
+        })
+          .filter((h) => h)
+          .join("");
+
+        document.getElementById("documentsGrid").innerHTML =
+          html ||
+          emptyState(
+            `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><path d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m0-18h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9m0-18v18m-4-4h12M5 12h12" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            "No operational documents found.",
+          );
+      }
+
+      document
+        .getElementById("operationsSearch")
+        .addEventListener("input", renderOperations);
+      document
+        .getElementById("operationsFilter")
+        .addEventListener("change", renderOperations);
+
+      async function editDocument(id) {
+        const doc = DOCUMENTS.find((d) => d.id === id);
+        if (!doc) return;
+        showDocumentModal(doc);
+      }
+
+      async function deleteDocument(id) {
+        const ok = await confirmModal(
+          "Delete document?",
+          "This permanently removes this document.",
+        );
+        if (!ok) return;
+        await apiSend(API.documents + "?id=" + id, "DELETE");
+        await loadAll();
+        renderOperations();
+        toast("Document deleted.");
+      }
+
+      function initials(name) {
+        return name
+          .split(" ")
+          .map((p) => p[0])
+          .slice(0, 2)
+          .join("")
+          .toUpperCase();
+      }
+      function emptyState(icon, text) {
+        return `<div class="empty-state" style="grid-column:1/-1;"><div class="big">${icon}</div>${text}</div>`;
+      }
+      document
+        .getElementById("directorySearch")
+        .addEventListener("input", renderDirectory);
+      document
+        .getElementById("directoryFilter")
+        .addEventListener("change", renderDirectory);
+
+      async function deleteClientRow(id) {
+        const ok = await confirmModal(
+          "Delete client?",
+          "This deletes the client and all of its drills. This can't be undone.",
+        );
+        if (!ok) return;
+        await apiSend(API.clients + "?id=" + id, "DELETE");
+        await loadAll();
+        renderDirectory();
+        toast("Client deleted.");
+      }
+      async function deleteIncidentRow(id) {
+        const ok = await confirmModal(
+          "Delete scenario?",
+          "This permanently removes this scenario.",
+        );
+        if (!ok) return;
+        await apiSend(API.incidents + "?id=" + id, "DELETE");
+        await loadAll();
+        renderDirectory();
+        toast("Scenario deleted.");
+      }
+      async function deletePerson(type, id) {
+        const ok = await confirmModal(
+          "Delete team member?",
+          "This removes them from the roster.",
+        );
+        if (!ok) return;
+        await apiSend(
+          (type === "operator" ? API.operators : API.executives) + "?id=" + id,
+          "DELETE",
+        );
+        await loadAll();
+        renderDirectory();
+        toast("Team member deleted.");
+      }
+
+      /* ==================== ADD / EDIT MODALS ==================== */
+      function renderChips(containerId, active) {
+        const el = document.getElementById(containerId);
+        el.innerHTML = ALL_TOOL_KEYS.map(
+          (k) =>
+            `<span class="chip ${active.includes(k) ? "active" : ""}" data-key="${k}" onclick="this.classList.toggle('active')">${TOOL_LABELS[k]}</span>`,
+        ).join("");
+      }
+      function readChips(containerId) {
+        return [
+          ...document.querySelectorAll("#" + containerId + " .chip.active"),
+        ].map((el) => el.dataset.key);
+      }
+
+      /* --- Client modal --- */
+      function clientModal(existing) {
+        editingClientId = existing ? existing.id : null;
+        openModal(
+          existing ? "Edit Client" : "Add a Client",
+          `
+      <div class="grid2">
+        <div class="field"><label>Client name</label><input type="text" id="mClientName" placeholder="e.g. Ronald Cohen" value="${existing ? existing.name : ""}"></div>
+        <div class="field"><label>State</label>
+          <select id="mClientState">
+            ${["NY", "NJ", "CA", "FL", "Other"].map((s) => `<option ${existing && existing.state === s ? "selected" : ""}>${s}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Address</label><input type="text" id="mClientAddress" placeholder="Street, City, State, ZIP" value="${existing ? existing.address : ""}"></div>
+      <div class="checkrow">
+        <label><input type="checkbox" id="mClientSpeaker" ${existing && existing.has_speaker ? "checked" : ""}> Has speaker</label>
+        <label><input type="checkbox" id="mClientSiren" ${existing && existing.has_siren ? "checked" : ""}> Has siren/alarm</label>
+      </div>
+      <div class="field"><label>Police Department (Optional)</label><input type="text" id="mClientPolice" placeholder="e.g. Brooklyn Police Department" value="${existing && existing.police_department ? existing.police_department : ""}"></div>
+      <div class="field"><label>Police Hotline (Optional)</label><input type="text" id="mClientHotline" placeholder="e.g. 911 or local dispatch number" value="${existing && existing.police_hotline ? existing.police_hotline : ""}"></div>
+      <div id="mClientMsg" class="small" style="margin-top:6px;color:#ff9d9d;"></div>
+    `,
+          `<button class="ghost" onclick="closeModal()">Cancel</button>
+       <button class="primary" id="mClientSave">${existing ? "Update Client" : "Save Client"}</button>`,
+        );
+        document.getElementById("mClientSave").onclick = saveClientModal;
+      }
+      async function saveClientModal() {
+        const name = document.getElementById("mClientName").value.trim();
+        const address = document.getElementById("mClientAddress").value.trim();
+        const state = document.getElementById("mClientState").value;
+        const has_speaker = document.getElementById("mClientSpeaker").checked;
+        const has_siren = document.getElementById("mClientSiren").checked;
+        const police_department = document
+          .getElementById("mClientPolice")
+          .value.trim();
+        const police_hotline = document
+          .getElementById("mClientHotline")
+          .value.trim();
+        const msg = document.getElementById("mClientMsg");
+        if (!name || !address) {
+          msg.textContent = "Name and address are required.";
+          return;
+        }
+        const body = {
+          name,
+          address,
+          state,
+          has_speaker,
+          has_siren,
+          police_department: police_department || null,
+          police_hotline: police_hotline || null,
+        };
+        if (editingClientId) {
+          await apiSend(API.clients + "?id=" + editingClientId, "PUT", body);
+          toast(`${name} updated.`);
+        } else {
+          await apiSend(API.clients, "POST", body);
+          toast(`${name} added.`);
+        }
+        editingClientId = null;
+        closeModal();
+        await loadAll();
+        renderDirectory();
+      }
+      function editClient(id) {
+        clientModal(client(id));
+      }
+      document.getElementById("openAddClient").onclick = () =>
+        clientModal(null);
+
+      /* --- Incident modal --- */
+      function incidentModal(existing) {
+        editingIncidentId = existing ? existing.id : null;
+        openModal(
+          existing ? "Edit Scenario" : "Add a Scenario / Incident",
+          `
+      <div class="grid2">
+        <div class="field"><label>Title</label><input type="text" id="mIncTitle" placeholder="Short name for this scenario" value="${existing ? existing.title : ""}"></div>
+        <div class="field"><label>Client</label><select id="mIncClient">${CLIENTS.map((c) => `<option value="${c.id}" ${existing && existing.client_id === c.id ? "selected" : ""}>${c.name}</option>`).join("")}</select></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Category</label>
+          <select id="mIncCat">
+            <option value="green" ${existing && existing.category === "green" ? "selected" : ""}>Green — safe</option>
+            <option value="orange" ${existing && existing.category === "orange" ? "selected" : ""}>Orange — unusual</option>
+            <option value="red" ${existing && existing.category === "red" ? "selected" : ""}>Red — emergency</option>
+          </select>
+        </div>
+        <div class="field"><label>Time of incident</label><input type="text" id="mIncTime" placeholder="e.g. 2:15 AM" value="${existing ? existing.time_label || "" : ""}"></div>
+      </div>
+      <div class="field"><label>Narrative (what the operator sees on camera)</label><textarea id="mIncNarrative" placeholder="Describe exactly what appears on camera...">${existing ? existing.narrative : ""}</textarea></div>
+      <div class="field"><label>Ideal response actions</label><div class="chips" id="mIncTools"></div></div>
+      <div class="field"><label>Key details the operator's scripts should mention (comma separated)</label><input type="text" id="mIncExtra" placeholder="e.g. forced entry, masked, weapons" value="${existing ? existing.extra_keywords.join(", ") : ""}"></div>
+      <div id="mIncMsg" class="small" style="margin-top:6px;color:#ff9d9d;"></div>
+    `,
+          `<button class="ghost" onclick="closeModal()">Cancel</button>
+       <button class="primary" id="mIncSave">${existing ? "Update Scenario" : "Save Scenario"}</button>`,
+        );
+        renderChips("mIncTools", existing ? existing.ideal_tools : []);
+        document.getElementById("mIncSave").onclick = saveIncidentModal;
+      }
+      async function saveIncidentModal() {
+        const title = document.getElementById("mIncTitle").value.trim();
+        const client_id = document.getElementById("mIncClient").value;
+        const category = document.getElementById("mIncCat").value;
+        const time_label =
+          document.getElementById("mIncTime").value.trim() ||
+          "unspecified time";
+        const narrative = document.getElementById("mIncNarrative").value.trim();
+        const ideal_tools = readChips("mIncTools");
+        const extra_keywords = document
+          .getElementById("mIncExtra")
+          .value.split(",")
+          .map((s) => s.trim().toLowerCase())
+          .filter(Boolean);
+        const msg = document.getElementById("mIncMsg");
+
+        if (!title || !client_id || !narrative || ideal_tools.length === 0) {
+          msg.textContent =
+            "Title, client, narrative, and at least one ideal action are required.";
+          return;
+        }
+
+        const body = {
+          title,
+          client_id,
+          category,
+          time_label,
+          narrative,
+          ideal_tools,
+          extra_keywords,
+        };
+
+        if (editingIncidentId) {
+          await apiSend(
+            API.incidents + "?id=" + editingIncidentId,
+            "PUT",
+            body,
+          );
+          toast(`"${title}" updated.`);
+        } else {
+          await apiSend(API.incidents, "POST", body);
+          toast(`"${title}" added to the rotation.`);
+        }
+        editingIncidentId = null;
+        closeModal();
+        await loadAll();
+        renderDirectory();
+      }
+      function editIncident(id) {
+        incidentModal(INCIDENTS.find((i) => i.id === id));
+      }
+      document.getElementById("openAddIncident").onclick = () => {
+        if (CLIENTS.length === 0) {
+          toast("Add a client first, then add a scenario for them.", "warn");
+          return;
+        }
+        incidentModal(null);
+      };
+
+      /* --- Team member modal --- */
+      function personModal(type, existing) {
+        editingPersonId = existing ? existing.id : null;
+        editingPersonType = existing ? type : null;
+        const isOperator = (type || "operator") === "operator";
+        openModal(
+          existing ? "Edit Team Member" : "Add a Team Member",
+          `
+      <div class="grid2">
+        <div class="field"><label>Name</label><input type="text" id="mPersonName" placeholder="Full name" value="${existing ? existing.name : ""}"></div>
+        <div class="field"><label>Group</label>
+          <select id="mPersonType">
+            <option value="operator" ${isOperator ? "selected" : ""}>Operator team</option>
+            <option value="executive" ${!isOperator ? "selected" : ""}>Executive</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="mOperatorRoleField" ${isOperator ? "" : "hidden"}>
+        <label>Role</label>
+        <select id="mPersonOperatorRole">
+          <option value="Operator" ${existing && existing.role === "Operator" ? "selected" : ""}>Operator</option>
+          <option value="Supervisor" ${existing && existing.role === "Supervisor" ? "selected" : ""}>Supervisor</option>
+        </select>
+      </div>
+      <div class="field" id="mExecutiveRoleField" ${!isOperator ? "" : "hidden"}>
+        <label>Role</label>
+        <input type="text" id="mPersonExecutiveRole" value="${existing && !isOperator ? existing.role : "CEO"}">
+      </div>
+      <div id="mPersonMsg" class="small" style="margin-top:6px;color:#ff9d9d;"></div>
+    `,
+          `<button class="ghost" onclick="closeModal()">Cancel</button>
+       <button class="primary" id="mPersonSave">${existing ? "Update Team Member" : "Save Team Member"}</button>`,
+        );
+        document.getElementById("mPersonType").onchange = (e) => {
+          const op = e.target.value === "operator";
+          document.getElementById("mOperatorRoleField").hidden = !op;
+          document.getElementById("mExecutiveRoleField").hidden = op;
+        };
+        document.getElementById("mPersonSave").onclick = savePersonModal;
+      }
+      async function savePersonModal() {
+        const name = document.getElementById("mPersonName").value.trim();
+        const type = document.getElementById("mPersonType").value;
+        const role =
+          type === "operator"
+            ? document.getElementById("mPersonOperatorRole").value
+            : document.getElementById("mPersonExecutiveRole").value.trim() ||
+              "CEO";
+        const msg = document.getElementById("mPersonMsg");
+        if (!name) {
+          msg.textContent = "Name is required.";
+          return;
+        }
+        const endpoint = type === "operator" ? API.operators : API.executives;
+        if (editingPersonId && editingPersonType === type) {
+          await apiSend(endpoint + "?id=" + editingPersonId, "PUT", {
+            name,
+            role,
+          });
+          toast(`${name} updated.`);
+        } else {
+          await apiSend(endpoint, "POST", { name, role });
+          toast(`${name} added.`);
+        }
+        editingPersonId = null;
+        editingPersonType = null;
+        closeModal();
+        await loadAll();
+        renderDirectory();
+      }
+      function editPerson(type, id) {
+        const list = type === "operator" ? OPERATORS : EXECUTIVES;
+        personModal(
+          type,
+          list.find((x) => x.id === id),
+        );
+      }
+      document.getElementById("openAddPerson").onclick = () =>
+        personModal("operator", null);
+
+      /* ==================== DOCUMENT MODAL ==================== */
+      function showDocumentModal(existing) {
+        editingDocId = existing ? existing.id : null;
+        openModal(
+          existing ? "Edit Document" : "Add Operational Document",
+          `
+      <div class="field"><label>Client</label>
+        <select id="mDocClient">
+          ${CLIENTS.map((c) => `<option value="${c.id}" ${existing && existing.client_id === c.id ? "selected" : ""}>${c.name}</option>`).join("")}
+        </select>
+      </div>
+      <div class="field"><label>Document Title</label>
+        <input type="text" id="mDocTitle" placeholder="e.g. Evacuation Plan, Client Profile" value="${existing ? existing.title : ""}">
+      </div>
+      <div class="field"><label>Category (optional)</label>
+        <input type="text" id="mDocCategory" placeholder="e.g. Operational Plan, Client Profile, Contact List" value="${existing ? existing.category || "" : ""}">
+      </div>
+      <div class="field"><label>Description (optional)</label>
+        <textarea id="mDocDescription" placeholder="Brief description of the document..." rows="3">${existing ? existing.description || "" : ""}</textarea>
+      </div>
+      <div class="field"><label>Document Type</label>
+        <select id="mDocType">
+          <option value="external_url" ${existing && existing.doc_type === "external_url" ? "selected" : ""}>External URL (Google Drive, etc.)</option>
+          <option value="google_drive" ${existing && existing.doc_type === "google_drive" ? "selected" : ""}>Google Drive Link</option>
+          <option value="uploaded" ${existing && existing.doc_type === "uploaded" ? "selected" : ""}>Uploaded File</option>
+        </select>
+      </div>
+      <div class="field" id="mDocUrlField">
+        <label>URL</label>
+        <input type="text" id="mDocUrl" placeholder="https://drive.google.com/... or document URL" value="${existing ? existing.url || "" : ""}">
+        <small style="color:var(--muted);margin-top:4px;display:block;">For Google Drive, use the shareable link</small>
+      </div>
+      <div id="mDocMsg" class="small" style="margin-top:6px;color:#ff9d9d;"></div>
+    `,
+          `<button class="ghost" onclick="closeModal()">Cancel</button>
+       <button class="primary" id="mDocSave">${existing ? "Update Document" : "Add Document"}</button>`,
+        );
+        document.getElementById("mDocSave").onclick = saveDocumentModal;
+      }
+
+      async function saveDocumentModal() {
+        const title = document.getElementById("mDocTitle").value.trim();
+        const client_id = document.getElementById("mDocClient").value;
+        const category =
+          document.getElementById("mDocCategory").value.trim() || null;
+        const description =
+          document.getElementById("mDocDescription").value.trim() || null;
+        const doc_type = document.getElementById("mDocType").value;
+        const url = document.getElementById("mDocUrl").value.trim() || null;
+        const msg = document.getElementById("mDocMsg");
+
+        if (!title || !client_id) {
+          msg.textContent = "Title and client are required.";
+          return;
+        }
+
+        if (
+          (doc_type === "external_url" || doc_type === "google_drive") &&
+          !url
+        ) {
+          msg.textContent = "URL is required for this document type.";
+          return;
+        }
+
+        const body = {
+          title,
+          client_id,
+          category,
+          description,
+          doc_type,
+          url,
+        };
+
+        if (editingDocId) {
+          await apiSend(API.documents + "?id=" + editingDocId, "PUT", body);
+          toast(`"${title}" updated.`);
+        } else {
+          await apiSend(API.documents, "POST", body);
+          toast(`"${title}" added.`);
+        }
+        editingDocId = null;
+        closeModal();
+        await loadAll();
+        renderOperations();
+      }
+
+      let editingDocId = null;
+
+      document.getElementById("openAddDocument").onclick = () => {
+        if (CLIENTS.length === 0) {
+          toast("Add a client first, then add documents for them.", "warn");
+          return;
+        }
+        showDocumentModal(null);
+      };
+
+      /* ==================== BOOT ==================== */
+      document.getElementById("newDrillBtn").onclick = startScenario;
+      loadAll();
+    </script>
+  </body>
+</html>

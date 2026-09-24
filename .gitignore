@@ -1,0 +1,14 @@
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+
+# Local deployment artifacts
+for claude.zip
+*.log
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
