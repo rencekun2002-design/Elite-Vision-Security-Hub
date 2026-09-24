@@ -4302,7 +4302,7 @@
         document.getElementById("submissionsList").innerHTML = rows
           .map((h) => {
             const detail = getDetail(h);
-            const open = openSubmissionId === h.id;
+            const open = isAdmin || openSubmissionId === h.id;
             return `
       <div class="submission ${open ? "open" : ""}" id="sub-${h.id}">
         <div class="submission-head" onclick="toggleSubmission(${h.id})">
