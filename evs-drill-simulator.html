@@ -2958,7 +2958,8 @@
       const collapsedClientIds = new Set();
       let operationsInitialized = false;
       const ADMIN_CODE = "evsadmin";
-      let isAdmin = sessionStorage.getItem("evs_admin") === "1";
+      const MAX_VOICEMAIL_ATTEMPTS = 3;
+      let isAdmin = false;
       let isDarkMode = localStorage.getItem("evs_theme") === "dark";
       const currentMonth = new Date().toISOString().slice(0, 7);
       let leaderboardMonth =
@@ -3241,7 +3242,6 @@
 
       function enableAdminMode() {
         isAdmin = true;
-        sessionStorage.setItem("evs_admin", "1");
         applyAdminUI();
         refreshAdminViews();
         toast("Admin mode enabled.");
@@ -3283,7 +3283,6 @@
       document.getElementById("adminToggleBtn").onclick = () => {
         if (isAdmin) {
           isAdmin = false;
-          sessionStorage.removeItem("evs_admin");
           applyAdminUI();
           toast("Signed out of admin mode.");
           refreshAdminViews();
@@ -3465,6 +3464,7 @@
           scripts: {},
           audio: {},
           audioBlobs: {},
+          voicemailAttempts: {},
           revealedInfo: new Set(),
           infoPenalty: 0,
           policeDepartmentChoice: "",
@@ -3730,6 +3730,14 @@
           mediaRecorder.stop();
           return;
         }
+        const attempts = current.voicemailAttempts[tool] || 0;
+        if (attempts >= MAX_VOICEMAIL_ATTEMPTS) {
+          toast(
+            `No voicemail attempts remaining for ${TOOL_LABELS[tool]}.`,
+            "warn",
+          );
+          return;
+        }
         try {
           const stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
@@ -3737,6 +3745,7 @@
           chunks = [];
           mediaRecorder = new MediaRecorder(stream);
           activeRecordTarget = tool;
+          current.voicemailAttempts[tool] = attempts + 1;
           mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
           mediaRecorder.onstop = () => {
             const blob = new Blob(chunks, { type: "audio/webm" });
@@ -3942,13 +3951,18 @@
           timeAdjustment;
         const unavailableEquipment = unavailableEquipmentUsed();
         const equipmentPenalty = unavailableEquipment.length * 3;
+        const voicemailAttempts = Object.values(
+          current.voicemailAttempts,
+        ).reduce((total, attempts) => total + attempts, 0);
+        const voicemailPenalty = voicemailAttempts;
         const points = Math.max(
           0,
           grossPoints -
             current.infoPenalty -
             equipmentPenalty -
             addressPenalty -
-            policeDepartmentPenalty,
+            policeDepartmentPenalty -
+            voicemailPenalty,
         );
         const audioData = Object.fromEntries(
           await Promise.all(
@@ -4014,6 +4028,7 @@
       ${equipmentPenalty ? ` − <strong>${equipmentPenalty}</strong> unavailable equipment cost` : ""}
       ${addressPenalty ? ` − <strong>${addressPenalty}</strong> address accuracy cost` : ""}
       ${policeDepartmentPenalty ? ` − <strong>${policeDepartmentPenalty}</strong> police department cost` : ""}
+      ${voicemailPenalty ? ` − <strong>${voicemailPenalty}</strong> voicemail attempt cost` : ""}
       = <strong>${points} points earned</strong>.
     </div>
     <div class="script-feedback">
@@ -4068,6 +4083,8 @@
           overall,
           grossPoints,
           points,
+          voicemailAttempts,
+          voicemailPenalty,
           audioData,
           infoPenalty: current.infoPenalty,
           equipmentPenalty,
@@ -4323,7 +4340,7 @@
         </div>
         <div class="submission-detail">${renderSubmissionDetail(h, detail)}</div>
         <div style="padding:0 14px 14px;text-align:right;">
-          <button class="small-btn danger" onclick="deleteHistoryRow(${h.id})">Delete drill</button>
+          <button class="small-btn danger admin-only" onclick="deleteHistoryRow(${h.id})">Delete drill</button>
         </div>
       </div>`;
           })
@@ -4442,6 +4459,7 @@
         ?.addEventListener("change", renderSubmissionsList);
 
       async function deleteHistoryRow(id) {
+        if (!isAdmin) return;
         const ok = await confirmModal(
           "Delete drill?",
           "This removes this drill from history and permanently deletes its score.",
@@ -4456,6 +4474,7 @@
         toast("Drill deleted.");
       }
       document.getElementById("clearHistory").onclick = async () => {
+        if (!isAdmin) return;
         const ok = await confirmModal(
           "Clear all history?",
           "This deletes every submitted scenario for every operator. This can't be undone.",
