@@ -1,6 +1,6 @@
 # EVS Command Center Hub — XAMPP / MySQL Edition
 
-This version stores everything (clients, scenarios, operators, executives, scenario history)
+This repository stores everything (clients, scenarios, operators, executives, scenario history)
 in a real MySQL database through a small PHP API, so you get full **Create, Read, Update,
 Delete** on every record instead of browser-only storage.
 
@@ -11,11 +11,11 @@ Download XAMPP if you don't have it, then open the **XAMPP Control Panel** and s
 - **Apache**
 - **MySQL**
 
-## 2. Copy this folder into htdocs
+## 2. Clone this repository into htdocs
 
-Copy the whole `evs-drill-simulator` folder into XAMPP's `htdocs` directory:
+Clone the repository into XAMPP's `htdocs` directory:
 
-- Windows: `C:\xampp\htdocs\evs-drill-simulator`
+- Windows: `C:\xampp\htdocs\Elite-Vision-Security-Hub`
 - macOS: `/Applications/XAMPP/htdocs/evs-drill-simulator`
 - Linux: `/opt/lampp/htdocs/evs-drill-simulator`
 
@@ -23,7 +23,7 @@ Copy the whole `evs-drill-simulator` folder into XAMPP's `htdocs` directory:
 
 1. Open `http://localhost/phpmyadmin` in your browser.
 2. Click **Import** in the top menu.
-3. Choose the `evs-drill-simulator.sql` file from this folder.
+3. Choose `evs-drill-simulator.sql` from the repository root.
 4. Click **Go**.
 
 This creates the `evs_drills` database with every table and loads all the existing
@@ -45,7 +45,7 @@ $DB_PASS = '';
 Go to:
 
 ```
-http://localhost/evs-drill-simulator/
+http://localhost/Elite-Vision-Security-Hub/
 ```
 
 Do **not** open `evs-drill-entry.html` by double-clicking it — the page needs to be served by
@@ -54,8 +54,8 @@ show a "can't reach the database" message.
 
 ## What's in each folder
 
-- `evs-drill-simulator.html` — the whole application (drill runner, directory, add/edit forms).
-- `evs-drill-simulator.sql` — schema + seed data, import once in phpMyAdmin.
+- `evs-drill-simulator.html` — the point-based application (drill runner, directory, add/edit forms).
+- `evs-drill-simulator.sql` — schema + seed data for the point-based application, import once in phpMyAdmin.
 - `api/db.php` — shared database connection settings.
 - `api/clients.php` — CRUD for clients (create, read, update, delete).
 - `api/incidents.php` — CRUD for drills/incidents, including the two-stage complex drills.

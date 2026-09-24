@@ -18,10 +18,10 @@ and `pdo_sqlite` enabled.
 
 ### Drill simulator database
 
-Create a database named `evs_drills` in phpMyAdmin and import:
+Create a database named `evs_drills` in phpMyAdmin and import the point-system schema:
 
 ```text
-C:\xampp\htdocs\Elite-Vision-Security-Hub\evs-drill-simulator\database2.sql
+C:\xampp\htdocs\Elite-Vision-Security-Hub\evs-drill-simulator.sql
 ```
 
 For a passworded MySQL account, define these Apache environment variables in
@@ -83,7 +83,7 @@ runtime backup exists.
 Run `ipconfig` on the anchor PC and use its IPv4 address from other machines:
 
 ```text
-http://ANCHOR-IP/evs-drill-simulator/
+http://ANCHOR-IP/Elite-Vision-Security-Hub/
 http://ANCHOR-IP/evs-payroll-system/
 ```
 
