@@ -4321,7 +4321,7 @@
 
       function renderSubmissionDetail(h, detail) {
         if (!detail) {
-          return `<p class="no-detail-note">Full breakdown isn't available for this submission (it may have been logged in a different browser/session). Scores: Tools ${h.tool_pct}% · Script ${h.script_pct}% · Overall ${h.overall_pct}%.</p>`;
+          return `<p class="no-detail-note">Full breakdown isn't available for this submission (it may have been logged in a different browser/session). Scores: Tools ${h.tool_pct}% · Script ${h.script_pct}% · Overall ${h.overall_pct}%.</p>${renderAdminGrade(h, null)}`;
         }
         const catOk = detail.chosenCat === detail.correctCat;
         const usedSet = new Set(detail.usedTools);
@@ -4370,22 +4370,26 @@
               .join("")
       }
     </div>
-    ${
-      isAdmin
-        ? `
+    ${renderAdminGrade(h, detail)}
+  `;
+      }
+
+      function renderAdminGrade(h, detail) {
+        if (!isAdmin) return "";
+        const adminReview = detail?.adminReview || null;
+        const defaultVoicemailPoints = detail?.scriptPct ?? h.script_pct ?? 0;
+        const defaultPoints = detail?.points ?? h.overall_pct ?? 0;
+        return `
     <div class="admin-grade-box">
       <div class="script-feedback-title">Admin voicemail grading</div>
       <div class="grid2">
-        <div class="field"><label for="vmPoints-${h.id}">Voicemail points (0-100)</label><input type="number" id="vmPoints-${h.id}" min="0" max="100" value="${adminReview?.voicemailPoints ?? detail.scriptPct ?? 0}"></div>
-        <div class="field"><label for="finalPoints-${h.id}">Final points awarded</label><input type="number" id="finalPoints-${h.id}" min="0" value="${adminReview?.pointsAwarded ?? detail.points ?? 0}"></div>
+        <div class="field"><label for="vmPoints-${h.id}">Voicemail points (0-100)</label><input type="number" id="vmPoints-${h.id}" min="0" max="100" value="${adminReview?.voicemailPoints ?? defaultVoicemailPoints}"></div>
+        <div class="field"><label for="finalPoints-${h.id}">Final points awarded</label><input type="number" id="finalPoints-${h.id}" min="0" value="${adminReview?.pointsAwarded ?? defaultPoints}"></div>
       </div>
       <div class="field"><label for="gradeNotes-${h.id}">Admin notes</label><textarea id="gradeNotes-${h.id}" rows="2" placeholder="What was done well or needs coaching?">${adminReview?.notes || ""}</textarea></div>
       <button class="small-btn primary" onclick="saveAdminGrade(${h.id})">Save admin grade</button>
       ${adminReview ? `<span class="small" style="margin-left:8px;">Reviewed ${adminReview.reviewedAt || ""}</span>` : ""}
-    </div>`
-        : ""
-    }
-  `;
+    </div>`;
       }
 
       async function saveAdminGrade(id) {
