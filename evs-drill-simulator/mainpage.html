@@ -1,0 +1,3188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EVS Command Center Hub</title>
+    <style>
+      :root {
+        --bg: #f3f5f3;
+        --bg-2: #ffffff;
+        --surface: #ffffff;
+        --surface-2: #f1f4f1;
+        --surface-3: #e7ebe7;
+        --border: #dde3de;
+        --cream: #172420;
+        --cream-dim: #3c4a44;
+        --cream-soft: #1c2b22;
+        --muted: #667b70;
+        --accent: #148a56;
+        --accent-dim: #0e6f44;
+        --gold: #a76f16;
+        --green: #16874f;
+        --orange: #b26a0c;
+        --red: #c53434;
+        --shadow: 0 4px 16px rgba(23, 40, 30, 0.06);
+        --radius: 10px;
+        --radius-sm: 7px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, Arial, sans-serif;
+        background:
+          radial-gradient(circle at 15% -10%, #e4f2e9 0%, transparent 45%),
+          radial-gradient(circle at 100% 0%, #eaf3ec 0%, transparent 40%),
+          var(--bg);
+        color: var(--cream);
+        min-height: 100vh;
+      }
+      ::selection {
+        background: var(--accent);
+        color: #ffffff;
+      }
+      a {
+        color: var(--accent);
+      }
+      body {
+        scrollbar-color: var(--surface-3) var(--bg);
+      }
+
+      /* ---------- header ---------- */
+      header {
+        padding: 16px 24px;
+        background: #ffffff;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        backdrop-filter: blur(6px);
+      }
+      .header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand .logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(20, 138, 86, 0.35);
+      }
+      .brand .logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .brand h1 {
+        font-size: 16.5px;
+        margin: 0;
+        letter-spacing: 0.01em;
+      }
+      .brand .sub {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 1px;
+      }
+      nav.tabs {
+        display: flex;
+        gap: 6px;
+        background: var(--surface);
+        padding: 5px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+      }
+      nav.tabs button {
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .nav-ic {
+        display: inline-flex;
+        width: 14px;
+        height: 14px;
+      }
+      .nav-ic svg {
+        width: 14px;
+        height: 14px;
+      }
+      .admin-toggle {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 700;
+      }
+      .admin-toggle svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+      }
+      body.is-admin .admin-toggle {
+        background: rgba(20, 138, 86, 0.1);
+        border-color: var(--accent-dim);
+        color: var(--accent-dim);
+      }
+      .admin-only {
+        display: none !important;
+      }
+      body.is-admin .admin-only {
+        display: inline-flex !important;
+      }
+      body.is-admin .admin-only.block {
+        display: block !important;
+      }
+      .admin-pill {
+        font-size: 10.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(20, 138, 86, 0.12);
+        color: var(--accent-dim);
+        border: 1px solid rgba(20, 138, 86, 0.3);
+      }
+      nav.tabs button.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        color: #ffffff;
+        box-shadow: 0 3px 10px rgba(20, 138, 86, 0.3);
+      }
+      nav.tabs button:not(.active):hover {
+        color: var(--cream);
+        background: var(--surface-2);
+      }
+      .header-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+      select,
+      button,
+      input[type="text"],
+      input[type="search"] {
+        padding: 9px 13px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
+        background: var(--surface-2);
+        color: var(--cream);
+        cursor: pointer;
+        font-size: 13.5px;
+        font-family: inherit;
+        transition: all 0.15s ease;
+      }
+      select:hover,
+      button:hover {
+        border-color: var(--accent-dim);
+      }
+      input[type="text"],
+      input[type="search"],
+      textarea {
+        cursor: text;
+      }
+      button.primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        border-color: var(--accent-dim);
+        color: #ffffff;
+        font-weight: 700;
+      }
+      button.primary:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+      }
+      button.ghost {
+        background: transparent;
+      }
+      button.gold {
+        background: linear-gradient(135deg, var(--gold), #c98f3f);
+        border-color: #c98f3f;
+        color: #ffffff;
+        font-weight: 700;
+      }
+      button:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      button.small-btn {
+        font-size: 11.5px;
+        padding: 6px 10px;
+      }
+      button.danger {
+        background: #fdeceb;
+        border-color: var(--red);
+        color: #b3261e;
+      }
+      button.icon-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9px;
+        font-size: 14px;
+      }
+      .filter-chip {
+        display: flex;
+        gap: 6px;
+        background: var(--surface);
+        padding: 4px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+      }
+      .filter-chip button {
+        border: none;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 12.5px;
+        font-weight: 600;
+      }
+      .filter-chip button.active {
+        background: var(--surface-3);
+        color: var(--cream);
+      }
+      .filter-chip button.active.green {
+        background: rgba(74, 222, 128, 0.18);
+        color: var(--green);
+      }
+      .filter-chip button.active.orange {
+        background: rgba(242, 169, 60, 0.18);
+        color: var(--orange);
+      }
+      .filter-chip button.active.red {
+        background: rgba(239, 91, 91, 0.18);
+        color: var(--red);
+      }
+
+      /* ---------- layout ---------- */
+      main {
+        max-width: 1080px;
+        margin: 26px auto 80px;
+        padding: 0 18px;
+      }
+      section.view {
+        display: none;
+      }
+      section.view.active {
+        display: block;
+        animation: fadeUp 0.35s ease;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 22px;
+        margin-bottom: 18px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+      .card.cream {
+        background: linear-gradient(180deg, #fbf6ea, #f6efd9);
+        color: #17241c;
+        border-color: #e3d8b8;
+      }
+      .card.cream .muted-c {
+        color: #6b6250;
+      }
+      .card-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .card h2 {
+        margin: 0;
+        font-size: 15.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .section-heading {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin: 26px 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .section-heading:first-child {
+        margin-top: 0;
+      }
+
+      /* ---------- badges ---------- */
+      .badge {
+        display: inline-block;
+        padding: 3px 11px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .badge.green {
+        background: rgba(74, 222, 128, 0.15);
+        color: var(--green);
+        border: 1px solid rgba(74, 222, 128, 0.4);
+      }
+      .badge.orange {
+        background: rgba(242, 169, 60, 0.15);
+        color: var(--orange);
+        border: 1px solid rgba(242, 169, 60, 0.4);
+      }
+      .badge.red {
+        background: rgba(239, 91, 91, 0.15);
+        color: var(--red);
+        border: 1px solid rgba(239, 91, 91, 0.4);
+      }
+      .badge.role {
+        background: rgba(20, 138, 86, 0.15);
+        color: var(--accent);
+        border: 1px solid rgba(20, 138, 86, 0.4);
+        text-transform: none;
+      }
+      .badge.role.ceo {
+        background: rgba(224, 177, 104, 0.18);
+        color: var(--gold);
+        border: 1px solid rgba(224, 177, 104, 0.4);
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--surface-3);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11.5px;
+        color: var(--cream-dim);
+      }
+
+      /* ---------- drill ---------- */
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 6px 0 0;
+      }
+      .narrative {
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 16px 0;
+        padding: 16px;
+        background: #eef1ee;
+        border-left: 3px solid var(--accent);
+        border-radius: 8px;
+      }
+      .stepper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 4px 0 18px;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .step .dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--surface-3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        border: 1px solid var(--border);
+      }
+      .step.done .dot {
+        background: var(--accent);
+        color: #ffffff;
+        border-color: var(--accent);
+      }
+      .step.now .dot {
+        background: transparent;
+        border-color: var(--accent);
+        color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(20, 138, 86, 0.15);
+      }
+      .step.now {
+        color: var(--cream);
+      }
+      .step-line {
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .timer-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--surface-3);
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 12.5px;
+        font-variant-numeric: tabular-nums;
+        color: var(--gold);
+        border: 1px solid var(--border);
+      }
+      .cat-buttons {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+        flex-wrap: wrap;
+      }
+      .cat-buttons button {
+        flex: 1;
+        min-width: 140px;
+        padding: 14px;
+        font-weight: 700;
+        font-size: 13.5px;
+        border-radius: var(--radius-sm);
+      }
+      .cat-buttons button.green {
+        background: rgba(74, 222, 128, 0.08);
+        border-color: rgba(74, 222, 128, 0.4);
+        color: var(--green);
+      }
+      .cat-buttons button.orange {
+        background: rgba(242, 169, 60, 0.08);
+        border-color: rgba(242, 169, 60, 0.4);
+        color: var(--orange);
+      }
+      .cat-buttons button.red {
+        background: rgba(239, 91, 91, 0.08);
+        border-color: rgba(239, 91, 91, 0.4);
+        color: var(--red);
+      }
+      .cat-buttons button.selected {
+        outline: 2px solid var(--cream);
+        transform: translateY(-2px);
+      }
+      .feedback {
+        margin-top: 8px;
+        font-size: 13px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: var(--surface-3);
+        color: var(--cream-dim);
+      }
+      .tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+      }
+      .tool-btn {
+        padding: 9px 13px;
+        font-size: 13px;
+        border-radius: 999px;
+      }
+      .tool-btn.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        border-color: var(--accent-dim);
+        color: #ffffff;
+        font-weight: 700;
+      }
+      .panel {
+        background: #eef1ee;
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        margin-top: 10px;
+        border: 1px solid var(--border);
+      }
+      textarea {
+        width: 100%;
+        min-height: 70px;
+        background: #ffffff;
+        color: var(--text);
+        color: var(--cream);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 10px;
+        font-family: inherit;
+        font-size: 13px;
+        resize: vertical;
+      }
+      textarea:focus,
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(20, 138, 86, 0.15);
+      }
+      .rec-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 10px;
+        flex-wrap: wrap;
+      }
+      .rec-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--red);
+        display: none;
+      }
+      .rec-dot.on {
+        display: inline-block;
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.2;
+        }
+      }
+      audio {
+        height: 32px;
+      }
+      .checklist {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 12px;
+      }
+      .checklist .hit {
+        color: var(--green);
+      }
+      .checklist .miss {
+        color: var(--red);
+      }
+      .score-box {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+      .score-item {
+        background: var(--surface-3);
+        border-radius: var(--radius-sm);
+        padding: 14px 16px;
+        flex: 1;
+        min-width: 130px;
+        text-align: center;
+        border: 1px solid var(--border);
+      }
+      .score-item .num {
+        font-size: 24px;
+        font-weight: 800;
+      }
+      .score-item .lbl {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 3px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      th,
+      td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+      }
+      th {
+        color: var(--muted);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: 700;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      .hint {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      footer.actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 560px) {
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      .field {
+        margin-bottom: 12px;
+      }
+      .field label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 5px;
+        font-weight: 600;
+      }
+      .field input[type="text"],
+      .field select,
+      .field textarea {
+        width: 100%;
+      }
+      .checkrow {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin: 8px 0;
+        font-size: 13px;
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .chip {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .chip.active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        border-color: var(--accent-dim);
+        color: #ffffff;
+        font-weight: 700;
+      }
+      .small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .error-banner {
+        background: #fdeceb;
+        border: 1px solid var(--red);
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        margin-bottom: 16px;
+        font-size: 13px;
+      }
+      .rowbtns {
+        display: flex;
+        gap: 6px;
+      }
+
+      /* ---------- dashboard / stats ---------- */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      @media (max-width: 720px) {
+        .stat-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-top: 3px solid var(--accent);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        color: var(--cream);
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card .stat-icon {
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      .stat-card .stat-icon svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+      }
+      .stat-card .stat-num {
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+      .stat-card .stat-lbl {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 3px;
+        font-weight: 600;
+      }
+      .badges-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .achievement {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--surface-3);
+        border: 1px solid var(--border);
+        padding: 7px 13px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .achievement .ic {
+        font-size: 14px;
+        color: var(--accent);
+        display: inline-flex;
+      }
+      .achievement .ic svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      /* ---------- directory ---------- */
+      .search-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        align-items: center;
+      }
+      .search-row input {
+        flex: 1;
+      }
+      .grid-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 12px;
+      }
+      .entity-card {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        transition: border-color 0.15s ease;
+      }
+      .entity-card:hover {
+        border-color: var(--accent-dim);
+      }
+      .avatar {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 14px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+        color: #ffffff;
+      }
+      .avatar.gold {
+        background: linear-gradient(135deg, var(--gold), #c98f3f);
+        color: #ffffff;
+      }
+      .entity-body {
+        flex: 1;
+        min-width: 0;
+      }
+      .entity-body .name {
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .entity-body .desc {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+      .entity-actions {
+        display: flex;
+        gap: 4px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 30px 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .empty-state .big {
+        font-size: 30px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: center;
+        color: var(--muted);
+      }
+      .empty-state .big svg {
+        width: 32px;
+        height: 32px;
+      }
+
+      /* ---------- operations ---------- */
+      .client-docs-section {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        margin-bottom: 16px;
+      }
+      .client-header {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+      .client-info {
+        flex: 1;
+      }
+      .client-name {
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .client-location {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .docs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .doc-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px;
+        transition: all 0.15s ease;
+      }
+      .doc-card:hover {
+        border-color: var(--accent-dim);
+        box-shadow: 0 2px 8px rgba(20, 138, 86, 0.1);
+      }
+      .doc-header {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin-bottom: 8px;
+      }
+      .doc-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .doc-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .doc-title {
+        font-weight: 700;
+        font-size: 13.5px;
+        word-break: break-word;
+      }
+      .doc-category {
+        font-size: 11px;
+        color: var(--accent);
+        font-weight: 600;
+        margin-top: 2px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+      .doc-actions {
+        display: flex;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+      .doc-description {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 8px;
+        line-height: 1.4;
+      }
+      .doc-empty {
+        text-align: center;
+        padding: 12px;
+        color: var(--muted);
+        font-size: 12px;
+        font-style: italic;
+      }
+      .doc-link {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent);
+        text-decoration: none;
+        padding: 4px 0;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.15s ease;
+      }
+      .doc-link:hover {
+        border-bottom-color: var(--accent);
+      }
+
+      /* ---------- modal ---------- */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 12, 8, 0.72);
+        backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 20px;
+        animation: fadeIn 0.18s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .modal-overlay.hidden {
+        display: none;
+      }
+      .modal {
+        background: linear-gradient(180deg, #ffffff, #fbfcfa);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        max-width: 560px;
+        width: 100%;
+        max-height: 88vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: popIn 0.2s ease;
+      }
+      @keyframes popIn {
+        from {
+          opacity: 0;
+          transform: scale(0.96) translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+      .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: #ffffff;
+        z-index: 2;
+        border-radius: var(--radius) var(--radius) 0 0;
+      }
+      .modal-head h3 {
+        margin: 0;
+        font-size: 15.5px;
+      }
+      .modal-body {
+        padding: 20px 22px;
+      }
+      .modal-foot {
+        padding: 16px 22px 20px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        border-top: 1px solid var(--border);
+      }
+      .modal-close {
+        background: transparent;
+        border: none;
+        color: var(--muted);
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px 8px;
+      }
+      .modal-close:hover {
+        color: var(--cream);
+      }
+      .warn {
+        background: rgba(242, 169, 60, 0.1);
+        border: 1px solid rgba(242, 169, 60, 0.4);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 12px;
+        margin-bottom: 12px;
+        color: var(--cream-dim);
+      }
+
+      /* ---------- toasts ---------- */
+      #toastHost {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 200;
+      }
+      .toast {
+        background: var(--surface-3);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--accent);
+        color: var(--cream);
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        box-shadow: var(--shadow);
+        animation: slideIn 0.25s ease;
+        max-width: 320px;
+      }
+      .toast.error {
+        border-left-color: var(--red);
+      }
+      .toast.warn {
+        border-left-color: var(--orange);
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .toast.fade {
+        animation: fadeOutRight 0.3s ease forwards;
+      }
+      @keyframes fadeOutRight {
+        to {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+      }
+
+      /* ---------- confetti ---------- */
+      #confettiHost {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 250;
+        overflow: hidden;
+      }
+      .confetti-piece {
+        position: absolute;
+        top: -10px;
+        width: 8px;
+        height: 14px;
+        opacity: 0.9;
+        animation: confFall linear forwards;
+      }
+      @keyframes confFall {
+        to {
+          transform: translateY(105vh) rotate(600deg);
+          opacity: 0.3;
+        }
+      }
+
+      /* ---------- review / submissions ---------- */
+      .leaderboard {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .lb-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: var(--radius-sm);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+      }
+      .lb-row.top {
+        background: linear-gradient(
+          90deg,
+          rgba(224, 177, 104, 0.16),
+          var(--surface-2)
+        );
+        border-color: rgba(224, 177, 104, 0.4);
+      }
+      .lb-rank {
+        width: 22px;
+        text-align: center;
+        font-weight: 800;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .lb-row.top .lb-rank {
+        color: var(--gold);
+      }
+      .lb-name {
+        flex: 1;
+        font-weight: 700;
+        font-size: 13.5px;
+      }
+      .lb-meta {
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .lb-score {
+        font-weight: 800;
+        font-size: 15px;
+        color: var(--accent);
+      }
+      .submission {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        margin-bottom: 10px;
+        overflow: hidden;
+        background: var(--surface-2);
+      }
+      .submission-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        cursor: pointer;
+        flex-wrap: wrap;
+      }
+      .submission-head:hover {
+        background: var(--surface-3);
+      }
+      .submission-head .who {
+        font-weight: 700;
+        font-size: 13.5px;
+        min-width: 110px;
+      }
+      .submission-head .when {
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+      .ring {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11.5px;
+        font-weight: 800;
+        margin-left: auto;
+      }
+      .submission-detail {
+        display: none;
+        padding: 4px 16px 16px;
+        border-top: 1px dashed var(--border);
+      }
+      .submission.open .submission-detail {
+        display: block;
+      }
+      .submission.open .chevron {
+        transform: rotate(90deg);
+      }
+      .chevron {
+        transition: transform 0.15s ease;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 12px;
+      }
+      @media (max-width: 620px) {
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .detail-block {
+        background: #eef1ee;
+        border-radius: 10px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+      }
+      .detail-block h4 {
+        margin: 0 0 8px;
+        font-size: 11.5px;
+        text-transform: uppercase;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+      }
+      .compare-line {
+        font-size: 12.5px;
+        margin: 4px 0;
+        display: flex;
+        gap: 6px;
+      }
+      .no-detail-note {
+        font-size: 12px;
+        color: var(--muted);
+        font-style: italic;
+        padding: 8px 0 0;
+      }
+      .script-block {
+        margin-top: 8px;
+        font-size: 12.5px;
+        line-height: 1.5;
+      }
+      .script-block .label {
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+        margin-bottom: 3px;
+      }
+      .script-block .body-text {
+        background: var(--surface-2);
+        border-radius: 6px;
+        padding: 8px 10px;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-top">
+        <div class="brand">
+          <div class="logo">
+            <img src="assets/logo.jpeg" alt="Elite Vision Security logo" />
+          </div>
+          <div>
+            <h1>EVS Command Center Hub</h1>
+            <div class="sub">
+              Elite Vision Security · Central Operations Management
+            </div>
+          </div>
+        </div>
+        <nav class="tabs">
+          <button class="nav active" data-view="drill">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <circle cx="12" cy="12" r="8.5" />
+                <circle cx="12" cy="12" r="4.5" />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="0.9"
+                  fill="currentColor"
+                /></svg></span
+            >Drill
+          </button>
+          <button class="nav" data-view="stats">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M4 20V10M12 20V4M20 20v-7"
+                  stroke-linecap="round"
+                /></svg></span
+            >Statistics
+          </button>
+          <button class="nav" data-view="review">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M3 12a9 9 0 1 0 3-6.7" stroke-linecap="round" />
+                <path
+                  d="M3 4v5h5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path d="M12 8v4l3 2" stroke-linecap="round" /></svg></span
+            ><span id="historyTabLabel">History</span>
+          </button>
+          <button class="nav" data-view="directory">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"
+                /></svg></span
+            >Directory
+          </button>
+          <button class="nav" data-view="operations">
+            <span class="nav-ic"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m0-18h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9m0-18v18m-4-4h12M5 12h12"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg></span
+            >Operations
+          </button>
+        </nav>
+      </div>
+      <div class="header-controls">
+        <select id="operatorSelect"></select>
+        <button class="primary" id="newDrillBtn">New Scenario</button>
+        <button class="ghost admin-toggle" id="adminToggleBtn">
+          <span id="adminToggleIcon"></span
+          ><span id="adminToggleLabel">Admin Login</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <div id="dbBanner" class="error-banner" hidden>
+        Can't reach the database API. Make sure this page was opened through
+        XAMPP (e.g. <code>http://localhost/evs-drill-simulator/</code>) with
+        Apache and MySQL running, and that <code>database2.sql</code> has been
+        imported in phpMyAdmin.
+      </div>
+
+      <!-- ============ DRILL VIEW ============ -->
+      <section class="view active" id="view-drill">
+        <div id="drillCard" class="card" hidden></div>
+        <div class="card" id="noOperatorNotice">
+          <h2>Ready when you are</h2>
+          <p class="hint" style="margin-top: 6px">
+            Select your operator name above, then click
+            <strong>New Scenario</strong> to get a randomized live scenario.
+            Your classification and responses are graded — no answers are shown
+            until you finish, so this is a real read on where you stand.
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ STATISTICS VIEW ============ -->
+      <section class="view" id="view-stats">
+        <div class="stat-grid" id="dashboardStats"></div>
+        <div
+          class="badges-row"
+          id="achievementsRow"
+          style="margin-bottom: 18px"
+        ></div>
+
+        <div class="card">
+          <div class="card-title-row">
+            <h2>Leaderboard</h2>
+            <span class="small">Ranked by average overall score</span>
+          </div>
+          <div class="leaderboard" id="leaderboard"></div>
+        </div>
+      </section>
+
+      <!-- ============ REVIEW / HISTORY VIEW ============ -->
+      <section class="view" id="view-review">
+        <div class="card">
+          <div class="card-title-row">
+            <h2 id="submissionsTitle">Scenario History</h2>
+            <span class="small" id="submissionCount"></span>
+          </div>
+          <div class="search-row">
+            <input
+              type="search"
+              id="reviewSearch"
+              placeholder="Search by operator or client..."
+            />
+            <select id="reviewOperatorFilter">
+              <option value="all">All operators</option>
+            </select>
+            <button class="ghost small-btn admin-only" id="clearHistory">
+              Clear all
+            </button>
+          </div>
+          <div
+            class="filter-chip"
+            id="categoryFilterChips"
+            style="margin-bottom: 14px"
+          >
+            <button data-cat="all" class="active">All</button>
+            <button data-cat="green" class="green">Green</button>
+            <button data-cat="orange" class="orange">Orange</button>
+            <button data-cat="red" class="red">Red</button>
+          </div>
+          <div id="submissionsList"></div>
+        </div>
+      </section>
+
+      <!-- ============ DIRECTORY VIEW ============ -->
+      <section class="view" id="view-directory">
+        <div class="search-row">
+          <input
+            type="search"
+            id="directorySearch"
+            placeholder="Search clients, scenarios, or team members..."
+          />
+        </div>
+
+        <div class="section-heading">
+          <span>Team</span>
+          <span class="step-line"></span>
+          <button class="small-btn primary admin-only" id="openAddPerson">
+            + Add Person
+          </button>
+        </div>
+        <div class="grid-cards" id="teamCards"></div>
+
+        <div class="section-heading">
+          <span>Clients</span>
+          <span class="step-line"></span>
+          <button class="small-btn primary admin-only" id="openAddClient">
+            + Add Client
+          </button>
+        </div>
+        <div class="grid-cards" id="clientCards"></div>
+
+        <div class="section-heading admin-only block">
+          <span>Scenarios</span>
+          <span class="step-line"></span>
+          <button class="small-btn primary admin-only" id="openAddIncident">
+            + Add Scenario
+          </button>
+        </div>
+        <div class="grid-cards admin-only block" id="incidentCards"></div>
+      </section>
+
+      <!-- ============ OPERATIONS VIEW ============ -->
+      <section class="view" id="view-operations">
+        <div class="search-row">
+          <input
+            type="search"
+            id="operationsSearch"
+            placeholder="Search clients or documents..."
+          />
+        </div>
+
+        <div class="section-heading">
+          <span>Operational Resources</span>
+          <span class="step-line"></span>
+          <button class="small-btn primary admin-only" id="openAddDocument">
+            + Add Document
+          </button>
+        </div>
+        <div class="grid-cards" id="documentsGrid"></div>
+      </section>
+    </main>
+
+    <div class="modal-overlay hidden" id="modalOverlay">
+      <div class="modal" id="modalBox"></div>
+    </div>
+    <div id="toastHost"></div>
+    <div id="confettiHost"></div>
+
+    <script>
+      const API = {
+        clients: "api/clients.php",
+        incidents: "api/incidents.php",
+        operators: "api/operators.php",
+        executives: "api/executives.php",
+        history: "api/history.php",
+        documents: "api/documents.php",
+      };
+
+      async function apiGet(url) {
+        const res = await fetch(url);
+        return res.json();
+      }
+      async function apiSend(url, method, body) {
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: body !== undefined ? JSON.stringify(body) : undefined,
+        });
+        return res.json();
+      }
+
+      const TOOL_LABELS = {
+        speaker: "Speaker",
+        siren: "Siren / Alarm",
+        police: "Call Police",
+        ambulance: "Call Ambulance (911)",
+        supervisor: "Call Supervisor",
+        ceo: "Call CEO",
+        chat: "Report to Client Chat",
+      };
+      const ALL_TOOL_KEYS = Object.keys(TOOL_LABELS);
+
+      /* ==================== ICONS ==================== */
+      const ICON = {
+        drill:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.9" fill="currentColor"/></svg>',
+        stats:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7" stroke-linecap="round"/></svg>',
+        history:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 3-6.7" stroke-linecap="round"/><path d="M3 4v5h5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8v4l3 2" stroke-linecap="round"/></svg>',
+        directory:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>',
+        team: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" stroke-linecap="round"/></svg>',
+        client:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V6a1 1 0 0 1 1-1h6v15M11 20h9M14 9h2M14 13h2M7 9h1M7 13h1" stroke-linecap="round"/></svg>',
+        scenario:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h13l3 3v13H4Z"/><path d="M17 4v3h3" stroke-linejoin="round"/></svg>',
+        logged:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 2v4M16 2v4M4 10h16" stroke-linecap="round"/></svg>',
+        target:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/></svg>',
+        streak:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 3s4 4 4 8a5 5 0 0 1-10 0c0-1.5.7-2.4 1.3-3.2.3.9 1 1.2 1.4.6C10.2 6.7 10 5 13 3Z"/></svg>',
+        today:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M4.2 12h-2M21.8 12h-2M6 6l-1.4-1.4M19.4 19.4 18 18M18 6l1.4-1.4M4.6 19.4 6 18" stroke-linecap="round"/></svg>',
+        first:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7Z"/><path d="m9 12 2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        perfect:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.3 2.3L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        veteran:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 6v5c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6Z"/></svg>',
+        trophy:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 4h10v5a5 5 0 0 1-10 0Zm0 0H4v1a4 4 0 0 0 4 4M17 4h3v1a4 4 0 0 1-4 4M12 14v3M9 21h6M9.5 21v-.5A2.5 2.5 0 0 1 12 18h0a2.5 2.5 0 0 1 2.5 2.5v.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6h11M9 12h11M9 18h11" stroke-linecap="round"/><circle cx="4.5" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>',
+        empty:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 10 12 4l8 6v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/><path d="M9 20v-6h6v6"/></svg>',
+        lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>',
+        unlock:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.4-2.1" stroke-linecap="round"/></svg>',
+        clock:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2" stroke-linecap="round"/></svg>',
+        edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg>',
+        trash:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      };
+
+      /* ==================== STATE ==================== */
+      let CLIENTS = [],
+        INCIDENTS = [],
+        OPERATORS = [],
+        EXECUTIVES = [],
+        HISTORY = [],
+        DOCUMENTS = [];
+      let SUPERVISOR_NAMES = [],
+        CEO_NAMES = [];
+      let editingClientId = null,
+        editingIncidentId = null,
+        editingPersonId = null,
+        editingPersonType = null;
+      let current = null;
+      let mediaRecorder,
+        chunks = [],
+        activeRecordTarget = null;
+      let catFilter = "all";
+      let openSubmissionId = null;
+      const ADMIN_CODE = "evsadmin";
+      let isAdmin = sessionStorage.getItem("evs_admin") === "1";
+
+      // Rich per-submission detail (classification/tool/script breakdown) is
+      // stored server-side in drill_history.detail_json and comes back as
+      // h.detail on every GET, so the Review tab shows a full assessment on
+      // any device. Voice recordings themselves are session-only (blob URLs
+      // can't survive a reload), tracked here purely for in-session playback.
+      function getDetail(h) {
+        return h.detail || null;
+      }
+      const SESSION_AUDIO = {}; // historyId -> { tool: blobUrl }
+
+      function client(id) {
+        return CLIENTS.find((c) => c.id === id);
+      }
+
+      /* ==================== TOAST ==================== */
+      function toast(msg, type = "ok") {
+        const host = document.getElementById("toastHost");
+        const el = document.createElement("div");
+        el.className = "toast" + (type === "ok" ? "" : " " + type);
+        el.textContent = msg;
+        host.appendChild(el);
+        setTimeout(() => {
+          el.classList.add("fade");
+          setTimeout(() => el.remove(), 300);
+        }, 3200);
+      }
+
+      /* ==================== CONFETTI ==================== */
+      function confetti() {
+        const host = document.getElementById("confettiHost");
+        const colors = ["#5bd897", "#e0b168", "#f3ede0", "#4ade80"];
+        for (let i = 0; i < 60; i++) {
+          const p = document.createElement("div");
+          p.className = "confetti-piece";
+          p.style.left = Math.random() * 100 + "vw";
+          p.style.background =
+            colors[Math.floor(Math.random() * colors.length)];
+          p.style.animationDuration = 1.6 + Math.random() * 1.4 + "s";
+          p.style.animationDelay = Math.random() * 0.3 + "s";
+          host.appendChild(p);
+          setTimeout(() => p.remove(), 3200);
+        }
+      }
+
+      /* ==================== MODAL ==================== */
+      function openModal(title, bodyHTML, footHTML) {
+        document.getElementById("modalBox").innerHTML = `
+    <div class="modal-head">
+      <h3>${title}</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">${bodyHTML}</div>
+    ${footHTML ? `<div class="modal-foot">${footHTML}</div>` : ""}
+  `;
+        document.getElementById("modalOverlay").classList.remove("hidden");
+      }
+      function closeModal() {
+        document.getElementById("modalOverlay").classList.add("hidden");
+        document.getElementById("modalBox").innerHTML = "";
+      }
+      document.getElementById("modalOverlay").addEventListener("click", (e) => {
+        if (e.target.id === "modalOverlay") closeModal();
+      });
+      function confirmModal(title, message, confirmLabel = "Delete") {
+        return new Promise((resolve) => {
+          openModal(
+            title,
+            `<p style="font-size:13.5px;line-height:1.5;">${message}</p>`,
+            `<button class="ghost" id="cmCancel">Cancel</button>
+       <button class="danger" id="cmOk">${confirmLabel}</button>`,
+          );
+          document.getElementById("cmCancel").onclick = () => {
+            closeModal();
+            resolve(false);
+          };
+          document.getElementById("cmOk").onclick = () => {
+            closeModal();
+            resolve(true);
+          };
+        });
+      }
+
+      /* ==================== LOAD ==================== */
+      async function loadAll() {
+        try {
+          const [
+            clients,
+            incidents,
+            operators,
+            executives,
+            history,
+            documents,
+          ] = await Promise.all([
+            apiGet(API.clients),
+            apiGet(API.incidents),
+            apiGet(API.operators),
+            apiGet(API.executives),
+            apiGet(API.history),
+            apiGet(API.documents),
+          ]);
+          if (!Array.isArray(clients) || !Array.isArray(incidents))
+            throw new Error("bad payload");
+          CLIENTS = clients;
+          INCIDENTS = incidents;
+          OPERATORS = operators;
+          EXECUTIVES = executives;
+          HISTORY = history;
+          DOCUMENTS = documents || [];
+          SUPERVISOR_NAMES = OPERATORS.filter(
+            (o) => o.role === "Supervisor",
+          ).map((o) => o.name);
+          CEO_NAMES = EXECUTIVES.map((e) => e.name);
+          document.getElementById("dbBanner").hidden = true;
+          initOperatorSelect();
+          renderDashboard();
+        } catch (err) {
+          document.getElementById("dbBanner").hidden = false;
+        }
+      }
+
+      function initOperatorSelect() {
+        const sel = document.getElementById("operatorSelect");
+        const prev = sel.value;
+        sel.innerHTML =
+          '<option value="">Select operator...</option>' +
+          OPERATORS.map(
+            (o) =>
+              `<option value="${o.name}">${o.name}${o.role === "Supervisor" ? " (Supervisor)" : ""}</option>`,
+          ).join("");
+        if (prev) sel.value = prev;
+      }
+
+      /* ==================== VIEW NAV ==================== */
+      document.querySelectorAll("nav.tabs button.nav").forEach((btn) => {
+        btn.onclick = () => switchView(btn.dataset.view);
+      });
+      function switchView(view) {
+        document
+          .querySelectorAll("section.view")
+          .forEach((s) => s.classList.remove("active"));
+        document.getElementById("view-" + view).classList.add("active");
+        document
+          .querySelectorAll("nav.tabs button.nav")
+          .forEach((b) =>
+            b.classList.toggle("active", b.dataset.view === view),
+          );
+        if (view === "directory") renderDirectory();
+        if (view === "operations") renderOperations();
+        if (view === "review") renderReview();
+        if (view === "stats") {
+          renderDashboard();
+          renderLeaderboard();
+        }
+      }
+
+      /* ==================== ADMIN MODE ==================== */
+      const LOCK_ICON =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke-linecap="round"/></svg>';
+      const UNLOCK_ICON =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.4-2.1" stroke-linecap="round"/></svg>';
+      function applyAdminUI() {
+        document.body.classList.toggle("is-admin", isAdmin);
+        document.getElementById("adminToggleIcon").innerHTML = isAdmin
+          ? UNLOCK_ICON
+          : LOCK_ICON;
+        document.getElementById("adminToggleLabel").textContent = isAdmin
+          ? "Admin Mode"
+          : "Admin Login";
+        document.getElementById("historyTabLabel").textContent = isAdmin
+          ? "Review"
+          : "History";
+        document.getElementById("submissionsTitle").textContent = isAdmin
+          ? "Submitted Drills — Review"
+          : "Your Scenario History";
+      }
+      document.getElementById("adminToggleBtn").onclick = () => {
+        if (isAdmin) {
+          isAdmin = false;
+          sessionStorage.removeItem("evs_admin");
+          applyAdminUI();
+          toast("Signed out of admin mode.");
+          if (
+            document
+              .getElementById("view-directory")
+              .classList.contains("active")
+          )
+            renderDirectory();
+          if (
+            document.getElementById("view-review").classList.contains("active")
+          )
+            renderSubmissionsList();
+          return;
+        }
+        const code = prompt("Enter admin access code:");
+        if (code === null) return;
+        if (code === ADMIN_CODE) {
+          isAdmin = true;
+          sessionStorage.setItem("evs_admin", "1");
+          applyAdminUI();
+          toast("Admin mode enabled.");
+          if (
+            document
+              .getElementById("view-directory")
+              .classList.contains("active")
+          )
+            renderDirectory();
+          if (
+            document.getElementById("view-review").classList.contains("active")
+          )
+            renderSubmissionsList();
+        } else {
+          toast("Incorrect access code.", "warn");
+        }
+      };
+      applyAdminUI();
+
+      /* ==================== CATEGORY FILTER (History tab) ==================== */
+      document
+        .querySelectorAll("#categoryFilterChips button")
+        .forEach((btn) => {
+          btn.onclick = () => {
+            catFilter = btn.dataset.cat;
+            document
+              .querySelectorAll("#categoryFilterChips button")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderSubmissionsList();
+          };
+        });
+
+      /* ==================== DASHBOARD ==================== */
+      function renderDashboard() {
+        const total = HISTORY.length;
+        const today = new Date().toDateString();
+        const todayCount = HISTORY.filter(
+          (h) => new Date(h.created_at).toDateString() === today,
+        ).length;
+        const avg = total
+          ? Math.round(
+              HISTORY.reduce((s, h) => s + Number(h.overall_pct || 0), 0) /
+                total,
+            )
+          : 0;
+        // streak: consecutive most-recent scenarios (any operator) scoring >= 80
+        let streak = 0;
+        const sorted = [...HISTORY].sort((a, b) => b.id - a.id);
+        for (const h of sorted) {
+          if (Number(h.overall_pct) >= 80) streak++;
+          else break;
+        }
+
+        document.getElementById("dashboardStats").innerHTML = `
+    <div class="stat-card"><div class="stat-icon">${ICON.logged}</div><div class="stat-num">${total}</div><div class="stat-lbl">Scenarios logged</div></div>
+    <div class="stat-card"><div class="stat-icon">${ICON.target}</div><div class="stat-num">${avg}%</div><div class="stat-lbl">Average score</div></div>
+    <div class="stat-card"><div class="stat-icon">${ICON.streak}</div><div class="stat-num">${streak}</div><div class="stat-lbl">Current streak (80%+)</div></div>
+    <div class="stat-card"><div class="stat-icon">${ICON.today}</div><div class="stat-num">${todayCount}</div><div class="stat-lbl">Run today</div></div>
+  `;
+
+        const badges = [];
+        if (total >= 1)
+          badges.push({ ic: ICON.first, label: "First scenario logged" });
+        if (streak >= 3)
+          badges.push({
+            ic: ICON.streak,
+            label: `${streak}-scenario hot streak`,
+          });
+        if (HISTORY.some((h) => Number(h.overall_pct) === 100))
+          badges.push({ ic: ICON.perfect, label: "Perfect score on record" });
+        if (total >= 10)
+          badges.push({ ic: ICON.veteran, label: "10+ scenarios completed" });
+        document.getElementById("achievementsRow").innerHTML = badges
+          .map(
+            (b) =>
+              `<span class="achievement"><span class="ic">${b.ic}</span> ${b.label}</span>`,
+          )
+          .join("");
+      }
+
+      /* ==================== DRILL PICKING & RUNNING ==================== */
+      // Spaced repetition: incident categories where this operator has
+      // historically scored lower are weighted to appear more often, so
+      // practice time concentrates on the operator's actual weak spots.
+      function pickIncident(operator) {
+        const pool = INCIDENTS.slice();
+        if (pool.length === 0) return null;
+        if (!operator) return pool[Math.floor(Math.random() * pool.length)];
+
+        const catStats = {};
+        HISTORY.filter((h) => h.operator_name === operator).forEach((h) => {
+          const c = h.category;
+          catStats[c] = catStats[c] || { sum: 0, count: 0 };
+          catStats[c].sum += Number(h.overall_pct || 0);
+          catStats[c].count++;
+        });
+        const weights = pool.map((inc) => {
+          const s = catStats[inc.category];
+          if (!s || s.count === 0) return 3; // never-seen categories get priority
+          const avg = s.sum / s.count;
+          return Math.max(1, Math.round((100 - avg) / 25) + 1);
+        });
+        const total = weights.reduce((a, b) => a + b, 0);
+        let r = Math.random() * total;
+        for (let i = 0; i < pool.length; i++) {
+          r -= weights[i];
+          if (r <= 0) return pool[i];
+        }
+        return pool[pool.length - 1];
+      }
+
+      function startScenario() {
+        const operator = document.getElementById("operatorSelect").value;
+        if (!operator) {
+          toast("Select your operator name first.", "warn");
+          return;
+        }
+        if (INCIDENTS.length === 0) {
+          toast(
+            "No scenarios available yet — add one in the Directory tab.",
+            "warn",
+          );
+          return;
+        }
+        const inc = pickIncident(operator);
+        current = {
+          operator,
+          inc,
+          chosenCat: null,
+          toolsUsed: new Set(),
+          scripts: {},
+          audio: {},
+          startedAt: Date.now(),
+          finished: false,
+          timerHandle: null,
+        };
+        document.getElementById("noOperatorNotice").hidden = true;
+        renderScenario();
+        startTimer();
+      }
+
+      function startTimer() {
+        clearInterval(current.timerHandle);
+        current.timerHandle = setInterval(() => {
+          const el = document.getElementById("timerChip");
+          if (!el || !current || current.finished) return;
+          const secs = Math.floor((Date.now() - current.startedAt) / 1000);
+          const m = String(Math.floor(secs / 60)).padStart(2, "0");
+          const s = String(secs % 60).padStart(2, "0");
+          el.textContent = `${m}:${s}`;
+        }, 1000);
+      }
+
+      function toolsForClient(inc) {
+        const t = ["police", "ambulance", "supervisor", "ceo", "chat"];
+        if (inc.client_has_siren) t.unshift("siren");
+        if (inc.client_has_speaker) t.unshift("speaker");
+        return t;
+      }
+
+      function stepper(activeIdx) {
+        const labels = ["Classify", "Respond", "Score"];
+        return `<div class="stepper">${labels
+          .map((l, i) => {
+            const cls = i < activeIdx ? "done" : i === activeIdx ? "now" : "";
+            const icon = i < activeIdx ? "✓" : i + 1;
+            return `<div class="step ${cls}"><span class="dot">${icon}</span><span>${l}</span></div>${i < labels.length - 1 ? '<span class="step-line"></span>' : ""}`;
+          })
+          .join("")}</div>`;
+      }
+
+      function renderScenario() {
+        const { inc } = current;
+        const card = document.getElementById("drillCard");
+        card.hidden = false;
+
+        const toolBtns = toolsForClient(inc)
+          .map(
+            (t) =>
+              `<button class="tool-btn ${current.toolsUsed.has(t) ? "active" : ""}" data-tool="${t}" onclick="toggleTool('${t}')">${TOOL_LABELS[t]}</button>`,
+          )
+          .join("");
+
+        const activeStep =
+          current.toolsUsed.size > 0 || current.chosenCat ? 1 : 0;
+
+        card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
+      <div>
+        <span class="pill">${inc.category ? "Live scenario" : ""}</span>
+        <h2 style="margin:10px 0 0;">${inc.client_name}</h2>
+        <div class="meta">${inc.client_address} &nbsp;•&nbsp; ${inc.time_label || ""} &nbsp;•&nbsp; Speaker: ${inc.client_has_speaker ? "yes" : "N/A"} | Siren: ${inc.client_has_siren ? "yes" : "N/A"} | Operator: ${current.operator}</div>
+      </div>
+      <span class="timer-chip" id="timerChip">00:00</span>
+    </div>
+
+    ${stepper(activeStep)}
+
+    <p class="narrative">${inc.narrative}</p>
+
+    <div class="section-heading" style="margin-top:6px;">Step 1 · Classify this situation</div>
+    <div class="cat-buttons">
+      <button class="green" onclick="pickCategory('green')">GREEN — Safe</button>
+      <button class="orange" onclick="pickCategory('orange')">ORANGE — Unusual</button>
+      <button class="red" onclick="pickCategory('red')">RED — Emergency</button>
+    </div>
+    <div id="catFeedback"></div>
+
+    <div class="section-heading">Step 2 · Choose your response actions</div>
+    <div class="tools">${toolBtns}</div>
+    <div id="toolPanels"></div>
+
+    <footer class="actions">
+      <button class="primary" onclick="finishScenario()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14" style="vertical-align:-2px;margin-right:4px;"><path d="m5 12 4.5 4.5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Finish Scenario &amp; Score</button>
+    </footer>
+    <div id="results"></div>
+  `;
+      }
+
+      function pickCategory(cat) {
+        current.chosenCat = cat;
+        document
+          .querySelectorAll(".cat-buttons button")
+          .forEach((b) => b.classList.remove("selected"));
+        document
+          .querySelector(`.cat-buttons button.${cat}`)
+          .classList.add("selected");
+        // No correctness hint here on purpose — this is an assessment.
+        const fb = document.getElementById("catFeedback");
+        fb.className = "feedback";
+        fb.textContent = "Classification locked in. Keep going.";
+      }
+
+      function toggleTool(tool) {
+        const btn = document.querySelector(`.tool-btn[data-tool="${tool}"]`);
+        const panels = document.getElementById("toolPanels");
+
+        if (current.toolsUsed.has(tool)) {
+          current.toolsUsed.delete(tool);
+          btn.classList.remove("active");
+          document.getElementById("panel-" + tool)?.remove();
+          return;
+        }
+        current.toolsUsed.add(tool);
+        btn.classList.add("active");
+
+        if (tool === "speaker" || tool === "siren") {
+          panels.insertAdjacentHTML(
+            "beforeend",
+            `
+      <div class="panel" id="panel-${tool}">
+        <strong>${TOOL_LABELS[tool]} announcement</strong>
+        <textarea placeholder="Type what you would say over the ${tool}..." oninput="setScript('${tool}', this.value)"></textarea>
+        <div class="rec-row">
+          <button onclick="toggleRecord('${tool}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13" style="vertical-align:-2px;margin-right:4px;"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke-linecap="round"/></svg>Record voicemail simulation</button>
+          <span class="rec-dot" id="dot-${tool}"></span>
+          <span id="audioSlot-${tool}"></span>
+        </div>
+        <div class="small">Record yourself delivering this announcement out loud, as practice.</div>
+      </div>`,
+          );
+        } else if (tool === "supervisor" || tool === "ceo") {
+          const options = (tool === "supervisor" ? SUPERVISOR_NAMES : CEO_NAMES)
+            .map((n) => `<option>${n}</option>`)
+            .join("");
+          panels.insertAdjacentHTML(
+            "beforeend",
+            `
+      <div class="panel" id="panel-${tool}">
+        <strong>${tool === "supervisor" ? "Call Supervisor" : "Call CEO"}</strong>
+        <select onchange="setScript('${tool}_contact', this.value)" style="margin:8px 0;">${options}</select>
+        <textarea placeholder="Type exactly what you would say, including the client, address, and what happened..." oninput="setScript('${tool}', this.value)"></textarea>
+        <div class="rec-row">
+          <button onclick="toggleRecord('${tool}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13" style="vertical-align:-2px;margin-right:4px;"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke-linecap="round"/></svg>Record voicemail</button>
+          <span class="rec-dot" id="dot-${tool}"></span>
+          <span id="audioSlot-${tool}"></span>
+        </div>
+      </div>`,
+          );
+        } else if (["police", "ambulance"].includes(tool)) {
+          const target = tool === "police" ? "the police" : "911/EMS";
+          panels.insertAdjacentHTML(
+            "beforeend",
+            `
+      <div class="panel" id="panel-${tool}">
+        <strong>Call script — ${target}</strong>
+        <textarea placeholder="Type exactly what you would say, including your name, Elite Vision Security, the address, and what you need them to do..." oninput="setScript('${tool}', this.value)"></textarea>
+        <div class="rec-row">
+          <button onclick="toggleRecord('${tool}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13" style="vertical-align:-2px;margin-right:4px;"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke-linecap="round"/></svg>Record voicemail</button>
+          <span class="rec-dot" id="dot-${tool}"></span>
+          <span id="audioSlot-${tool}"></span>
+        </div>
+      </div>`,
+          );
+        } else if (tool === "chat") {
+          panels.insertAdjacentHTML(
+            "beforeend",
+            `
+      <div class="panel" id="panel-chat">
+        <strong>Client group chat message</strong>
+        <textarea placeholder="Type the update you would post in the client's group chat..." oninput="setScript('chat', this.value)"></textarea>
+      </div>`,
+          );
+        }
+      }
+
+      function setScript(key, value) {
+        current.scripts[key] = value;
+      }
+
+      /* ==================== VOICE RECORDING ==================== */
+      async function toggleRecord(tool) {
+        const dot = document.getElementById("dot-" + tool);
+        if (
+          activeRecordTarget === tool &&
+          mediaRecorder &&
+          mediaRecorder.state === "recording"
+        ) {
+          mediaRecorder.stop();
+          return;
+        }
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          chunks = [];
+          mediaRecorder = new MediaRecorder(stream);
+          activeRecordTarget = tool;
+          mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            const blob = new Blob(chunks, { type: "audio/webm" });
+            const url = URL.createObjectURL(blob);
+            current.audio[tool] = url;
+            document.getElementById("audioSlot-" + tool).innerHTML =
+              `<audio controls src="${url}"></audio>`;
+            dot.classList.remove("on");
+            stream.getTracks().forEach((t) => t.stop());
+          };
+          mediaRecorder.start();
+          dot.classList.add("on");
+        } catch (err) {
+          toast(
+            "Microphone access is needed to record a voicemail. You can still grade the typed script.",
+            "warn",
+          );
+        }
+      }
+
+      /* ==================== SCORING ==================== */
+      function scoreTools() {
+        const idealSet = new Set(current.inc.ideal_tools);
+        const used = current.toolsUsed;
+        const correct = [...idealSet].filter((t) => used.has(t)).length;
+        const extra = [...used].filter((t) => !idealSet.has(t)).length;
+        const denom = Math.max(idealSet.size, 1);
+        return Math.max(0, Math.round(((correct - extra * 0.5) / denom) * 100));
+      }
+
+      // Time-boxed scoring: faster, appropriately-paced responses score
+      // higher. Targets scale with incident severity — red (critical) calls
+      // for the quickest response, green allows more time to think it through.
+      const TIME_TARGET_SEC = { red: 90, orange: 150, green: 240 };
+      function scoreTime(category, elapsedSec) {
+        const target = TIME_TARGET_SEC[category] || 180;
+        if (elapsedSec <= target) return 100;
+        const over = elapsedSec - target;
+        return Math.max(0, 100 - Math.round((over / target) * 100));
+      }
+
+      function scoreScripts(addressPart) {
+        const externalTools = ["police", "ambulance"].filter((t) =>
+          current.toolsUsed.has(t),
+        );
+        const internalTools = ["supervisor", "ceo"].filter((t) =>
+          current.toolsUsed.has(t),
+        );
+        const speakerTools = ["speaker", "siren"].filter((t) =>
+          current.toolsUsed.has(t),
+        );
+        let totalHits = 0,
+          totalPossible = 0;
+        const perTool = [];
+
+        // A recorded voicemail stands in for the typed script — if audio was
+        // captured for a tool, that call is graded as fully delivered even
+        // if the text box was left blank.
+        const hasAudio = (t) => !!(current.audio && current.audio[t]);
+
+        externalTools.forEach((t) => {
+          const text = (current.scripts[t] || "").toLowerCase();
+          const required = ["elite vision", addressPart].concat(
+            current.inc.extra_keywords.map((x) => x.toLowerCase()),
+          );
+          const hits =
+            !text.trim() && hasAudio(t)
+              ? required.slice()
+              : required.filter((term) => text.includes(term));
+          totalHits += hits.length;
+          totalPossible += required.length;
+          perTool.push({
+            tool: t,
+            required,
+            hits,
+            text: current.scripts[t] || "",
+          });
+        });
+
+        internalTools.forEach((t) => {
+          const text = (current.scripts[t] || "").toLowerCase();
+          const required = [addressPart].concat(
+            current.inc.extra_keywords.map((x) => x.toLowerCase()),
+          );
+          const hits =
+            !text.trim() && hasAudio(t)
+              ? required.slice()
+              : required.filter((term) => text.includes(term));
+          totalHits += hits.length;
+          totalPossible += required.length;
+          perTool.push({
+            tool: t,
+            required,
+            hits,
+            text: current.scripts[t] || "",
+            contact: current.scripts[t + "_contact"],
+          });
+        });
+
+        speakerTools.forEach((t) => {
+          const text = (current.scripts[t] || "").trim();
+          const hit = text.length > 15 || hasAudio(t);
+          totalHits += hit ? 1 : 0;
+          totalPossible += 1;
+          perTool.push({
+            tool: t,
+            required: ["announcement of reasonable length"],
+            hits: hit ? ["announcement of reasonable length"] : [],
+            text,
+          });
+        });
+
+        const pct =
+          totalPossible === 0
+            ? 0
+            : Math.round((totalHits / totalPossible) * 100);
+        return { pct, perTool };
+      }
+
+      async function finishScenario() {
+        if (!current.chosenCat) {
+          toast("Classify the situation before finishing.", "warn");
+          return;
+        }
+        current.finished = true;
+        clearInterval(current.timerHandle);
+        const elapsedSec = Math.floor((Date.now() - current.startedAt) / 1000);
+
+        const addressPart = current.inc.client_address
+          .split(",")[0]
+          .toLowerCase();
+
+        const catCorrect = current.chosenCat === current.inc.category;
+        const catPct = catCorrect ? 100 : 0;
+        const toolPct = scoreTools();
+        const scriptResult = scoreScripts(addressPart);
+        const timePct = scoreTime(current.inc.category, elapsedSec);
+        const overall = Math.round(
+          (catPct + toolPct + scriptResult.pct + timePct) / 4,
+        );
+
+        const ringColor =
+          overall >= 85
+            ? "var(--green)"
+            : overall >= 60
+              ? "var(--orange)"
+              : "var(--red)";
+        const timeTarget = TIME_TARGET_SEC[current.inc.category] || 180;
+
+        document.getElementById("results").innerHTML = `
+    <div class="score-box">
+      <div class="score-item"><div class="num" style="color:${catCorrect ? "var(--green)" : "var(--red)"}">${catPct}%</div><div class="lbl">Classification</div></div>
+      <div class="score-item"><div class="num">${toolPct}%</div><div class="lbl">Tool Selection</div></div>
+      <div class="score-item"><div class="num">${scriptResult.pct}%</div><div class="lbl">Script Completeness</div></div>
+      <div class="score-item"><div class="num" style="color:${timePct >= 80 ? "var(--green)" : timePct >= 50 ? "var(--orange)" : "var(--red)"}">${timePct}%</div><div class="lbl">Response Time</div></div>
+      <div class="score-item"><div class="num" style="color:${ringColor}">${overall}%</div><div class="lbl">Overall</div></div>
+    </div>
+    <div class="warn" style="margin-top:14px;">
+      Correct classification was <strong>${current.inc.category.toUpperCase()}</strong>${catCorrect ? " — nice read." : ` — you chose ${current.chosenCat.toUpperCase()}.`}
+      Ideal actions: ${current.inc.ideal_tools.map((t) => TOOL_LABELS[t]).join(", ") || "—"}.
+      Time to complete: ${Math.floor(elapsedSec / 60)}m ${elapsedSec % 60}s (target for this severity: under ${Math.floor(timeTarget / 60)}m ${timeTarget % 60}s).
+    </div>
+  `;
+
+        if (overall >= 90) confetti();
+
+        const detail = {
+          incidentTitle: current.inc.title,
+          narrative: current.inc.narrative,
+          correctCat: current.inc.category,
+          chosenCat: current.chosenCat,
+          idealTools: current.inc.ideal_tools,
+          usedTools: [...current.toolsUsed],
+          scripts: current.scripts,
+          perTool: scriptResult.perTool,
+          elapsedSec,
+          catPct,
+          toolPct,
+          timePct,
+          scriptPct: scriptResult.pct,
+          overall,
+        };
+
+        const posted = await apiSend(API.history, "POST", {
+          operator_name: current.operator,
+          client_name: current.inc.client_name,
+          category: current.inc.category,
+          tool_pct: toolPct,
+          script_pct: scriptResult.pct,
+          overall_pct: overall,
+          detail,
+        });
+        if (posted && posted.id && Object.keys(current.audio).length) {
+          SESSION_AUDIO[posted.id] = current.audio;
+        }
+        HISTORY = await apiGet(API.history);
+        renderDashboard();
+        toast("Scenario submitted for review.");
+      }
+
+      /* ==================== REVIEW ==================== */
+      function ringStyle(pct) {
+        const color = pct >= 85 ? "#4ade80" : pct >= 60 ? "#f2a93c" : "#ef5b5b";
+        return `background:conic-gradient(${color} ${pct * 3.6}deg, var(--surface-3) 0deg); color:var(--cream);`;
+      }
+
+      function renderLeaderboard() {
+        const byOp = {};
+        HISTORY.forEach((h) => {
+          const name = h.operator_name || "Unknown";
+          byOp[name] = byOp[name] || { count: 0, sum: 0 };
+          byOp[name].count++;
+          byOp[name].sum += Number(h.overall_pct || 0);
+        });
+        const rows = Object.entries(byOp)
+          .map(([name, d]) => ({
+            name,
+            count: d.count,
+            avg: Math.round(d.sum / d.count),
+          }))
+          .sort((a, b) => b.avg - a.avg);
+
+        if (rows.length === 0) {
+          document.getElementById("leaderboard").innerHTML =
+            '<div class="empty-state"><div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 4h10v5a5 5 0 0 1-10 0Zm0 0H4v1a4 4 0 0 0 4 4M17 4h3v1a4 4 0 0 1-4 4M12 14v3M9 21h6M9.5 21v-.5A2.5 2.5 0 0 1 12 18h0a2.5 2.5 0 0 1 2.5 2.5v.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>No submitted scenarios yet. Run one to get the board started.</div>';
+          return;
+        }
+        document.getElementById("leaderboard").innerHTML = rows
+          .map(
+            (r, i) => `
+    <div class="lb-row ${i === 0 ? "top" : ""}">
+      <span class="lb-rank">${i + 1}</span>
+      <span class="lb-name">${r.name}</span>
+      <span class="lb-meta">${r.count} scenario${r.count === 1 ? "" : "s"}</span>
+      <span class="lb-score">${r.avg}%</span>
+    </div>`,
+          )
+          .join("");
+      }
+
+      function renderReview() {
+        renderLeaderboard();
+        const opSel = document.getElementById("reviewOperatorFilter");
+        const ops = [
+          ...new Set(HISTORY.map((h) => h.operator_name).filter(Boolean)),
+        ];
+        const prevOp = opSel.value || "all";
+        opSel.innerHTML =
+          '<option value="all">All operators</option>' +
+          ops.map((o) => `<option value="${o}">${o}</option>`).join("");
+        opSel.value = ops.includes(prevOp) ? prevOp : "all";
+        renderSubmissionsList();
+      }
+
+      function renderSubmissionsList() {
+        const q = (
+          document.getElementById("reviewSearch").value || ""
+        ).toLowerCase();
+        const opFilter = document.getElementById("reviewOperatorFilter").value;
+        let rows = [...HISTORY].sort((a, b) => b.id - a.id);
+        if (opFilter !== "all")
+          rows = rows.filter((h) => h.operator_name === opFilter);
+        if (catFilter !== "all")
+          rows = rows.filter((h) => h.category === catFilter);
+        if (q)
+          rows = rows.filter(
+            (h) =>
+              (h.operator_name || "").toLowerCase().includes(q) ||
+              (h.client_name || "").toLowerCase().includes(q),
+          );
+        document.getElementById("submissionCount").textContent =
+          `${rows.length} submission${rows.length === 1 ? "" : "s"}`;
+
+        if (rows.length === 0) {
+          document.getElementById("submissionsList").innerHTML =
+            '<div class="empty-state"><div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg></div>Nothing matches yet.</div>';
+          return;
+        }
+
+        document.getElementById("submissionsList").innerHTML = rows
+          .map((h) => {
+            const detail = getDetail(h);
+            const open = openSubmissionId === h.id;
+            return `
+      <div class="submission ${open ? "open" : ""}" id="sub-${h.id}">
+        <div class="submission-head" onclick="toggleSubmission(${h.id})">
+          <span class="chevron">▶</span>
+          <span class="who">${h.operator_name || "—"}</span>
+          <span class="badge ${h.category}">${h.category}</span>
+          <span class="when">${h.client_name} · ${h.created_at}</span>
+          <span class="ring" style="${ringStyle(Number(h.overall_pct))}"><span style="background:var(--surface-2);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;">${h.overall_pct}%</span></span>
+        </div>
+        <div class="submission-detail">${renderSubmissionDetail(h, detail)}</div>
+        <div style="padding:0 14px 14px;text-align:right;">
+          <button class="small-btn danger" onclick="deleteHistoryRow(${h.id})">Delete drill</button>
+        </div>
+      </div>`;
+          })
+          .join("");
+      }
+
+      function renderSubmissionDetail(h, detail) {
+        if (!detail) {
+          return `<p class="no-detail-note">Full breakdown isn't available for this submission (it may have been logged in a different browser/session). Scores: Tools ${h.tool_pct}% · Script ${h.script_pct}% · Overall ${h.overall_pct}%.</p>`;
+        }
+        const catOk = detail.chosenCat === detail.correctCat;
+        const usedSet = new Set(detail.usedTools);
+        const idealSet = new Set(detail.idealTools);
+        const missed = detail.idealTools.filter((t) => !usedSet.has(t));
+        const extra = detail.usedTools.filter((t) => !idealSet.has(t));
+        const audio = SESSION_AUDIO[h.id] || {};
+
+        return `
+    <p class="narrative" style="margin-top:12px;">${detail.narrative}</p>
+    <div class="detail-grid">
+      <div class="detail-block">
+        <h4>Classification</h4>
+        <div class="compare-line">Correct: <strong style="color:var(--green)">${detail.correctCat.toUpperCase()}</strong></div>
+        <div class="compare-line">Chosen: <strong style="color:${catOk ? "var(--green)" : "var(--red)"}">${detail.chosenCat.toUpperCase()}</strong> ${catOk ? "✓" : "✕"}</div>
+        <div class="compare-line">Time to complete: ${Math.floor(detail.elapsedSec / 60)}m ${detail.elapsedSec % 60}s${detail.timePct !== undefined ? ` (response-time score: ${detail.timePct}%)` : ""}</div>
+      </div>
+      <div class="detail-block">
+        <h4>Tool Selection — ${detail.toolPct}%</h4>
+        <div class="compare-line">Used: ${detail.usedTools.map((t) => TOOL_LABELS[t]).join(", ") || "—"}</div>
+        <div class="compare-line" style="color:${missed.length ? "var(--red)" : "var(--muted)"}">Missed ideal: ${missed.map((t) => TOOL_LABELS[t]).join(", ") || "none"}</div>
+        <div class="compare-line" style="color:${extra.length ? "var(--orange)" : "var(--muted)"}">Unnecessary: ${extra.map((t) => TOOL_LABELS[t]).join(", ") || "none"}</div>
+      </div>
+    </div>
+    <div class="detail-block" style="margin-top:12px;">
+      <h4>Scripts &amp; Call Content — ${detail.scriptPct}%</h4>
+      ${
+        detail.perTool.length === 0
+          ? '<div class="small">No scripts were entered.</div>'
+          : detail.perTool
+              .map(
+                (pt) => `
+        <div class="script-block">
+          <div class="label">${TOOL_LABELS[pt.tool]}${pt.contact ? " → " + pt.contact : ""} · ${pt.hits.length}/${pt.required.length} key elements</div>
+          <div class="body-text">${pt.text ? pt.text.replace(/</g, "&lt;") : "(nothing entered)"}</div>
+          <div class="checklist">${pt.required
+            .map(
+              (r) =>
+                `<span class="${pt.hits.includes(r) ? "hit" : "miss"}">${pt.hits.includes(r) ? "✓" : "✕"} ${r}</span>`,
+            )
+            .join("")}</div>
+          ${audio[pt.tool] ? `<audio controls src="${audio[pt.tool]}" style="margin-top:6px;"></audio>` : ""}
+        </div>`,
+              )
+              .join("")
+      }
+    </div>
+  `;
+      }
+
+      function toggleSubmission(id) {
+        openSubmissionId = openSubmissionId === id ? null : id;
+        renderSubmissionsList();
+      }
+      document
+        .getElementById("reviewSearch")
+        .addEventListener("input", renderSubmissionsList);
+      document
+        .getElementById("reviewOperatorFilter")
+        .addEventListener("change", renderSubmissionsList);
+
+      async function deleteHistoryRow(id) {
+        const ok = await confirmModal(
+          "Delete drill?",
+          "This removes this drill from history and permanently deletes its score.",
+        );
+        if (!ok) return;
+        await apiSend(API.history + "?id=" + id, "DELETE");
+        delete SESSION_AUDIO[id];
+        if (openSubmissionId === id) openSubmissionId = null;
+        HISTORY = await apiGet(API.history);
+        renderReview();
+        renderDashboard();
+        toast("Drill deleted.");
+      }
+      document.getElementById("clearHistory").onclick = async () => {
+        const ok = await confirmModal(
+          "Clear all history?",
+          "This deletes every submitted scenario for every operator. This can't be undone.",
+        );
+        if (!ok) return;
+        await apiSend(API.history, "DELETE");
+        HISTORY = await apiGet(API.history);
+        renderReview();
+        renderDashboard();
+        toast("History cleared.");
+      };
+
+      /* ==================== DIRECTORY ==================== */
+      function renderDirectory() {
+        const q = (
+          document.getElementById("directorySearch").value || ""
+        ).toLowerCase();
+
+        const team = [
+          ...EXECUTIVES.map((e) => ({ ...e, kind: "executive" })),
+          ...OPERATORS.map((o) => ({ ...o, kind: "operator" })),
+        ].filter((p) => p.name.toLowerCase().includes(q));
+
+        document.getElementById("teamCards").innerHTML =
+          team.length === 0
+            ? emptyState(
+                `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" stroke-linecap="round"/></svg>`,
+                "No team members yet.",
+              )
+            : team
+                .map(
+                  (p) => `
+      <div class="entity-card">
+        <div class="avatar ${p.kind === "executive" ? "gold" : ""}">${initials(p.name)}</div>
+        <div class="entity-body">
+          <div class="name">${p.name}</div>
+          <div class="desc"><span class="badge role ${p.kind === "executive" ? "ceo" : ""}">${p.role}</span></div>
+        </div>
+        <div class="entity-actions">
+          <button class="icon-btn ghost admin-only" title="Edit" onclick="editPerson('${p.kind}',${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg></button>
+          <button class="icon-btn danger admin-only" title="Delete" onclick="deletePerson('${p.kind}',${p.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>`,
+                )
+                .join("");
+
+        const clients = CLIENTS.filter(
+          (c) =>
+            c.name.toLowerCase().includes(q) ||
+            c.address.toLowerCase().includes(q),
+        );
+        document.getElementById("clientCards").innerHTML =
+          clients.length === 0
+            ? emptyState(
+                `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><path d="M4 20V6a1 1 0 0 1 1-1h6v15M11 20h9M14 9h2M14 13h2M7 9h1M7 13h1" stroke-linecap="round"/></svg>`,
+                "No clients yet.",
+              )
+            : clients
+                .map(
+                  (c) => `
+      <div class="entity-card">
+        <div class="avatar">${initials(c.name)}</div>
+        <div class="entity-body">
+          <div class="name">${c.name}</div>
+          <div class="desc">${c.address}${c.state ? ", " + c.state : ""}<br>${c.has_speaker ? "Speaker  " : ""}${c.has_siren ? "Siren" : ""}${!c.has_speaker && !c.has_siren ? "No speaker/siren on site" : ""}${c.police_department ? "<br>Police Dept: " + c.police_department : ""}</div>
+        </div>
+        <div class="entity-actions">
+          <button class="icon-btn ghost admin-only" title="Edit" onclick="editClient(${c.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg></button>
+          <button class="icon-btn danger admin-only" title="Delete" onclick="deleteClientRow(${c.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>`,
+                )
+                .join("");
+
+        const incidents = INCIDENTS.filter(
+          (i) =>
+            i.title.toLowerCase().includes(q) ||
+            i.client_name.toLowerCase().includes(q),
+        );
+        document.getElementById("incidentCards").innerHTML =
+          incidents.length === 0
+            ? emptyState(
+                `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><path d="M4 4h13l3 3v13H4Z"/><path d="M17 4v3h3" stroke-linejoin="round"/></svg>`,
+                "No scenarios yet — add one to start running operations.",
+              )
+            : incidents
+                .map(
+                  (i) => `
+      <div class="entity-card">
+        <div class="avatar" style="background:${i.category === "green" ? "linear-gradient(135deg,#4ade80,#2fa864)" : i.category === "orange" ? "linear-gradient(135deg,#f2a93c,#c9821f)" : "linear-gradient(135deg,#ef5b5b,#c53a3a)"};color:#0c1a13;">${i.category[0].toUpperCase()}</div>
+        <div class="entity-body">
+          <div class="name">${i.title}</div>
+          <div class="desc">${i.client_name} <span class="badge ${i.category}">${i.category}</span></div>
+        </div>
+        <div class="entity-actions">
+          <button class="icon-btn ghost admin-only" title="Edit" onclick="editIncident(${i.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg></button>
+          <button class="icon-btn danger admin-only" title="Delete" onclick="deleteIncidentRow(${i.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>`,
+                )
+                .join("");
+      }
+
+      /* ==================== OPERATIONS VIEW ==================== */
+      function renderOperations() {
+        const q = (
+          document.getElementById("operationsSearch").value || ""
+        ).toLowerCase();
+
+        // Group documents by client
+        const docsByClient = {};
+        DOCUMENTS.forEach((doc) => {
+          if (!docsByClient[doc.client_id]) {
+            docsByClient[doc.client_id] = [];
+          }
+          docsByClient[doc.client_id].push(doc);
+        });
+
+        // Filter clients that have documents or match search
+        const relevantClients = CLIENTS.filter((c) => {
+          const hasDocuments =
+            docsByClient[c.id] && docsByClient[c.id].length > 0;
+          const matchesSearch = c.name.toLowerCase().includes(q);
+          return hasDocuments || matchesSearch;
+        });
+
+        // If no matches, show empty state
+        if (
+          relevantClients.length === 0 &&
+          Object.keys(docsByClient).length === 0
+        ) {
+          document.getElementById("documentsGrid").innerHTML = emptyState(
+            `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><path d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m0-18h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9m0-18v18m-4-4h12M5 12h12" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            "No operational documents yet. Add documents to help operators prepare for drills.",
+          );
+          return;
+        }
+
+        const html = CLIENTS.map((client) => {
+          const docs = docsByClient[client.id] || [];
+          const matchesSearch =
+            client.name.toLowerCase().includes(q) ||
+            docs.some(
+              (d) =>
+                d.title.toLowerCase().includes(q) ||
+                (d.description && d.description.toLowerCase().includes(q)),
+            );
+
+          if (!matchesSearch && docs.length === 0) return "";
+
+          const docsHtml =
+            docs.length === 0
+              ? '<div class="doc-empty">No documents for this client</div>'
+              : docs
+                  .map((doc) => {
+                    const docIcon =
+                      doc.doc_type === "google_drive"
+                        ? "📁"
+                        : doc.doc_type === "uploaded"
+                          ? "📄"
+                          : "🔗";
+                    const docLink =
+                      doc.url ||
+                      (doc.file_path ? `downloads/${doc.file_path}` : "#");
+                    return `
+                  <div class="doc-card">
+                    <div class="doc-header">
+                      <span class="doc-icon">${docIcon}</span>
+                      <div class="doc-info">
+                        <div class="doc-title">${doc.title}</div>
+                        ${doc.category ? `<div class="doc-category">${doc.category}</div>` : ""}
+                      </div>
+                      <div class="doc-actions admin-only">
+                        <button class="icon-btn ghost" title="Edit" onclick="editDocument(${doc.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="m15.2 3.8 5 5L8.5 20.5 3 21l.5-5.5Z" stroke-linejoin="round"/></svg></button>
+                        <button class="icon-btn danger" title="Delete" onclick="deleteDocument(${doc.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                      </div>
+                    </div>
+                    ${doc.description ? `<div class="doc-description">${doc.description}</div>` : ""}
+                    <a href="${docLink}" target="_blank" class="doc-link">Open Document →</a>
+                  </div>
+                `;
+                  })
+                  .join("");
+
+          return `
+            <div class="client-docs-section">
+              <div class="client-header">
+                <div class="avatar">${initials(client.name)}</div>
+                <div class="client-info">
+                  <div class="client-name">${client.name}</div>
+                  <div class="client-location">${client.address}${client.state ? ", " + client.state : ""}</div>
+                </div>
+              </div>
+              <div class="docs-list">
+                ${docsHtml}
+              </div>
+            </div>
+          `;
+        })
+          .filter((h) => h)
+          .join("");
+
+        document.getElementById("documentsGrid").innerHTML =
+          html ||
+          emptyState(
+            `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><path d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m0-18h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9m0-18v18m-4-4h12M5 12h12" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            "No operational documents found.",
+          );
+      }
+
+      document
+        .getElementById("operationsSearch")
+        .addEventListener("input", renderOperations);
+
+      async function editDocument(id) {
+        const doc = DOCUMENTS.find((d) => d.id === id);
+        if (!doc) return;
+        showDocumentModal(doc);
+      }
+
+      async function deleteDocument(id) {
+        const ok = await confirmModal(
+          "Delete document?",
+          "This permanently removes this document.",
+        );
+        if (!ok) return;
+        await apiSend(API.documents + "?id=" + id, "DELETE");
+        await loadAll();
+        renderOperations();
+        toast("Document deleted.");
+      }
+
+      function initials(name) {
+        return name
+          .split(" ")
+          .map((p) => p[0])
+          .slice(0, 2)
+          .join("")
+          .toUpperCase();
+      }
+      function emptyState(icon, text) {
+        return `<div class="empty-state" style="grid-column:1/-1;"><div class="big">${icon}</div>${text}</div>`;
+      }
+      document
+        .getElementById("directorySearch")
+        .addEventListener("input", renderDirectory);
+
+      async function deleteClientRow(id) {
+        const ok = await confirmModal(
+          "Delete client?",
+          "This deletes the client and all of its drills. This can't be undone.",
+        );
+        if (!ok) return;
+        await apiSend(API.clients + "?id=" + id, "DELETE");
+        await loadAll();
+        renderDirectory();
+        toast("Client deleted.");
+      }
+      async function deleteIncidentRow(id) {
+        const ok = await confirmModal(
+          "Delete scenario?",
+          "This permanently removes this scenario.",
+        );
+        if (!ok) return;
+        await apiSend(API.incidents + "?id=" + id, "DELETE");
+        await loadAll();
+        renderDirectory();
+        toast("Scenario deleted.");
+      }
+      async function deletePerson(type, id) {
+        const ok = await confirmModal(
+          "Delete team member?",
+          "This removes them from the roster.",
+        );
+        if (!ok) return;
+        await apiSend(
+          (type === "operator" ? API.operators : API.executives) + "?id=" + id,
+          "DELETE",
+        );
+        await loadAll();
+        renderDirectory();
+        toast("Team member deleted.");
+      }
+
+      /* ==================== ADD / EDIT MODALS ==================== */
+      function renderChips(containerId, active) {
+        const el = document.getElementById(containerId);
+        el.innerHTML = ALL_TOOL_KEYS.map(
+          (k) =>
+            `<span class="chip ${active.includes(k) ? "active" : ""}" data-key="${k}" onclick="this.classList.toggle('active')">${TOOL_LABELS[k]}</span>`,
+        ).join("");
+      }
+      function readChips(containerId) {
+        return [
+          ...document.querySelectorAll("#" + containerId + " .chip.active"),
+        ].map((el) => el.dataset.key);
+      }
+
+      /* --- Client modal --- */
+      function clientModal(existing) {
+        editingClientId = existing ? existing.id : null;
+        openModal(
+          existing ? "Edit Client" : "Add a Client",
+          `
+      <div class="grid2">
+        <div class="field"><label>Client name</label><input type="text" id="mClientName" placeholder="e.g. Ronald Cohen" value="${existing ? existing.name : ""}"></div>
+        <div class="field"><label>State</label>
+          <select id="mClientState">
+            ${["NY", "NJ", "CA", "FL", "Other"].map((s) => `<option ${existing && existing.state === s ? "selected" : ""}>${s}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Address</label><input type="text" id="mClientAddress" placeholder="Street, City, State, ZIP" value="${existing ? existing.address : ""}"></div>
+      <div class="checkrow">
+        <label><input type="checkbox" id="mClientSpeaker" ${existing && existing.has_speaker ? "checked" : ""}> Has speaker</label>
+        <label><input type="checkbox" id="mClientSiren" ${existing && existing.has_siren ? "checked" : ""}> Has siren/alarm</label>
+      </div>
+      <div class="field"><label>Police Department (Optional)</label><input type="text" id="mClientPolice" placeholder="e.g. Brooklyn Police Department" value="${existing && existing.police_department ? existing.police_department : ""}"></div>
+      <div id="mClientMsg" class="small" style="margin-top:6px;color:#ff9d9d;"></div>
+    `,
+          `<button class="ghost" onclick="closeModal()">Cancel</button>
+       <button class="primary" id="mClientSave">${existing ? "Update Client" : "Save Client"}</button>`,
+        );
+        document.getElementById("mClientSave").onclick = saveClientModal;
+      }
+      async function saveClientModal() {
+        const name = document.getElementById("mClientName").value.trim();
+        const address = document.getElementById("mClientAddress").value.trim();
+        const state = document.getElementById("mClientState").value;
+        const has_speaker = document.getElementById("mClientSpeaker").checked;
+        const has_siren = document.getElementById("mClientSiren").checked;
+        const police_department = document
+          .getElementById("mClientPolice")
+          .value.trim();
+        const msg = document.getElementById("mClientMsg");
+        if (!name || !address) {
+          msg.textContent = "Name and address are required.";
+          return;
+        }
+        const body = {
+          name,
+          address,
+          state,
+          has_speaker,
+          has_siren,
+          police_department: police_department || null,
+        };
+        if (editingClientId) {
+          await apiSend(API.clients + "?id=" + editingClientId, "PUT", body);
+          toast(`${name} updated.`);
+        } else {
+          await apiSend(API.clients, "POST", body);
+          toast(`${name} added.`);
+        }
+        editingClientId = null;
+        closeModal();
+        await loadAll();
+        renderDirectory();
+      }
+      function editClient(id) {
+        clientModal(client(id));
+      }
+      document.getElementById("openAddClient").onclick = () =>
+        clientModal(null);
+
+      /* --- Incident modal --- */
+      function incidentModal(existing) {
+        editingIncidentId = existing ? existing.id : null;
+        openModal(
+          existing ? "Edit Scenario" : "Add a Scenario / Incident",
+          `
+      <div class="grid2">
+        <div class="field"><label>Title</label><input type="text" id="mIncTitle" placeholder="Short name for this scenario" value="${existing ? existing.title : ""}"></div>
+        <div class="field"><label>Client</label><select id="mIncClient">${CLIENTS.map((c) => `<option value="${c.id}" ${existing && existing.client_id === c.id ? "selected" : ""}>${c.name}</option>`).join("")}</select></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Category</label>
+          <select id="mIncCat">
+            <option value="green" ${existing && existing.category === "green" ? "selected" : ""}>Green — safe</option>
+            <option value="orange" ${existing && existing.category === "orange" ? "selected" : ""}>Orange — unusual</option>
+            <option value="red" ${existing && existing.category === "red" ? "selected" : ""}>Red — emergency</option>
+          </select>
+        </div>
+        <div class="field"><label>Time of incident</label><input type="text" id="mIncTime" placeholder="e.g. 2:15 AM" value="${existing ? existing.time_label || "" : ""}"></div>
+      </div>
+      <div class="field"><label>Narrative (what the operator sees on camera)</label><textarea id="mIncNarrative" placeholder="Describe exactly what appears on camera...">${existing ? existing.narrative : ""}</textarea></div>
+      <div class="field"><label>Ideal response actions</label><div class="chips" id="mIncTools"></div></div>
+      <div class="field"><label>Key details the operator's scripts should mention (comma separated)</label><input type="text" id="mIncExtra" placeholder="e.g. forced entry, masked, weapons" value="${existing ? existing.extra_keywords.join(", ") : ""}"></div>
+      <div id="mIncMsg" class="small" style="margin-top:6px;color:#ff9d9d;"></div>
+    `,
+          `<button class="ghost" onclick="closeModal()">Cancel</button>
+       <button class="primary" id="mIncSave">${existing ? "Update Scenario" : "Save Scenario"}</button>`,
+        );
+        renderChips("mIncTools", existing ? existing.ideal_tools : []);
+        document.getElementById("mIncSave").onclick = saveIncidentModal;
+      }
+      async function saveIncidentModal() {
+        const title = document.getElementById("mIncTitle").value.trim();
+        const client_id = document.getElementById("mIncClient").value;
+        const category = document.getElementById("mIncCat").value;
+        const time_label =
+          document.getElementById("mIncTime").value.trim() ||
+          "unspecified time";
+        const narrative = document.getElementById("mIncNarrative").value.trim();
+        const ideal_tools = readChips("mIncTools");
+        const extra_keywords = document
+          .getElementById("mIncExtra")
+          .value.split(",")
+          .map((s) => s.trim().toLowerCase())
+          .filter(Boolean);
+        const msg = document.getElementById("mIncMsg");
+
+        if (!title || !client_id || !narrative || ideal_tools.length === 0) {
+          msg.textContent =
+            "Title, client, narrative, and at least one ideal action are required.";
+          return;
+        }
+
+        const body = {
+          title,
+          client_id,
+          category,
+          time_label,
+          narrative,
+          ideal_tools,
+          extra_keywords,
+        };
+
+        if (editingIncidentId) {
+          await apiSend(
+            API.incidents + "?id=" + editingIncidentId,
+            "PUT",
+            body,
+          );
+          toast(`"${title}" updated.`);
+        } else {
+          await apiSend(API.incidents, "POST", body);
+          toast(`"${title}" added to the rotation.`);
+        }
+        editingIncidentId = null;
+        closeModal();
+        await loadAll();
+        renderDirectory();
+      }
+      function editIncident(id) {
+        incidentModal(INCIDENTS.find((i) => i.id === id));
+      }
+      document.getElementById("openAddIncident").onclick = () => {
+        if (CLIENTS.length === 0) {
+          toast("Add a client first, then add a scenario for them.", "warn");
+          return;
+        }
+        incidentModal(null);
+      };
+
+      /* --- Team member modal --- */
+      function personModal(type, existing) {
+        editingPersonId = existing ? existing.id : null;
+        editingPersonType = existing ? type : null;
+        const isOperator = (type || "operator") === "operator";
+        openModal(
+          existing ? "Edit Team Member" : "Add a Team Member",
+          `
+      <div class="grid2">
+        <div class="field"><label>Name</label><input type="text" id="mPersonName" placeholder="Full name" value="${existing ? existing.name : ""}"></div>
+        <div class="field"><label>Group</label>
+          <select id="mPersonType">
+            <option value="operator" ${isOperator ? "selected" : ""}>Operator team</option>
+            <option value="executive" ${!isOperator ? "selected" : ""}>Executive</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="mOperatorRoleField" ${isOperator ? "" : "hidden"}>
+        <label>Role</label>
+        <select id="mPersonOperatorRole">
+          <option value="Operator" ${existing && existing.role === "Operator" ? "selected" : ""}>Operator</option>
+          <option value="Supervisor" ${existing && existing.role === "Supervisor" ? "selected" : ""}>Supervisor</option>
+        </select>
+      </div>
+      <div class="field" id="mExecutiveRoleField" ${!isOperator ? "" : "hidden"}>
+        <label>Role</label>
+        <input type="text" id="mPersonExecutiveRole" value="${existing && !isOperator ? existing.role : "CEO"}">
+      </div>
+      <div id="mPersonMsg" class="small" style="margin-top:6px;color:#ff9d9d;"></div>
+    `,
+          `<button class="ghost" onclick="closeModal()">Cancel</button>
+       <button class="primary" id="mPersonSave">${existing ? "Update Team Member" : "Save Team Member"}</button>`,
+        );
+        document.getElementById("mPersonType").onchange = (e) => {
+          const op = e.target.value === "operator";
+          document.getElementById("mOperatorRoleField").hidden = !op;
+          document.getElementById("mExecutiveRoleField").hidden = op;
+        };
+        document.getElementById("mPersonSave").onclick = savePersonModal;
+      }
+      async function savePersonModal() {
+        const name = document.getElementById("mPersonName").value.trim();
+        const type = document.getElementById("mPersonType").value;
+        const role =
+          type === "operator"
+            ? document.getElementById("mPersonOperatorRole").value
+            : document.getElementById("mPersonExecutiveRole").value.trim() ||
+              "CEO";
+        const msg = document.getElementById("mPersonMsg");
+        if (!name) {
+          msg.textContent = "Name is required.";
+          return;
+        }
+        const endpoint = type === "operator" ? API.operators : API.executives;
+        if (editingPersonId && editingPersonType === type) {
+          await apiSend(endpoint + "?id=" + editingPersonId, "PUT", {
+            name,
+            role,
+          });
+          toast(`${name} updated.`);
+        } else {
+          await apiSend(endpoint, "POST", { name, role });
+          toast(`${name} added.`);
+        }
+        editingPersonId = null;
+        editingPersonType = null;
+        closeModal();
+        await loadAll();
+        renderDirectory();
+      }
+      function editPerson(type, id) {
+        const list = type === "operator" ? OPERATORS : EXECUTIVES;
+        personModal(
+          type,
+          list.find((x) => x.id === id),
+        );
+      }
+      document.getElementById("openAddPerson").onclick = () =>
+        personModal("operator", null);
+
+      /* ==================== DOCUMENT MODAL ==================== */
+      function showDocumentModal(existing) {
+        editingDocId = existing ? existing.id : null;
+        openModal(
+          existing ? "Edit Document" : "Add Operational Document",
+          `
+      <div class="field"><label>Client</label>
+        <select id="mDocClient">
+          ${CLIENTS.map((c) => `<option value="${c.id}" ${existing && existing.client_id === c.id ? "selected" : ""}>${c.name}</option>`).join("")}
+        </select>
+      </div>
+      <div class="field"><label>Document Title</label>
+        <input type="text" id="mDocTitle" placeholder="e.g. Evacuation Plan, Client Profile" value="${existing ? existing.title : ""}">
+      </div>
+      <div class="field"><label>Category (optional)</label>
+        <input type="text" id="mDocCategory" placeholder="e.g. Operational Plan, Client Profile, Contact List" value="${existing ? existing.category || "" : ""}">
+      </div>
+      <div class="field"><label>Description (optional)</label>
+        <textarea id="mDocDescription" placeholder="Brief description of the document..." rows="3">${existing ? existing.description || "" : ""}</textarea>
+      </div>
+      <div class="field"><label>Document Type</label>
+        <select id="mDocType">
+          <option value="external_url" ${existing && existing.doc_type === "external_url" ? "selected" : ""}>External URL (Google Drive, etc.)</option>
+          <option value="google_drive" ${existing && existing.doc_type === "google_drive" ? "selected" : ""}>Google Drive Link</option>
+          <option value="uploaded" ${existing && existing.doc_type === "uploaded" ? "selected" : ""}>Uploaded File</option>
+        </select>
+      </div>
+      <div class="field" id="mDocUrlField">
+        <label>URL</label>
+        <input type="text" id="mDocUrl" placeholder="https://drive.google.com/... or document URL" value="${existing ? existing.url || "" : ""}">
+        <small style="color:var(--muted);margin-top:4px;display:block;">For Google Drive, use the shareable link</small>
+      </div>
+      <div id="mDocMsg" class="small" style="margin-top:6px;color:#ff9d9d;"></div>
+    `,
+          `<button class="ghost" onclick="closeModal()">Cancel</button>
+       <button class="primary" id="mDocSave">${existing ? "Update Document" : "Add Document"}</button>`,
+        );
+        document.getElementById("mDocSave").onclick = saveDocumentModal;
+      }
+
+      async function saveDocumentModal() {
+        const title = document.getElementById("mDocTitle").value.trim();
+        const client_id = document.getElementById("mDocClient").value;
+        const category =
+          document.getElementById("mDocCategory").value.trim() || null;
+        const description =
+          document.getElementById("mDocDescription").value.trim() || null;
+        const doc_type = document.getElementById("mDocType").value;
+        const url = document.getElementById("mDocUrl").value.trim() || null;
+        const msg = document.getElementById("mDocMsg");
+
+        if (!title || !client_id) {
+          msg.textContent = "Title and client are required.";
+          return;
+        }
+
+        if (
+          (doc_type === "external_url" || doc_type === "google_drive") &&
+          !url
+        ) {
+          msg.textContent = "URL is required for this document type.";
+          return;
+        }
+
+        const body = {
+          title,
+          client_id,
+          category,
+          description,
+          doc_type,
+          url,
+        };
+
+        if (editingDocId) {
+          await apiSend(API.documents + "?id=" + editingDocId, "PUT", body);
+          toast(`"${title}" updated.`);
+        } else {
+          await apiSend(API.documents, "POST", body);
+          toast(`"${title}" added.`);
+        }
+        editingDocId = null;
+        closeModal();
+        await loadAll();
+        renderOperations();
+      }
+
+      let editingDocId = null;
+
+      document.getElementById("openAddDocument").onclick = () => {
+        if (CLIENTS.length === 0) {
+          toast("Add a client first, then add documents for them.", "warn");
+          return;
+        }
+        showDocumentModal(null);
+      };
+
+      /* ==================== BOOT ==================== */
+      document.getElementById("newDrillBtn").onclick = startScenario;
+      loadAll();
+    </script>
+  </body>
+</html>

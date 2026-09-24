@@ -23,7 +23,7 @@ Copy the whole `evs-drill-simulator` folder into XAMPP's `htdocs` directory:
 
 1. Open `http://localhost/phpmyadmin` in your browser.
 2. Click **Import** in the top menu.
-3. Choose the `evs-drill-simulator.sql` file from this folder.
+3. Choose the `database2.sql` file from this folder.
 4. Click **Go**.
 
 This creates the `evs_drills` database with every table and loads all the existing
@@ -48,14 +48,14 @@ Go to:
 http://localhost/evs-drill-simulator/
 ```
 
-Do **not** open `evs-drill-entry.html` by double-clicking it — the page needs to be served by
+Do **not** open `index.html` by double-clicking it — the page needs to be served by
 Apache so it can talk to the PHP API. Opening it directly from your file system will
 show a "can't reach the database" message.
 
 ## What's in each folder
 
-- `evs-drill-simulator.html` — the whole application (drill runner, directory, add/edit forms).
-- `evs-drill-simulator.sql` — schema + seed data, import once in phpMyAdmin.
+- `index.html` — the whole application (drill runner, directory, add/edit forms).
+- `database2.sql` — schema + seed data, import once in phpMyAdmin.
 - `api/db.php` — shared database connection settings.
 - `api/clients.php` — CRUD for clients (create, read, update, delete).
 - `api/incidents.php` — CRUD for drills/incidents, including the two-stage complex drills.
@@ -71,7 +71,7 @@ The app now has two modes:
   achievement badges, stats), view your Drill History (filterable by
   green/orange/red severity), and browse the Directory read-only.
 - **Admin mode** — click **Admin Login** in the header and enter the access
-  code (default `evsadmin`, set in `evs-drill-simulator.html` via the `ADMIN_CODE`
+  code (default `evsadmin`, set in `mainpage.html` via the `ADMIN_CODE`
   constant near the top of the `<script>` block — change this before
   deploying). Admin mode unlocks:
   - Add/Edit/Delete on Team, Clients, and Drills in the Directory
@@ -105,73 +105,3 @@ concentrates on real weak spots instead of being purely random.
 Voicemail recording (the microphone button for speaker/siren/police/supervisor/CEO
 calls) stays entirely in the browser and does not require the database — it works the
 same as before.
-# Elite Vision Security Hub
-
-This repository contains two PHP systems intended for use on an office LAN:
-
-- `evs-drill-simulator/` - drill simulator backed by MySQL/MariaDB.
-- `evs-payroll-system/` - invoice and payroll system backed by SQLite.
-
-## Recommended workflow
-
-Use the laptop for development and GitHub for source control. Designate one
-office PC as the anchor server. That PC runs XAMPP/Apache and serves both
-applications to the office network.
-
-```text
-Laptop -> git push -> GitHub <- git pull <- Anchor office PC
-												  |
-												  +-- Apache/PHP serves both systems
-												  +-- MySQL stores drill data
-												  +-- SQLite stores payroll data
-```
-
-The applications are available from the anchor PC at:
-
-```text
-http://localhost/evs-drill-simulator/
-http://localhost/evs-payroll-system/
-```
-
-Other office PCs use the anchor PC's LAN address, for example:
-
-```text
-http://192.168.1.25/evs-drill-simulator/
-http://192.168.1.25/evs-payroll-system/
-```
-
-## Initial anchor-PC setup
-
-1. Install XAMPP with Apache, PHP, and MySQL/MariaDB on the anchor PC.
-2. Install Git and clone this repository into `C:\xampp\htdocs`:
-
-	```powershell
-	cd C:\xampp\htdocs
-	git clone https://github.com/rencekun2002-design/Elite-Vision-Security-Hub.git Elite-Vision-Security-Hub
-	```
-
-3. Start Apache and MySQL from the XAMPP Control Panel.
-4. Import `evs-drill-simulator\database2.sql` into a database named `evs_drills`.
-5. Allow inbound TCP port 80 through Windows Firewall on the private office network.
-6. Find the anchor PC's LAN address with `ipconfig` and test both URLs from another office PC.
-
-Detailed update and backup instructions are in [ANCHOR-PC-DEPLOYMENT.md](ANCHOR-PC-DEPLOYMENT.md).
-
-## Updating from the laptop
-
-Commit and push code from the laptop:
-
-```powershell
-git add .
-git commit -m "Describe the change"
-git push origin main
-```
-
-Then update the anchor PC from its repository directory:
-
-```powershell
-cd C:\xampp\htdocs\Elite-Vision-Security-Hub
-git pull --ff-only origin main
-```
-
-Do not commit `.env` files, `invoices.db`, logs, PDFs, or production credentials.

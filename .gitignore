@@ -12,3 +12,13 @@ for claude.zip
 .idea/
 .DS_Store
 Thumbs.db
+
+# Application runtime data
+evs-payroll-system/invoices.db
+evs-payroll-system/logs/*
+evs-payroll-system/pdfs/*
+!evs-payroll-system/logs/.gitkeep
+!evs-payroll-system/pdfs/.gitkeep
+
+# Local deployment artifacts
+*.zip

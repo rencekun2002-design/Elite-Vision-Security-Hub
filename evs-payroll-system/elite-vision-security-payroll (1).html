@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Elite Vision Security — Payroll</title>
+    <style>
+      :root {
+        --ink: #0e1a10;
+        --night: #12271a;
+        --night-2: #1c3524;
+        --brass: #b99a55;
+        --brass-light: #e3cd93;
+        --green-dark: #1f3d1a;
+        --green-mid: #4f7942;
+        --green-light: #8fbf6f;
+        --green-row: #8ec46b;
+        --green-row-alt: #a9d189;
+        --border: #3f6b30;
+        --bg: #f1f3ec;
+        --panel: #ffffff;
+        --text: #1a2418;
+        --muted: #66705f;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+      body {
+        margin: 0;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Arial,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .app {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 20px;
+      }
+
+      /* Masthead */
+      .masthead {
+        background:
+          radial-gradient(
+            1100px 260px at 85% -40%,
+            rgba(185, 154, 85, 0.18),
+            transparent 60%
+          ),
+          linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
+        margin: 0 -20px 24px;
+        padding: 34px 20px 26px;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 3px solid var(--brass);
+      }
+      .masthead::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+          115deg,
+          rgba(255, 255, 255, 0.025) 0 2px,
+          transparent 2px 34px
+        );
+        pointer-events: none;
+      }
+      .masthead-inner {
+        max-width: 1160px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        position: relative;
+      }
+      .mark {
+        flex-shrink: 0;
+        width: 52px;
+        height: 52px;
+      }
+      .brand-text h1 {
+        margin: 0;
+        font-family: "Oswald", sans-serif;
+        font-weight: 600;
+        font-size: 26px;
+        letter-spacing: 0.06em;
+        color: #f4f1e6;
+        text-transform: uppercase;
+      }
+      .tagline {
+        margin-top: 3px;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--brass-light);
+        font-weight: 500;
+      }
+      .masthead-sub {
+        margin-left: auto;
+        text-align: right;
+        font-size: 12px;
+        color: #c9d3c0;
+        letter-spacing: 0.03em;
+      }
+      .sub {
+        color: var(--muted);
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid #e0e5db;
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      }
+      .panel h2 {
+        font-family: "Oswald", sans-serif;
+        font-size: 14px;
+        margin: 0 0 12px;
+        color: var(--night-2);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 600;
+        border-bottom: 2px solid var(--brass);
+        padding-bottom: 8px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      input[type="text"],
+      input[type="number"],
+      input[type="date"] {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #d3dacb;
+        border-radius: 6px;
+        font-size: 14px;
+        background: #fff;
+      }
+      input:focus {
+        outline: 2px solid var(--green-light);
+        outline-offset: 1px;
+      }
+      button {
+        cursor: pointer;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 9px 16px;
+      }
+      .btn-primary {
+        background: var(--night-2);
+        color: #f4f1e6;
+        border: 1px solid var(--night-2);
+      }
+      .btn-primary:hover {
+        background: var(--night);
+      }
+      .btn-secondary {
+        background: #fff;
+        color: var(--night-2);
+        border: 1px solid var(--brass);
+      }
+      .btn-secondary:hover {
+        background: #faf6ea;
+      }
+      .btn-danger {
+        background: #fbe6e6;
+        color: #a13636;
+      }
+      .btn-danger:hover {
+        background: #f5cccc;
+      }
+      .btn-row {
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      /* Operator card */
+      .operator-card {
+        border: 1px solid #e0e5db;
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 14px;
+        background: #fbfcf9;
+      }
+      .operator-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .operator-head input[type="text"] {
+        max-width: 220px;
+      }
+      .operator-head input[type="number"] {
+        max-width: 110px;
+      }
+      .op-meta {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .day-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .day-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #eef4e9;
+        border: 1px solid #cfe0c3;
+        border-radius: 14px;
+        padding: 4px 8px 4px 10px;
+        font-size: 12px;
+      }
+      .day-chip input {
+        width: 56px;
+        padding: 2px 4px;
+        font-size: 12px;
+        border: 1px solid #cfe0c3;
+        border-radius: 4px;
+      }
+      .day-chip button {
+        background: none;
+        border: none;
+        color: #a13636;
+        font-weight: 700;
+        padding: 0 2px;
+        font-size: 13px;
+        line-height: 1;
+      }
+      .day-picker-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .day-picker-row input[type="date"] {
+        max-width: 170px;
+      }
+      .totals-preview {
+        margin-top: 10px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .totals-preview b {
+        color: var(--text);
+      }
+
+      /* Invoice preview / print output */
+      .invoice-page {
+        background: #fff;
+        width: 850px;
+        max-width: 100%;
+        margin: 0 auto 40px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        position: relative;
+        overflow: hidden;
+        padding-bottom: 40px;
+      }
+      .invoice-band {
+        height: 76px;
+        background: linear-gradient(
+          90deg,
+          var(--night) 0%,
+          var(--night-2) 55%,
+          var(--green-dark) 100%
+        );
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        border-bottom: 3px solid var(--brass);
+      }
+      .invoice-band .band-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .invoice-band .band-brand svg {
+        width: 34px;
+        height: 34px;
+        flex-shrink: 0;
+      }
+      .invoice-band .band-brand-text {
+        line-height: 1.15;
+      }
+      .invoice-band .band-brand-text .name {
+        font-family: "Oswald", sans-serif;
+        color: #f4f1e6;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .invoice-band .band-brand-text .tag {
+        color: var(--brass-light);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .invoice-band span.title {
+        color: #fff;
+        font-family: "Oswald", sans-serif;
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+      }
+      .invoice-meta {
+        text-align: right;
+        padding: 14px 40px 0;
+        font-size: 13px;
+      }
+      .invoice-meta .label {
+        font-weight: 700;
+        color: var(--text);
+      }
+      .invoice-body {
+        padding: 20px 40px 0;
+      }
+      .to-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 6px;
+      }
+      .to-label {
+        width: 60px;
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--text);
+        flex-shrink: 0;
+      }
+      .to-value {
+        font-family: "Oswald", sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--night-2);
+        text-transform: uppercase;
+      }
+      .dates-line {
+        margin: 6px 0 4px 80px;
+        font-size: 13px;
+      }
+      .op-row {
+        display: flex;
+        gap: 20px;
+        margin: 10px 0 20px;
+      }
+      .op-label {
+        width: 60px;
+        font-weight: 700;
+        font-size: 13px;
+        flex-shrink: 0;
+      }
+      .op-value {
+        font-size: 13px;
+        font-weight: 700;
+      }
+      table.invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      table.invoice-table th {
+        background: var(--green-dark);
+        color: #fff;
+        padding: 8px 10px;
+        text-align: center;
+        font-size: 12px;
+        letter-spacing: 0.02em;
+      }
+      table.invoice-table th:nth-child(2) {
+        text-align: center;
+      }
+      table.invoice-table td {
+        padding: 6px 10px;
+        border: 1px solid #c9d6c1;
+        text-align: center;
+      }
+      table.invoice-table td:nth-child(2) {
+        text-align: center;
+      }
+      table.invoice-table tr.filled td:nth-child(4) {
+        background: var(--green-row);
+        font-weight: 600;
+      }
+      table.invoice-table tr:nth-child(even).filled td:nth-child(4) {
+        background: var(--green-row-alt);
+      }
+      .totals-row td {
+        font-weight: 700;
+        border: 1px solid #c9d6c1;
+      }
+      .totals-row td.tot-label {
+        text-align: right;
+      }
+      .totals-row td.tot-val {
+        background: var(--green-row);
+        text-align: right;
+      }
+      .grand-total td.tot-val {
+        font-size: 15px;
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      @media print {
+        body {
+          background: #fff;
+        }
+        .app > *:not(#printArea) {
+          display: none !important;
+        }
+        #printArea {
+          display: block !important;
+        }
+        .invoice-page {
+          box-shadow: none;
+          margin: 0;
+          page-break-after: always;
+          width: 100%;
+        }
+        .toolbar {
+          display: none !important;
+        }
+      }
+      #printArea {
+        display: none;
+      }
+      #printArea.active {
+        display: block;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: var(--muted);
+        padding: 30px;
+        font-size: 14px;
+      }
+      .small-note {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="masthead">
+      <div class="masthead-inner">
+        <svg
+          class="mark"
+          viewBox="0 0 52 52"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="26"
+            cy="26"
+            r="24"
+            fill="none"
+            stroke="#b99a55"
+            stroke-width="2"
+          />
+          <path
+            d="M8 26 C8 15, 17 8, 26 8 C35 8, 44 15, 44 26 C44 37, 35 44, 26 44 C17 44, 8 37, 8 26 Z"
+            fill="none"
+            stroke="#e3cd93"
+            stroke-width="1.2"
+            opacity="0.5"
+          />
+          <path
+            d="M10 26 Q26 12 42 26 Q26 40 10 26 Z"
+            fill="none"
+            stroke="#f4f1e6"
+            stroke-width="1.6"
+          />
+          <circle cx="26" cy="26" r="6" fill="#b99a55" />
+          <circle cx="26" cy="26" r="2.2" fill="#12271a" />
+        </svg>
+        <div class="brand-text">
+          <h1>Elite Vision Security</h1>
+          <div class="tagline">Always Watching, Always Protecting</div>
+        </div>
+        <div class="masthead-sub">Payroll Invoice System</div>
+      </div>
+    </div>
+
+    <div class="app">
+      <div class="sub">
+        Set up operators and their worked days, then generate print-ready
+        invoices in the same style as your existing template.
+      </div>
+
+      <div class="panel" id="setupPanel">
+        <h2>Invoice Setup</h2>
+        <div class="grid">
+          <div>
+            <label for="companyTo">Bill To (Company)</label>
+            <input type="text" id="companyTo" value="ELITE VISION SECURITY" />
+          </div>
+          <div>
+            <label for="startInvoiceNo">Starting Invoice No.</label>
+            <input type="text" id="startInvoiceNo" value="2026-081" />
+          </div>
+          <div>
+            <label for="periodStart">Period Start</label>
+            <input type="date" id="periodStart" />
+          </div>
+          <div>
+            <label for="periodEnd">Period End</label>
+            <input type="date" id="periodEnd" />
+          </div>
+          <div>
+            <label for="taxRate">Sales Tax (%)</label>
+            <input type="number" id="taxRate" value="0" min="0" step="0.01" />
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Operators</h2>
+        <div id="operatorsList"></div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="addOperator()">
+            + Add Operator
+          </button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn-primary" onclick="renderInvoices()">
+          Generate Invoices
+        </button>
+        <button class="btn-secondary" onclick="printInvoices()">
+          Print / Save as PDF
+        </button>
+      </div>
+
+      <div id="printArea"></div>
+    </div>
+
+    <script>
+      let operators = [];
+      let opCounter = 0;
+
+      function uid() {
+        return "op" + ++opCounter;
+      }
+
+      function todayISO() {
+        const d = new Date();
+        return d.toISOString().slice(0, 10);
+      }
+
+      function addOperator(prefill) {
+        const id = uid();
+        const op = prefill || {
+          id,
+          name: "",
+          rate: 2.0,
+          hoursPerDay: 12,
+          days: [],
+        };
+        op.id = id;
+        operators.push(op);
+        renderOperators();
+      }
+
+      function removeOperator(id) {
+        operators = operators.filter((o) => o.id !== id);
+        renderOperators();
+      }
+
+      function addDay(opId) {
+        const op = operators.find((o) => o.id === opId);
+        const periodStart =
+          document.getElementById("periodStart").value || todayISO();
+        op.days.push(periodStart);
+        renderOperators();
+      }
+
+      function removeDay(opId, idx) {
+        const op = operators.find((o) => o.id === opId);
+        op.days.splice(idx, 1);
+        renderOperators();
+      }
+
+      function updateOperatorField(opId, field, value) {
+        const op = operators.find((o) => o.id === opId);
+        op[field] = value;
+      }
+
+      function updateDay(opId, idx, value) {
+        const op = operators.find((o) => o.id === opId);
+        op.days[idx] = value;
+      }
+
+      function fmtMoney(n) {
+        return "$" + n.toFixed(2);
+      }
+
+      function fmtDateDisplay(iso) {
+        if (!iso) return "";
+        const [y, m, d] = iso.split("-").map(Number);
+        const dt = new Date(y, m - 1, d);
+        return dt.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      function renderOperators() {
+        const container = document.getElementById("operatorsList");
+        if (operators.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state">No operators yet. Click "+ Add Operator" to start.</div>';
+          return;
+        }
+        container.innerHTML = operators
+          .map((op) => {
+            const totalHours = op.days.length * (Number(op.hoursPerDay) || 0);
+            const lineTotal =
+              (Number(op.hoursPerDay) || 0) * (Number(op.rate) || 0);
+            const subtotal = op.days.length * lineTotal;
+            const taxRate =
+              Number(document.getElementById("taxRate").value) || 0;
+            const tax = subtotal * (taxRate / 100);
+            const total = subtotal + tax;
+
+            const sortedDays = op.days
+              .map((d, i) => ({ d, i }))
+              .sort((a, b) => a.d.localeCompare(b.d));
+
+            const dayChips = sortedDays
+              .map(
+                ({ d, i }) => `
+      <div class="day-chip">
+        <input type="date" value="${d}" onchange="updateDay('${op.id}', ${i}, this.value)">
+        <button onclick="removeDay('${op.id}', ${i})" title="Remove day">×</button>
+      </div>
+    `,
+              )
+              .join("");
+
+            return `
+      <div class="operator-card">
+        <div class="operator-head">
+          <div class="op-meta">
+            <div>
+              <label>Operator Name</label>
+              <input type="text" placeholder="Full name" value="${op.name}" oninput="updateOperatorField('${op.id}','name', this.value)">
+            </div>
+            <div>
+              <label>Hrs / Day</label>
+              <input type="number" value="${op.hoursPerDay}" min="0" step="0.5" oninput="updateOperatorField('${op.id}','hoursPerDay', this.value); renderOperators()">
+            </div>
+            <div>
+              <label>Unit Price ($/hr)</label>
+              <input type="number" value="${op.rate}" min="0" step="0.01" oninput="updateOperatorField('${op.id}','rate', this.value); renderOperators()">
+            </div>
+          </div>
+          <button class="btn-danger" onclick="removeOperator('${op.id}')">Remove Operator</button>
+        </div>
+
+        <label>Worked Days</label>
+        <div class="day-list">${dayChips}</div>
+        <div class="day-picker-row">
+          <button class="btn-secondary" onclick="addDay('${op.id}')">+ Add Day</button>
+          <span class="small-note">New days default to the period start — edit the date on each chip as needed.</span>
+        </div>
+
+        <div class="totals-preview">
+          Days: <b>${op.days.length}</b> &nbsp;|&nbsp;
+          Total Hours: <b>${totalHours}</b> &nbsp;|&nbsp;
+          Line Rate: <b>${fmtMoney(lineTotal)}</b>/day &nbsp;|&nbsp;
+          Subtotal: <b>${fmtMoney(subtotal)}</b> &nbsp;|&nbsp;
+          Tax: <b>${fmtMoney(tax)}</b> &nbsp;|&nbsp;
+          Total: <b>${fmtMoney(total)}</b>
+        </div>
+      </div>
+    `;
+          })
+          .join("");
+      }
+
+      function nextInvoiceNo(base, offset) {
+        // base like "2026-081" -> increment numeric suffix
+        const m = base.match(/^(.*?)(\d+)$/);
+        if (!m) return base + "-" + offset;
+        const prefix = m[1];
+        const numStr = m[2];
+        const num = parseInt(numStr, 10) + offset;
+        const padded = String(num).padStart(numStr.length, "0");
+        return prefix + padded;
+      }
+
+      function renderInvoices() {
+        const printArea = document.getElementById("printArea");
+        const companyTo = document.getElementById("companyTo").value || "";
+        const startInvoiceNo =
+          document.getElementById("startInvoiceNo").value || "1";
+        const periodStart = document.getElementById("periodStart").value;
+        const periodEnd = document.getElementById("periodEnd").value;
+        const taxRate = Number(document.getElementById("taxRate").value) || 0;
+
+        if (operators.length === 0) {
+          printArea.innerHTML =
+            '<div class="empty-state">Add at least one operator to generate invoices.</div>';
+          printArea.classList.add("active");
+          printArea.scrollIntoView({ behavior: "smooth" });
+          return;
+        }
+
+        const pages = operators
+          .map((op, idx) => {
+            const invoiceNo = nextInvoiceNo(startInvoiceNo, idx);
+            const hrs = Number(op.hoursPerDay) || 0;
+            const rate = Number(op.rate) || 0;
+            const lineTotal = hrs * rate;
+            const sortedDays = [...op.days].sort();
+            const totalHours = sortedDays.length * hrs;
+            const subtotal = sortedDays.length * lineTotal;
+            const tax = subtotal * (taxRate / 100);
+            const total = subtotal + tax;
+
+            const rows = sortedDays
+              .map(
+                (d) => `
+      <tr class="filled">
+        <td>${hrs}</td>
+        <td>${fmtDateDisplay(d)}</td>
+        <td>${fmtMoney(rate)}</td>
+        <td>${fmtMoney(lineTotal)}</td>
+      </tr>
+    `,
+              )
+              .join("");
+
+            // pad a couple of empty rows for visual match, like the sample
+            const emptyRows =
+              `<tr><td>&nbsp;</td><td></td><td></td><td></td></tr>`.repeat(1);
+
+            const periodLine =
+              periodStart && periodEnd
+                ? `${fmtDateDisplay(periodStart)} - ${fmtDateDisplay(periodEnd)}`
+                : "";
+
+            return `
+      <div class="invoice-page">
+        <div class="invoice-band">
+          <div class="band-brand">
+            <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 26 Q26 12 42 26 Q26 40 10 26 Z" fill="none" stroke="#f4f1e6" stroke-width="1.8"/>
+              <circle cx="26" cy="26" r="6" fill="#b99a55"/>
+              <circle cx="26" cy="26" r="2.2" fill="#12271a"/>
+            </svg>
+            <div class="band-brand-text">
+              <div class="name">Elite Vision Security</div>
+              <div class="tag">Always Watching, Always Protecting</div>
+            </div>
+          </div>
+          <span class="title">INVOICE</span>
+        </div>
+        <div class="invoice-meta">
+          <div><span class="label">INVOICE NO.</span> ${invoiceNo}</div>
+        </div>
+        <div class="invoice-body">
+          <div class="to-row">
+            <div class="to-label">TO</div>
+            <div class="to-value">${companyTo}</div>
+          </div>
+          <div class="dates-line">Dates Covered: ${periodLine}</div>
+          <div class="op-row">
+            <div class="op-label">OPERATOR</div>
+            <div class="op-value">${(op.name || "").toUpperCase()}</div>
+          </div>
+
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>HRS/DAY</th>
+                <th>DESCRIPTION</th>
+                <th>UNIT PRICE</th>
+                <th>LINE TOTAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows}
+              ${emptyRows}
+              <tr class="totals-row">
+                <td>TOTAL HOURS</td>
+                <td></td>
+                <td class="tot-label">SUBTOTAL</td>
+                <td class="tot-val">${fmtMoney(subtotal)}</td>
+              </tr>
+              <tr class="totals-row">
+                <td>${totalHours}</td>
+                <td></td>
+                <td class="tot-label">SALES TAX</td>
+                <td class="tot-val">${fmtMoney(tax)}</td>
+              </tr>
+              <tr class="totals-row grand-total">
+                <td></td>
+                <td></td>
+                <td class="tot-label">TOTAL</td>
+                <td class="tot-val">${fmtMoney(total)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+          })
+          .join("");
+
+        printArea.innerHTML = pages;
+        printArea.classList.add("active");
+        printArea.scrollIntoView({ behavior: "smooth" });
+      }
+
+      function printInvoices() {
+        if (
+          !document.getElementById("printArea").classList.contains("active")
+        ) {
+          renderInvoices();
+        }
+        setTimeout(() => window.print(), 150);
+      }
+
+      // init
+      addOperator({
+        id: uid(),
+        name: "",
+        rate: 2.0,
+        hoursPerDay: 12,
+        days: [],
+      });
+    </script>
+  </body>
+</html>
