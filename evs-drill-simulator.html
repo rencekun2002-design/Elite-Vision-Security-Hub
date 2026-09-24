@@ -4288,6 +4288,8 @@
               (h.operator_name || "").toLowerCase().includes(q) ||
               (h.client_name || "").toLowerCase().includes(q),
           );
+        if (isAdmin && openSubmissionId === null && rows.length)
+          openSubmissionId = rows[0].id;
         document.getElementById("submissionCount").textContent =
           `${rows.length} submission${rows.length === 1 ? "" : "s"}`;
 
