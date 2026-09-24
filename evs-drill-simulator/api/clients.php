@@ -4,6 +4,13 @@ require __DIR__ . '/db.php';
 $method = $_SERVER['REQUEST_METHOD'];
 $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 
+function decode_client(array $row): array {
+    $row['id'] = (int) $row['id'];
+    $row['has_speaker'] = (bool) $row['has_speaker'];
+    $row['has_siren'] = (bool) $row['has_siren'];
+    return $row;
+}
+
 if ($method === 'GET') {
     if ($id) {
         $stmt = $pdo->prepare('SELECT * FROM clients WHERE id = ?');
@@ -11,9 +18,9 @@ if ($method === 'GET') {
         $row = $stmt->fetch();
         if (!$row)
             send(['error' => 'Client not found'], 404);
-        send($row);
+        send(decode_client($row));
     }
-    send($pdo->query('SELECT * FROM clients ORDER BY name ASC')->fetchAll());
+    send(array_map('decode_client', $pdo->query('SELECT * FROM clients ORDER BY name ASC')->fetchAll()));
 }
 
 if ($method === 'POST') {
@@ -34,7 +41,7 @@ if ($method === 'POST') {
     $newId = $pdo->lastInsertId();
     $stmt = $pdo->prepare('SELECT * FROM clients WHERE id = ?');
     $stmt->execute([$newId]);
-    send($stmt->fetch(), 201);
+    send(decode_client($stmt->fetch()), 201);
 }
 
 if ($method === 'PUT') {
@@ -57,7 +64,7 @@ if ($method === 'PUT') {
     ]);
     $stmt = $pdo->prepare('SELECT * FROM clients WHERE id = ?');
     $stmt->execute([$id]);
-    send($stmt->fetch());
+    send(decode_client($stmt->fetch()));
 }
 
 if ($method === 'DELETE') {

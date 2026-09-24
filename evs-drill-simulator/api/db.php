@@ -25,6 +25,10 @@ try {
         [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            // Native prepares return typed columns (int/bool) instead of
+            // all-string values, which the front end relies on for ID and
+            // checkbox comparisons.
+            PDO::ATTR_EMULATE_PREPARES => false,
         ]
     );
 } catch (PDOException $e) {

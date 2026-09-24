@@ -4403,40 +4403,93 @@
   `;
       }
 
+      function renderPointsExplanation(detail) {
+        if (!detail) return "";
+        const adminReview = detail.adminReview || null;
+        const overall = detail.overall;
+        const points = detail.points;
+        const performanceBonus = overall >= 90 ? 10 : overall >= 80 ? 5 : 0;
+        return `
+    <div class="points-explanation">
+      Points: <strong>${overall}</strong> base score
+      ${performanceBonus ? ` + <strong>${performanceBonus}</strong> performance bonus` : ""}
+      ${detail.timeAdjustment > 0 ? ` + <strong>${detail.timeAdjustment}</strong> speed bonus` : detail.timeAdjustment < 0 ? ` − <strong>${Math.abs(detail.timeAdjustment)}</strong> slow response adjustment` : ""}
+      ${detail.revealFreeBonus ? ` + <strong>${detail.revealFreeBonus}</strong> correct no-reveal knowledge bonus` : ""}
+      ${detail.infoPenalty ? ` − <strong>${detail.infoPenalty}</strong> information cost` : ""}
+      ${detail.equipmentPenalty ? ` − <strong>${detail.equipmentPenalty}</strong> unavailable equipment cost` : ""}
+      ${detail.addressPenalty ? ` − <strong>${detail.addressPenalty}</strong> address accuracy cost` : ""}
+      ${detail.policeDepartmentPenalty ? ` − <strong>${detail.policeDepartmentPenalty}</strong> police department cost` : ""}
+      ${detail.voicemailPenalty ? ` − <strong>${detail.voicemailPenalty}</strong> voicemail attempt cost` : ""}
+      = <strong>${points} points earned</strong>.
+      ${adminReview ? `<br><span class="small">Admin-reviewed score, recalculated from voicemail accuracy grading.</span>` : ""}
+    </div>`;
+      }
+
       function renderAdminGrade(h, detail) {
         if (!isAdmin) return "";
-        const adminReview = detail?.adminReview || null;
-        const defaultVoicemailPoints = detail?.scriptPct ?? h.script_pct ?? 0;
-        const defaultPoints = detail?.points ?? h.overall_pct ?? 0;
+        if (!detail) {
+          return `
+    <div class="admin-grade-box">
+      <div class="script-feedback-title">Admin grading</div>
+      <p class="small">Full breakdown isn't available for this submission, so voicemail accuracy grading can't be recalculated here.</p>
+      <div class="field"><label for="finalPoints-${h.id}">Final points awarded</label><input type="number" id="finalPoints-${h.id}" min="0" value="${h.overall_pct ?? 0}"></div>
+      <div class="field"><label for="gradeNotes-${h.id}">Admin notes</label><textarea id="gradeNotes-${h.id}" rows="2" placeholder="What was done well or needs coaching?"></textarea></div>
+      <button class="small-btn primary" onclick="saveAdminGrade(${h.id})">Save admin grade</button>
+    </div>`;
+        }
+        const adminReview = detail.adminReview || null;
+        const audio = SESSION_AUDIO[h.id] || {};
+        const persistedAudio = detail.audioData || {};
+        const voicemailTools = (detail.perTool || []).filter(
+          (pt) => audio[pt.tool] || persistedAudio[pt.tool],
+        );
         return `
     <div class="admin-grade-box">
       <div class="script-feedback-title">Admin voicemail grading</div>
-      <div class="grid2">
-        <div class="field"><label for="vmPoints-${h.id}">Voicemail points (0-100)</label><input type="number" id="vmPoints-${h.id}" min="0" max="100" value="${adminReview?.voicemailPoints ?? defaultVoicemailPoints}"></div>
-        <div class="field"><label for="finalPoints-${h.id}">Final points awarded</label><input type="number" id="finalPoints-${h.id}" min="0" value="${adminReview?.pointsAwarded ?? defaultPoints}"></div>
-      </div>
+      ${
+        voicemailTools.length
+          ? voicemailTools
+              .map((pt) => {
+                const savedAccuracy = adminReview?.voicemailAccuracy?.[pt.tool];
+                const defaultAccuracy =
+                  savedAccuracy ??
+                  Math.round((pt.hits.length / Math.max(pt.required.length, 1)) * 100);
+                return `<div class="field"><label for="vmAcc-${h.id}-${pt.tool}">${TOOL_LABELS[pt.tool]} voicemail accuracy (0-100)</label><input type="number" id="vmAcc-${h.id}-${pt.tool}" min="0" max="100" value="${defaultAccuracy}"></div>`;
+              })
+              .join("")
+          : '<p class="small">No voicemail recordings on this submission.</p>'
+      }
+      <div class="field"><label for="finalPoints-${h.id}">Final points awarded</label><input type="number" id="finalPoints-${h.id}" min="0" value="${adminReview?.pointsAwarded ?? detail.points ?? 0}"></div>
       <div class="field"><label for="gradeNotes-${h.id}">Admin notes</label><textarea id="gradeNotes-${h.id}" rows="2" placeholder="What was done well or needs coaching?">${adminReview?.notes || ""}</textarea></div>
       <button class="small-btn primary" onclick="saveAdminGrade(${h.id})">Save admin grade</button>
       ${adminReview ? `<span class="small" style="margin-left:8px;">Reviewed ${adminReview.reviewedAt || ""}</span>` : ""}
+      ${renderPointsExplanation(detail)}
     </div>`;
       }
 
       async function saveAdminGrade(id) {
         if (!isAdmin) return;
-        const voicemailPoints = Number(
-          document.getElementById(`vmPoints-${id}`).value || 0,
-        );
+        const row = HISTORY.find((item) => item.id === id);
+        const detail = row ? getDetail(row) : null;
+        const voicemailAccuracy = {};
+        (detail?.perTool || []).forEach((pt) => {
+          const input = document.getElementById(`vmAcc-${id}-${pt.tool}`);
+          if (input) voicemailAccuracy[pt.tool] = Number(input.value || 0);
+        });
         const pointsAwarded = Number(
           document.getElementById(`finalPoints-${id}`).value || 0,
         );
         const notes = document.getElementById(`gradeNotes-${id}`).value.trim();
         const result = await apiSend(API.history + "?id=" + id, "PUT", {
-          voicemail_points: voicemailPoints,
+          voicemail_accuracy: voicemailAccuracy,
           points_awarded: pointsAwarded,
           notes,
         });
-        const row = HISTORY.find((item) => item.id === id);
-        if (row) row.detail = result.detail;
+        if (row) {
+          row.detail = result.detail;
+          row.script_pct = result.script_pct;
+          row.overall_pct = result.overall_pct;
+        }
         renderSubmissionsList();
         renderLeaderboard();
         renderOperatorStats(
