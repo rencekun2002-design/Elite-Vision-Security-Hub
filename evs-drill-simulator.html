@@ -4590,9 +4590,9 @@
 
       /* ==================== OPERATIONS VIEW ==================== */
       function toggleClientDocs(clientId) {
-        if (collapsedClientIds.has(clientId))
-          collapsedClientIds.delete(clientId);
-        else collapsedClientIds.add(clientId);
+        const key = String(clientId);
+        if (collapsedClientIds.has(key)) collapsedClientIds.delete(key);
+        else collapsedClientIds.add(key);
         renderOperations();
       }
 
@@ -4612,7 +4612,7 @@
         });
 
         if (!operationsInitialized) {
-          CLIENTS.forEach((client) => collapsedClientIds.add(client.id));
+          CLIENTS.forEach((client) => collapsedClientIds.add(String(client.id)));
           operationsInitialized = true;
         }
 
@@ -4691,11 +4691,11 @@
                   })
                   .join("");
 
-          const isCollapsed = collapsedClientIds.has(client.id);
+          const isCollapsed = collapsedClientIds.has(String(client.id));
           return `
             <div class="client-docs-section ${isCollapsed ? "is-collapsed" : ""}" data-client-id="${client.id}">
               <div class="client-header">
-                <button class="client-toggle" type="button" aria-expanded="${!isCollapsed}" onclick="toggleClientDocs(${client.id})">
+                <button class="client-toggle" type="button" aria-expanded="${!isCollapsed}">
                   <span class="client-marker" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V6a1 1 0 0 1 1-1h6v15M11 20h9M14 9h2M14 13h2M7 9h1M7 13h1" stroke-linecap="round"/></svg></span>
                   <div class="client-info">
                     <div class="client-name">${client.name}</div>
@@ -4720,6 +4720,13 @@
             `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="26" height="26"><path d="M9 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m0-18h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9m0-18v18m-4-4h12M5 12h12" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
             "No operational documents found.",
           );
+        document
+          .querySelectorAll("#documentsGrid .client-toggle")
+          .forEach((button) => {
+            button.addEventListener("click", () =>
+              toggleClientDocs(button.closest(".client-docs-section").dataset.clientId),
+            );
+          });
       }
 
       document
