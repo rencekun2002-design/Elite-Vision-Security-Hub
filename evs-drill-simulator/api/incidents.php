@@ -16,7 +16,8 @@ function decode_incident(array $row): array {
 }
 
 $baseSelect = "SELECT i.*, c.name AS client_name, c.address AS client_address,
-               c.has_speaker AS client_has_speaker, c.has_siren AS client_has_siren
+               c.has_speaker AS client_has_speaker, c.has_siren AS client_has_siren,
+               c.police_department, c.police_hotline
                FROM incidents i JOIN clients c ON c.id = i.client_id";
 
 if ($method === 'GET') {

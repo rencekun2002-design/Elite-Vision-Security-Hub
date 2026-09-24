@@ -21,7 +21,7 @@ if ($method === 'POST') {
     if (empty($b['name']) || empty($b['address'])) {
         send(['error' => 'Name and address are required'], 400);
     }
-    $stmt = $pdo->prepare('INSERT INTO clients (name, address, state, has_speaker, has_siren, police_department) VALUES (?, ?, ?, ?, ?, ?)');
+    $stmt = $pdo->prepare('INSERT INTO clients (name, address, state, has_speaker, has_siren, police_department, police_hotline) VALUES (?, ?, ?, ?, ?, ?, ?)');
     $stmt->execute([
         $b['name'],
         $b['address'],
@@ -29,6 +29,7 @@ if ($method === 'POST') {
         !empty($b['has_speaker']) ? 1 : 0,
         !empty($b['has_siren']) ? 1 : 0,
         $b['police_department'] ?? null,
+        $b['police_hotline'] ?? null,
     ]);
     $newId = $pdo->lastInsertId();
     $stmt = $pdo->prepare('SELECT * FROM clients WHERE id = ?');
@@ -43,7 +44,7 @@ if ($method === 'PUT') {
     if (empty($b['name']) || empty($b['address'])) {
         send(['error' => 'Name and address are required'], 400);
     }
-    $stmt = $pdo->prepare('UPDATE clients SET name=?, address=?, state=?, has_speaker=?, has_siren=?, police_department=? WHERE id=?');
+    $stmt = $pdo->prepare('UPDATE clients SET name=?, address=?, state=?, has_speaker=?, has_siren=?, police_department=?, police_hotline=? WHERE id=?');
     $stmt->execute([
         $b['name'],
         $b['address'],
@@ -51,6 +52,7 @@ if ($method === 'PUT') {
         !empty($b['has_speaker']) ? 1 : 0,
         !empty($b['has_siren']) ? 1 : 0,
         $b['police_department'] ?? null,
+        $b['police_hotline'] ?? null,
         $id,
     ]);
     $stmt = $pdo->prepare('SELECT * FROM clients WHERE id = ?');
