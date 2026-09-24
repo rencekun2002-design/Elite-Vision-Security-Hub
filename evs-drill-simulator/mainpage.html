@@ -412,6 +412,85 @@
         border-left: 3px solid var(--accent);
         border-radius: 8px;
       }
+      .welcome-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
+        gap: 28px;
+        padding: clamp(24px, 5vw, 48px);
+        background: #ffffff;
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+      .welcome-kicker {
+        margin: 0 0 10px;
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+      }
+      .welcome-panel h2 {
+        max-width: 620px;
+        margin: 0;
+        font-size: clamp(28px, 4vw, 46px);
+        line-height: 1.05;
+      }
+      .welcome-copy {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+      }
+      .welcome-copy .hint {
+        max-width: 580px;
+        font-size: 15px;
+        line-height: 1.65;
+      }
+      .welcome-steps {
+        display: grid;
+        align-content: center;
+        gap: 10px;
+        padding-left: 24px;
+        border-left: 1px solid var(--border);
+      }
+      .welcome-step {
+        display: grid;
+        grid-template-columns: 32px 1fr;
+        gap: 10px;
+        align-items: start;
+        padding: 12px 0;
+      }
+      .welcome-step-number {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: var(--surface-2);
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .welcome-step strong {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 13px;
+      }
+      .welcome-step span:last-child {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+      @media (max-width: 700px) {
+        .welcome-panel {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .welcome-steps {
+          padding: 16px 0 0;
+          border-top: 1px solid var(--border);
+          border-left: 0;
+        }
+      }
       .stepper {
         display: flex;
         align-items: center;
@@ -1415,14 +1494,31 @@
       <!-- ============ DRILL VIEW ============ -->
       <section class="view active" id="view-drill">
         <div id="drillCard" class="card" hidden></div>
-        <div class="card" id="noOperatorNotice">
-          <h2>Ready when you are</h2>
-          <p class="hint" style="margin-top: 6px">
-            Select your operator name above, then click
-            <strong>New Scenario</strong> to get a randomized live scenario.
-            Your classification and responses are graded — no answers are shown
-            until you finish, so this is a real read on where you stand.
-          </p>
+        <div class="card welcome-panel" id="noOperatorNotice">
+          <div class="welcome-copy">
+            <p class="welcome-kicker">ELITE VISION SECURITY</p>
+            <h2>Welcome to the Command Center.</h2>
+            <p class="hint">
+              Build calm, decisive responses through realistic security
+              scenarios. Choose an operator, start a scenario, and work the
+              incident from first alert to final handoff.
+            </p>
+            <button class="primary" id="welcomeStartBtn">Start a scenario</button>
+          </div>
+          <div class="welcome-steps" aria-label="How to start a drill">
+            <div class="welcome-step">
+              <span class="welcome-step-number">01</span>
+              <span><strong>Choose an operator</strong>Select a name from the header.</span>
+            </div>
+            <div class="welcome-step">
+              <span class="welcome-step-number">02</span>
+              <span><strong>Take the call</strong>Classify the situation and respond.</span>
+            </div>
+            <div class="welcome-step">
+              <span class="welcome-step-number">03</span>
+              <span><strong>Review the result</strong>Use your history to sharpen the next response.</span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -3182,6 +3278,7 @@
 
       /* ==================== BOOT ==================== */
       document.getElementById("newDrillBtn").onclick = startScenario;
+      document.getElementById("welcomeStartBtn").onclick = startScenario;
       loadAll();
     </script>
   </body>
