@@ -3833,20 +3833,12 @@
           totalPossible = 0;
         const perTool = [];
 
-        // A recorded voicemail stands in for the typed script — if audio was
-        // captured for a tool, that call is graded as fully delivered even
-        // if the text box was left blank.
-        const hasAudio = (t) => !!(current.audio && current.audio[t]);
-
         externalTools.forEach((t) => {
           const text = (current.scripts[t] || "").toLowerCase();
           const required = ["elite vision", addressPart].concat(
             current.inc.extra_keywords.map((x) => x.toLowerCase()),
           );
-          const hits =
-            !text.trim() && hasAudio(t)
-              ? required.slice()
-              : required.filter((term) => text.includes(term));
+          const hits = required.filter((term) => text.includes(term));
           totalHits += hits.length;
           totalPossible += required.length;
           perTool.push({
@@ -3862,10 +3854,7 @@
           const required = [addressPart].concat(
             current.inc.extra_keywords.map((x) => x.toLowerCase()),
           );
-          const hits =
-            !text.trim() && hasAudio(t)
-              ? required.slice()
-              : required.filter((term) => text.includes(term));
+          const hits = required.filter((term) => text.includes(term));
           totalHits += hits.length;
           totalPossible += required.length;
           perTool.push({
@@ -3879,7 +3868,7 @@
 
         speakerTools.forEach((t) => {
           const text = (current.scripts[t] || "").trim();
-          const hit = text.length > 15 || hasAudio(t);
+          const hit = text.length > 15;
           totalHits += hit ? 1 : 0;
           totalPossible += 1;
           perTool.push({
